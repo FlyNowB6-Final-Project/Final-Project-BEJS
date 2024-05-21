@@ -12,3 +12,107 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id          Int     @id @default(autoincrement())
+  fullname    String
+  email       String  @unique
+  phoneNumber String
+  password    String
+  avatar      String?
+  google_id   String?
+  isVerified  Boolean @default(false)
+  role        String  @default("user")
+
+  @@map("users")
+}
+
+model Schedule {
+  id             Int      @id @default(autoincrement())
+  time_arrive    DateTime
+  time_departure DateTime
+  date           DateTime
+
+  @@map("schedules")
+}
+
+model Plane {
+  id       Int    @id @default(autoincrement())
+  name     String
+  brand    String
+  seri     String
+  capacity Int
+
+  @@map("planes")
+}
+
+model Passenger {
+  id         Int    @id @default(autoincrement())
+  fullname   String
+  birth_date String
+  passport   String
+  gender     String
+
+  @@map("passengers")
+}
+
+model Country {
+  id   Int    @id @default(autoincrement())
+  name String
+  code String
+
+  @@map("countries")
+}
+
+model City {
+  id   Int    @id @default(autoincrement())
+  name String
+  code String
+
+  @@map("cities")
+}
+
+model Contient {
+  id   Int    @id @default(autoincrement())
+  name String
+  code String
+
+  @@map("contients")
+}
+
+model Class {
+  id    Int    @id @default(autoincrement())
+  name  String
+  price String
+
+  @@map("class")
+}
+
+model Order {
+  id          Int    @id @default(autoincrement())
+  destination String
+  status      String @default("unpaid")
+  code        String
+  payment     String
+
+  @@map("orders")
+}
+
+model Payment {
+  id             Int      @id @default(autoincrement())
+  amount         String
+  method_payment String
+  createdAt      DateTime
+
+  @@map("payments")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime
+
+  @@map("notifications")
+}
