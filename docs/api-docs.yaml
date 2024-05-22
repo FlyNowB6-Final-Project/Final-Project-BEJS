@@ -9,15 +9,15 @@ tags:
   - name: "Users"
     description: Operations about user
 paths:
-  /auth/register :
+  /auth/register:
     post:
       tags:
         - "Auth"
       summary: Register user
       description: Register user with the provided information.
       requestBody:
-        $ref: '#/components/requestBodies/createUser'
-                
+        $ref: "#/components/requestBodies/createUser"
+
       responses:
         201:
           description: User created was successful
@@ -33,7 +33,7 @@ paths:
                     type: string
                     example: User Created Successfully
                   data:
-                    $ref: '#/components/schemas/UserResponse'
+                    $ref: "#/components/schemas/UserResponse"
 
         400:
           description: Input must be required!
@@ -67,15 +67,15 @@ paths:
                   data:
                     example: ~
 
-  /auth/login :
+  /auth/login:
     post:
       tags:
         - "Auth"
       summary: Login user
       description: Login user with the provided information.
       requestBody:
-        $ref: '#/components/requestBodies/createLogin'
-                
+        $ref: "#/components/requestBodies/createLogin"
+
       responses:
         201:
           description: Login was successful
@@ -91,7 +91,7 @@ paths:
                     type: string
                     example: Login was successfull
                   data:
-                    $ref: '#/components/schemas/LoginResponse'
+                    $ref: "#/components/schemas/LoginResponse"
 
         400:
           description: invalid email or password!
@@ -107,15 +107,15 @@ paths:
                     type: string
                     example: invalid email or password!
                   data:
-                    example: ~         
+                    example: ~
 
-  /auth/authenticate :
+  /auth/authenticate:
     get:
       tags:
         - "Auth"
       summary: Authenticate user
       description: Authenticate user with the token.
-                
+
       responses:
         200:
           description: Success
@@ -131,7 +131,7 @@ paths:
                     type: string
                     example: OK
                   data:
-                    $ref: '#/components/schemas/UserResponse'
+                    $ref: "#/components/schemas/UserResponse"
 
         403:
           description: Token not provided!
@@ -163,7 +163,7 @@ paths:
                     type: string
                     example: jwt malformed
                   data:
-                    example: ~        
+                    example: ~
       security:
         - bearerAuth: []
 
@@ -242,7 +242,7 @@ paths:
                   message:
                     type: string
                     example: "Success Send Email Forget Password"
-                  
+
         404:
           description: user not found
           content:
@@ -256,7 +256,7 @@ paths:
                   message:
                     type: string
                     example: "user not found"
-                  data: 
+                  data:
                     example: ~
 
   /reset-pass:
@@ -298,9 +298,9 @@ paths:
                   message:
                     type: string
                     example: "Your password has been updated successfully!"
-                  data: 
+                  data:
                     properties:
-                      id: 
+                      id:
                         type: integer
                         example: 1
                       name:
@@ -323,9 +323,9 @@ paths:
                   message:
                     type: string
                     example: "Both password and password confirmation are required!!"
-                  data: 
+                  data:
                     example: ~
-        
+
         401:
           description: Please ensure that the password and password confirmation match!
           content:
@@ -339,9 +339,9 @@ paths:
                   message:
                     type: string
                     example: "Please ensure that the password and password confirmation match!"
-                  data: 
+                  data:
                     example: ~
-                  
+
         403:
           description: Invalid or expired token!
           content:
@@ -355,14 +355,102 @@ paths:
                   message:
                     type: string
                     example: "Invalid or expired token!"
-                  data: 
+                  data:
                     example: ~
+  /schedule:
+    post:
+      description: Find ticket 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                from:
+                  type: string
+                  example: jakarta
+                destination:
+                  type: string
+                  example: melbourne
+                date_departure:
+                  type: string
+                  example: 20/06/2024
+                date_return:
+                  type: string
+                  example: 20/06/2024
+                total_passenger:
+                  type: integer
+                  example: 2
+                seat_class:
+                  type: integer
+                  example: 2
+      responses:
+        "200":
+          description: Succes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: boolean
+                  message: 
+                    type: string
+                    example: success retrive data
+                  data: 
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        plane:
+                          type: string
+                          example: jetAir
+                        arive_at:
+                          type: string
+                          example: 07:00
+                        leave_at:
+                          type: string
+                          example: 07:30
+                        from:
+                          type: string
+                          example: jakarta
+                        destination:
+                          type: string
+                          example: melbourne
+                        estimation:
+                          type: string
+                          example: "7.30"
+                        seat_class:
+                          type: array
+                          items:
+                            properties:
+                              class:
+                                type: string
+                                example: ekonomi
+                              price: 
+                                type: string
+                                example: 100000                        
+    get:
+      parameters:
+        - name: query
+          in: query
+          required: false
+          description: Query parameter to filter content
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Succes
+          content:
+            application/json:
+              schema:
+                type: object
 
 components:
   securitySchemes:
-    bearerAuth:       
+    bearerAuth:
       type: http
-      scheme: bearer       
+      scheme: bearer
       bearerFormat: JWT
   schemas:
     UserResponse:
@@ -391,7 +479,7 @@ components:
           example: sugab.dwi88@gmail.com
         token:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RfbmFtZSI6IkJhZ3VzIER3aSIsImxhc3RfbmFtZSI6IlB1dHJhIEFkaXlvbm8iLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsImlhdCI6MTcxNDY1NTQ1N30.7mHMjtq0QvKWfZ41Nb5XMXKyfkcg4l7LX34yC-HBj3A 
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RfbmFtZSI6IkJhZ3VzIER3aSIsImxhc3RfbmFtZSI6IlB1dHJhIEFkaXlvbm8iLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsImlhdCI6MTcxNDY1NTQ1N30.7mHMjtq0QvKWfZ41Nb5XMXKyfkcg4l7LX34yC-HBj3A
 
   requestBodies:
     createLogin:
@@ -406,7 +494,7 @@ components:
               password:
                 type: string
                 example: 123456
-    createUser: 
+    createUser:
       content:
         application/json:
           schema:
