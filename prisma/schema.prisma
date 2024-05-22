@@ -23,6 +23,7 @@ model User {
   avatar_url   String?
   google_id    String?
   otp          String?
+  otpCreatedAt DateTime?
   isVerified   Boolean        @default(false)
   role         String         @default("user")
   notification Notification[]
@@ -76,10 +77,10 @@ model Plane {
 model DetailPlane {
   id            Int       @id @default(autoincrement())
   total_seat    Int
-  seat_class SeatClass @relation(fields: [seat_class_id], references: [id])
-  plane      Plane     @relation(fields: [plane_id], references: [id])
-  seat_class_id   Int
-  plane_id       Int
+  seat_class    SeatClass @relation(fields: [seat_class_id], references: [id])
+  plane         Plane     @relation(fields: [plane_id], references: [id])
+  seat_class_id Int
+  plane_id      Int
 
   @@map("detail_plane")
 }
