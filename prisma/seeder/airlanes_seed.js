@@ -1,4 +1,5 @@
 async function airlaneSeed(prisma) {
+    await prisma.airlines.deleteMany()
     await prisma.airlines.createMany({
         data:
             [
@@ -74,6 +75,7 @@ async function airlaneSeed(prisma) {
                 }
             ]
     })
+    console.log('airlines data seeded successfully');
 }
 
 module.exports = airlaneSeed
