@@ -100,7 +100,7 @@ model SeatClass {
   type_class  String
   DetailPlane DetailPlane[]
 
-  @@map("Seat_class")
+  @@map("seat_class")
 }
 
 model Passenger {
