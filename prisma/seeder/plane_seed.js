@@ -11,7 +11,6 @@ async function planeSeed(prisma) {
   const wingsAir = await prisma.airlines.findUnique({ where: { code: "WI901" } });
   const superAirJet = await prisma.airlines.findUnique({ where: { code: "SU012" } });
 
-  await prisma.plane.deleteMany()
   await prisma.plane.createMany({
     data: [
       {
