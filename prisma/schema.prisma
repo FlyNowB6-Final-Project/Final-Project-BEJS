@@ -90,7 +90,6 @@ model Airlines {
   name     String
   since    String
   logo_url String
-  plane_id Int?
   Plane    Plane[]
 
   @@map("airlines")
