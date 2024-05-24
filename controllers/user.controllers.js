@@ -287,7 +287,7 @@ module.exports = {
   },
   resetPassword: async (req, res, next) => {
     try {
-      const { token } = req.params;
+      const { token } = req.query;
       const { password, passwordConfirmation } = req.body;
       const passwordValidator =
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/;
