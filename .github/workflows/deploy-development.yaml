@@ -33,7 +33,9 @@ jobs:
           npx prisma migrate deploy
 
       - name: Run Seeder
-        run: npx prisma db seed
+        run: |
+          export DATABASE_URL="${{ secrets.DEV_DATABASE_URL }}"
+          npx prisma db seed
 
       - name: Deploy to Railway
         run: railway up --service ${{ secrets.RAILWAY_SERVICE_ID }}
