@@ -32,7 +32,7 @@ jobs:
           export DATABASE_URL="${{ secrets.DEV_DATABASE_URL }}"
           npx prisma migrate deploy
 
-      - name: Run Migrations
+      - name: Run Seeder
         run: npx prisma db seed
 
       - name: Deploy to Railway
