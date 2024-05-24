@@ -31,7 +31,6 @@ async function scheduleSeed(prisma) {
                 ...v.detail_data,
                 flight_id: createdFlight.id
             };
-            console.log(detailData)
             await prisma.detailFlight.create({ data: detailData });
         })
         console.log('schedule data seeded successfully');
