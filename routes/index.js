@@ -7,6 +7,7 @@ const path = require("path");
 
 const User = require("./user.routes")
 const cityRoute = require("./city.routes")
+const classRoute = require("./seat_class.routes")
 
 const swagger_path = path.resolve(__dirname, "../docs/api-docs.yaml");
 const file = fs.readFileSync(swagger_path, "utf-8");
@@ -18,5 +19,6 @@ router.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 // API
 router.use("/api/v1", User)
 router.use("/api/v1", cityRoute)
+router.use("/api/v1/class", classRoute)
 
 module.exports = router;
