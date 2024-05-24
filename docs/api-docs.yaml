@@ -9,10 +9,10 @@ tags:
   - name: "Users"
     description: Operations about user
 paths:
-  /auth/register :
+  /users/register :
     post:
       tags:
-        - "Auth"
+        - "Users"
       summary: Register user
       description: Register user with the provided information.
       requestBody:
@@ -67,10 +67,10 @@ paths:
                   data:
                     example: ~
 
-  /auth/login :
+  /users/login :
     post:
       tags:
-        - "Auth"
+        - "Users"
       summary: Login user
       description: Login user with the provided information.
       requestBody:
@@ -107,15 +107,44 @@ paths:
                     type: string
                     example: invalid email or password!
                   data:
-                    example: ~         
+                    example: ~   
 
-  /auth/authenticate :
-    get:
+        403:
+          description: Verify Account User!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Account not verified. Please check your email!
+                  data:
+                    example: ~ 
+
+  /users/verify-otp:
+    put:
       tags:
-        - "Auth"
-      summary: Authenticate user
-      description: Authenticate user with the token.
-                
+        - "Users"    
+      summary: Verify Otp Email User
+      description: Verify Otp Email User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: sugab.dwi88@gmail.com
+                otp: 
+                  type: string
+                  example: 123456
+
       responses:
         200:
           description: Success
@@ -129,12 +158,10 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: OK
-                  data:
-                    $ref: '#/components/schemas/UserResponse'
-
-        403:
-          description: Token not provided!
+                    example: "Activation successfully. You're Account is Verified"
+                  
+        400:
+          description: OTP Expired
           content:
             application/json:
               schema:
@@ -145,43 +172,62 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: token not provided!!
-                  data:
+                    example: "OTP has expired. Please resend new otp."
+                  data: 
+                    example: ~ 
+
+        401:
+          description: Invalid OTP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid OTP"
+                  data: 
+                    example: ~ 
+
+        404:
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "user not found"
+                  data: 
                     example: ~
 
-        409:
-          description: jwt malformed!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: jwt malformed
-                  data:
-                    example: ~        
-      security:
-        - bearerAuth: []
-
-  /users:
-    get:
+  /users/resend-otp:
+    put:
       tags:
-        - "Users"
-      summary: Get all users
-      parameters:
-        - schema:
-            type: string
-          name: search
-          in: query
-          description: search for get first_name users
-      description: Get all users
+        - "Users"    
+      summary: Resend Verify Otp Email User
+      description: Resend Verify Otp Email User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: sugab.dwi88@gmail.com
+
       responses:
         200:
-          description: Success get all users
+          description: Success
           content:
             application/json:
               schema:
@@ -192,26 +238,25 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: Success
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        first_name:
-                          type: string
-                          example: Bagus Dwi
-                        last_name:
-                          type: string
-                          example: Putra Adiyono
-                        email:
-                          type: string
-                          example: sugab.dwi88@gmail.com
+                    example: "Resend OTP successfully"
 
-  /forget-pass:
+        404:
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "user not found"
+                  data: 
+                    example: ~    
+
+  /users/forget-password:
     post:
       tags:
         - "Users"
@@ -259,8 +304,8 @@ paths:
                   data: 
                     example: ~
 
-  /reset-pass:
-    post:
+  /users/reset-password:
+    put:
       tags:
         - "Users"
       summary: Reset Password Email User
@@ -357,6 +402,64 @@ paths:
                     example: "Invalid or expired token!"
                   data: 
                     example: ~
+
+  /users/authenticate :
+    get:
+      tags:
+        - "Users"
+      summary: Authenticate user
+      description: Authenticate user with the token.
+                
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: OK
+                  data:
+                    $ref: '#/components/schemas/UserResponse'
+
+        403:
+          description: Token not provided!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: token not provided!!
+                  data:
+                    example: ~
+
+        409:
+          description: jwt malformed!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: jwt malformed
+                  data:
+                    example: ~        
+      security:
+        - bearerAuth: []
 
 components:
   securitySchemes:

@@ -229,6 +229,18 @@ module.exports = {
     try {
       const { email } = req.body;
 
+      // Check for existing user with the same email
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          status: false,
+          message: "User not found!",
+        });
+      }
+
       // Generate a new OTP and its creation timestamp
       const otpObject = generatedOTP();
       otp = otpObject.code;
