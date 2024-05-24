@@ -10,6 +10,13 @@ const getAllCity = async (req, res, next) => {
             data: null
         })
     }
+    data = data.map(city => ({
+        id: city.id,
+        name: city.name,
+        code: city.code,
+        airport_name: city.airport_name,
+        country: city.country.name
+    }))
 
     res.status(200).json({
         status: true,

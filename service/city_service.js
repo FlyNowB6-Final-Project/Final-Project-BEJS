@@ -1,5 +1,4 @@
 const { PrismaClient } = require("@prisma/client");
-const { param } = require("../routes/city.routes");
 const prisma = new PrismaClient()
 
 const get = async (params) => {
@@ -9,6 +8,17 @@ const get = async (params) => {
                 where: {
                     name: {
                         contains: params
+                    }
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    code: true,
+                    airport_name: true,
+                    country: {
+                        select: {
+                            name : true
+                        }
                     }
                 }
 
