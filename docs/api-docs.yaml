@@ -380,7 +380,7 @@ paths:
                   example: 20/06/2024
                 # total_passenger:
                 #   type: integer
-                  # example: 2
+                # example: 2
                 seat_class:
                   type: integer
                   example: 2
@@ -447,6 +447,24 @@ paths:
           description: Query parameter to filter content
           schema:
             type: string
+      responses:
+        "200":
+          description: Succes
+          content:
+            application/json:
+              schema:
+                type: object
+  /class:
+    get:
+      responses:
+        "200":
+          description: Succes
+          content:
+            application/json:
+              schema:
+                type: object
+  /city:
+    get:
       responses:
         "200":
           description: Succes
