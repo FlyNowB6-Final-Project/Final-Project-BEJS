@@ -215,6 +215,7 @@ module.exports = {
         where: { email },
         data: { isVerified: true },
       });
+      delete user.password;
 
       res.status(200).json({
         status: true,
@@ -245,6 +246,7 @@ module.exports = {
       const otpObject = generatedOTP();
       otp = otpObject.code;
       otpCreatedAt = otpObject.createdAt;
+      delete user.password;
 
       // Send the new OTP via email
       const html = await nodemailer.getHTML("otp.ejs", { email, otp });
@@ -347,7 +349,7 @@ module.exports = {
           where: { email: decoded.email },
           data: { password: hashPassword },
         });
-
+        delete updateUser.password;
         //            const notification = await prisma.notification.create({
         //                data: {
         //                    title: "Password Updated!",

@@ -4,6 +4,7 @@ info:
   description: API Pemesanan Ticketing Pesawat
   version: 1.0.0
 servers:
+  - url: https://express-development.up.railway.app/api/v1
   - url: http://localhost:3000/api/v1
 tags:
   - name: "Users"
@@ -91,8 +92,14 @@ paths:
                     type: string
                     example: Login was successfull
                   data:
-                    $ref: '#/components/schemas/LoginResponse'
-
+                    allOf:
+                      - $ref: '#/components/schemas/UserResponse'
+                      - type: object
+                        properties:
+                          token :
+                            type: integer
+                            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZnVsbG5hbWUiOiJCYWd1cyBEd2kgUHV0cmEgQWRpeW9ubyIsImZhbWlseV9uYW1lIjpudWxsLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDgyMjI5NzQ5NDYyIiwiYXZhdGFyX3VybCI6bnVsbCwiZ29vZ2xlX2lkIjpudWxsLCJvdHAiOiI2NjI1NDMiLCJvdHBDcmVhdGVkQXQiOiIyMDI0LTA1LTI0VDE2OjEzOjU2LjA4OFoiLCJpc1ZlcmlmaWVkIjp0cnVlLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNjU2NzI1OH0._tBfHd_s_J9UWnblX_tHjnTmmt5b2PdXpvekhjHRXF0
+                            
         400:
           description: invalid email or password!
           content:
@@ -140,7 +147,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: sugab.dwi88@gmail.com
+                  example: flynowb6@gmail.com
                 otp: 
                   type: string
                   example: 123456
@@ -159,6 +166,8 @@ paths:
                   message:
                     type: string
                     example: "Activation successfully. You're Account is Verified"
+                  data: 
+                    $ref: '#/components/schemas/UserResponse'
                   
         400:
           description: OTP Expired
@@ -223,7 +232,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: sugab.dwi88@gmail.com
+                  example: flynowb6@gmail.com
 
       responses:
         200:
@@ -239,6 +248,8 @@ paths:
                   message:
                     type: string
                     example: "Resend OTP successfully"
+                  data:
+                    $ref: '#/components/schemas/UserResponse'
 
         404:
           description: user not found
@@ -271,7 +282,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: sugab.dwi88@gmail.com
+                  example: flynowb6@gmail.com
 
       responses:
         200:
@@ -324,10 +335,10 @@ paths:
               properties:
                 password:
                   type: string
-                  example: qwerty
+                  example: FlynowB6#
                 passwordConfirmation:
                   type: string
-                  example: qwerty
+                  example: FlynowB6#
 
       responses:
         200:
@@ -353,7 +364,7 @@ paths:
                         example: Bagus Dwi
                       email:
                         type: string
-                        example: sugab.dwi88@gmail.com
+                        example: flynowb6@gmail.com
 
         400:
           description: Both password and password confirmation are required!!
@@ -474,27 +485,36 @@ components:
         id:
           type: integer
           example: 1
-        name:
+        fullname:
           type: string
           example: Bagus Dwi
+        family_name:
+          type: string
+          example: ~
         email:
           type: string
-          example: sugab.dwi88@gmail.com
-    LoginResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        name:
+          example: flynowb6@gmail.com
+        phoneNumber:
           type: string
-          example: Bagus Dwi
-        email:
+          example: "08123456789"
+        avatar_url:
           type: string
-          example: sugab.dwi88@gmail.com
-        token:
+          example: ~
+        google_id:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RfbmFtZSI6IkJhZ3VzIER3aSIsImxhc3RfbmFtZSI6IlB1dHJhIEFkaXlvbm8iLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsImlhdCI6MTcxNDY1NTQ1N30.7mHMjtq0QvKWfZ41Nb5XMXKyfkcg4l7LX34yC-HBj3A 
+          example: ~
+        otp:
+          type: string
+          example: 123456
+        otpCreatedAt:
+          type: string
+          example: 2024-05-24T16:03:46.444Z
+        isVerified:
+          type: boolean
+          example: false
+        role:
+          type: string
+          example: user
 
   requestBodies:
     createLogin:
@@ -505,22 +525,25 @@ components:
             properties:
               email:
                 type: string
-                example: sugab.dwi88@gmail.com
+                example: flynowb6@gmail.com
               password:
                 type: string
-                example: 123456
+                example: Flynowb6#
     createUser: 
       content:
         application/json:
           schema:
             type: object
             properties:
-              name:
+              fullname:
                 type: string
                 example: Bagus Dwi
               email:
                 type: string
-                example: sugab.dwi88@gmail.com
-              password:
+                example: flynowb6@gmail.com
+              phoneNumber:
                 type: string
-                example: 123456
+                example: "08123456789"
+              password: 
+                type: string
+                example: Flynowb6#
