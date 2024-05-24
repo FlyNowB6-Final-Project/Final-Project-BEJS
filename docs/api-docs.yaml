@@ -359,7 +359,7 @@ paths:
                     example: ~
   /schedule:
     post:
-      description: Find ticket 
+      description: Find ticket
       requestBody:
         content:
           application/json:
@@ -378,12 +378,21 @@ paths:
                 date_return:
                   type: string
                   example: 20/06/2024
-                total_passenger:
-                  type: integer
-                  example: 2
+                # total_passenger:
+                #   type: integer
+                  # example: 2
                 seat_class:
                   type: integer
                   example: 2
+                passenger:
+                  type: object
+                  properties:
+                    adult:
+                      type: integer
+                      example: 1
+                    children:
+                      type: integer
+                      example: 1
       responses:
         "200":
           description: Succes
@@ -392,12 +401,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  status: 
+                  status:
                     type: boolean
-                  message: 
+                  message:
                     type: string
                     example: success retrive data
-                  data: 
+                  data:
                     type: array
                     items:
                       type: object
@@ -427,9 +436,9 @@ paths:
                               class:
                                 type: string
                                 example: ekonomi
-                              price: 
+                              price:
                                 type: string
-                                example: 100000                        
+                                example: 100000
     get:
       parameters:
         - name: query
