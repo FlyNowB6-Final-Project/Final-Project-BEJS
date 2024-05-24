@@ -8,6 +8,7 @@ const roolbackSeed = require('./seeder/roolback_seed')
 const countrySeed = require('./seeder/countries_seed')
 const citySeed = require('./seeder/cities_seed')
 const seatClassSeed = require('./seeder/seat_class_seed')
+const scheduleSeed = require('./seeder/schedule_seed')
 
 async function main() {
     await roolbackSeed(prisma)
@@ -17,6 +18,7 @@ async function main() {
     await countrySeed(prisma)
     await citySeed(prisma)
     await seatClassSeed(prisma)
+    await scheduleSeed(prisma)
 }
 
 main()

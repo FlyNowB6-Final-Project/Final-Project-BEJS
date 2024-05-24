@@ -37,10 +37,10 @@ model Flight {
   flight_number       String         @unique
   city_arrive         City           @relation(name: "arrive", fields: [city_arrive_id], references: [id])
   city_destination    City           @relation(name: "destination", fields: [city_destination_id], references: [id])
-  time_arrive         DateTime
-  time_departure      DateTime
-  date_flight         DateTime
-  flight_estimation   String
+  time_arrive         DateTime       @db.Time()
+  time_departure      DateTime       @db.Time()
+  date_flight         DateTime       @db.Date
+  estimation_minute   Int
   DetailFlight        DetailFlight[]
   city_arrive_id      Int
   city_destination_id Int
@@ -50,7 +50,7 @@ model Flight {
 
 model DetailFlight {
   id        Int     @id @default(autoincrement())
-  price     String
+  price     Int
   order     Order[]
   flight    Flight? @relation(fields: [flight_id], references: [id])
   flight_id Int?
