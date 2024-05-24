@@ -487,7 +487,7 @@ components:
           example: 1
         fullname:
           type: string
-          example: Bagus Dwi
+          example: Flynow Foundation
         family_name:
           type: string
           example: ~
@@ -523,7 +523,7 @@ components:
           schema:
             type: object
             properties:
-              email:
+              emailOrPhoneNumber:
                 type: string
                 example: flynowb6@gmail.com
               password:
