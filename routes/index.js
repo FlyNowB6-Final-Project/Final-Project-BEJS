@@ -20,7 +20,7 @@ router.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 // API
 router.use("/api/v1", User)
 router.use("/api/v1", cityRoute)
-router.use("/api/v1/class", classRoute)
-router.use("/api/v1/schedule", scheduleRoute)
+router.use("/api/v1", classRoute)
+router.use("/api/v1", scheduleRoute)
 
 module.exports = router;
