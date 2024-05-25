@@ -735,6 +735,24 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  status: 
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success retrive city data
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        type_class:
+                          type: string
+                          example: Ekonomi
   /city:
     get:
       responses:
@@ -744,6 +762,33 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  status: 
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success retrive city data
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: Tangerang
+                        code:
+                          type: string
+                          example: CGK
+                        airport_name:
+                          type: string
+                          example: Bandara Internasional Soekarno-Hatta
+                        country:
+                          type: string
+                          example: Indoensia
 
 components:
   securitySchemes:
