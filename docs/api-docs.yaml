@@ -517,23 +517,12 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/FlightSchedule"
-    get:
-      parameters:
-        - name: query
-          in: query
-          required: false
-          description: Query parameter to filter content
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Succes
-          content:
-            application/json:
-              schema:
-                type: object
   /class:
     get:
+      tags:
+        - "Ticket"
+      summary: Get All type_class
+      description: Get All type_class
       responses:
         "200":
           description: Succes
@@ -561,6 +550,10 @@ paths:
                           example: Ekonomi
   /city:
     get:
+      tags:
+        - "Ticket"
+      summary: Get All city
+      description: Get All city
       responses:
         "200":
           description: Succes
