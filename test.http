@@ -1,0 +1,21 @@
+GET http://localhost:3000/api/v1/cities
+
+###
+GET http://localhost:3000/api/v1/class
+
+
+###
+POST http://localhost:3000/api/v1/schedule
+Content-Type: application/json
+
+{
+    "city_arrive_id": 2,
+    "city_destination_id": 1,
+    "date_departure" : "25-05-2024",
+    "seat_class" : 1,
+    "passenger" : {
+        "adult" : 1,
+        "children" : 1
+    }
+
+}
