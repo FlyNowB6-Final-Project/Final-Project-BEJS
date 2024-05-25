@@ -7,16 +7,26 @@ const data = [
         "time_departure": "2024-05-24T01:00:00.000Z",
         "date_flight": "2024-05-24",
         "estimation_minute": 240,
-        "detail_data": {
-            "plane_id": 1,
-            "price": 500000
-        }
+        "detail_data": [
+            {
+                "detail_plane_id": 1,
+                "price": 500000
+            },
+            {
+                "detail_plane_id": 2,
+                "price": 1000000
+            },
+            {
+                "detail_plane_id": 3,
+                "price": 1500000
+            }
+        ]
     }
 ]
 
 async function scheduleSeed(prisma) {
     try {
-        data.forEach(async (v) => {
+        for (const v of data) {
             const flightData = {
                 city_destination_id: v.city_destination_id,
                 city_arrive_id: v.city_arrive_id,
@@ -26,16 +36,21 @@ async function scheduleSeed(prisma) {
                 date_flight: new Date(v.date_flight),
                 estimation_minute: v.estimation_minute,
             };
+
             const createdFlight = await prisma.flight.create({ data: flightData });
-            const detailData = {
-                ...v.detail_data,
-                flight_id: createdFlight.id
-            };
-            await prisma.detailFlight.create({ data: detailData });
-        })
+
+            const detailData = v.detail_data.map(detail => ({
+                detail_plane_id: detail.detail_plane_id,
+                price: detail.price,
+                flight_id: createdFlight.id,
+            }));
+
+            await prisma.detailFlight.createMany({ data: detailData });
+        }
+
         console.log('schedule data seeded successfully');
     } catch (error) {
-        console.log(error);
+        console.error('Error seeding schedule data:', error);
     }
 }
 

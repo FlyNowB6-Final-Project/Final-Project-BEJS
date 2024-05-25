@@ -54,8 +54,8 @@ model DetailFlight {
   order           Order[]
   flight          Flight?     @relation(fields: [flight_id], references: [id])
   flight_id       Int?
-  detail_plane_id DetailPlane @relation(fields: [detailPlaneId], references: [id])
-  detailPlaneId   Int
+  detailPlaneId   DetailPlane @relation(fields: [detail_plane_id], references: [id])
+  detail_plane_id Int
 
   @@map("detail_flight")
 }

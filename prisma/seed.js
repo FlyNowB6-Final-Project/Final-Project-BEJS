@@ -4,11 +4,12 @@ const prisma = new PrismaClient()
 const airlaneSeed = require('./seeder/airlanes_seed')
 const planeSeed = require('./seeder/plane_seed')
 const continentSeed = require('./seeder/continent_seed')
-const roolbackSeed = require('./seeder/roolback_seed')
+const roolbackSeed = require('./seeder/rollback_seed')
 const countrySeed = require('./seeder/countries_seed')
 const citySeed = require('./seeder/cities_seed')
 const seatClassSeed = require('./seeder/seat_class_seed')
 const scheduleSeed = require('./seeder/schedule_seed')
+const detailPlaneSeed = require('./seeder/detail_plane_seed')
 
 async function main() {
     await roolbackSeed(prisma)
@@ -18,6 +19,7 @@ async function main() {
     await countrySeed(prisma)
     await citySeed(prisma)
     await seatClassSeed(prisma)
+    await detailPlaneSeed(prisma)
     await scheduleSeed(prisma)
 }
 
