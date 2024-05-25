@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const scheduleController = require("../controllers/schedule_service")
+const scheduleController = require("../controllers/schedule_controller")
 
 router.post("/", scheduleController.findSchedule)
 
