@@ -4,15 +4,16 @@ info:
   description: API Pemesanan Ticketing Pesawat
   version: 1.0.0
 servers:
+  - url: https://express-development.up.railway.app/api/v1
   - url: http://localhost:3000/api/v1
 tags:
   - name: "Users"
     description: Operations about user
 paths:
-  /auth/register :
+  /users/register :
     post:
       tags:
-        - "Auth"
+        - "Users"
       summary: Register user
       description: Register user with the provided information.
       requestBody:
@@ -67,10 +68,10 @@ paths:
                   data:
                     example: ~
 
-  /auth/login :
+  /users/login :
     post:
       tags:
-        - "Auth"
+        - "Users"
       summary: Login user
       description: Login user with the provided information.
       requestBody:
@@ -91,8 +92,14 @@ paths:
                     type: string
                     example: Login was successfull
                   data:
-                    $ref: '#/components/schemas/LoginResponse'
-
+                    allOf:
+                      - $ref: '#/components/schemas/UserResponse'
+                      - type: object
+                        properties:
+                          token :
+                            type: integer
+                            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZnVsbG5hbWUiOiJCYWd1cyBEd2kgUHV0cmEgQWRpeW9ubyIsImZhbWlseV9uYW1lIjpudWxsLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDgyMjI5NzQ5NDYyIiwiYXZhdGFyX3VybCI6bnVsbCwiZ29vZ2xlX2lkIjpudWxsLCJvdHAiOiI2NjI1NDMiLCJvdHBDcmVhdGVkQXQiOiIyMDI0LTA1LTI0VDE2OjEzOjU2LjA4OFoiLCJpc1ZlcmlmaWVkIjp0cnVlLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNjU2NzI1OH0._tBfHd_s_J9UWnblX_tHjnTmmt5b2PdXpvekhjHRXF0
+                            
         400:
           description: invalid email or password!
           content:
@@ -107,12 +114,310 @@ paths:
                     type: string
                     example: invalid email or password!
                   data:
-                    example: ~         
+                    example: ~   
 
-  /auth/authenticate :
+        403:
+          description: Verify Account User!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Account not verified. Please check your email!
+                  data:
+                    example: ~ 
+
+  /users/verify-otp:
+    put:
+      tags:
+        - "Users"    
+      summary: Verify Otp Email User
+      description: Verify Otp Email User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: flynowb6@gmail.com
+                otp: 
+                  type: string
+                  example: 123456
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Activation successfully. You're Account is Verified"
+                  data: 
+                    $ref: '#/components/schemas/UserResponse'
+                  
+        400:
+          description: OTP Expired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "OTP has expired. Please resend new otp."
+                  data: 
+                    example: ~ 
+
+        401:
+          description: Invalid OTP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid OTP"
+                  data: 
+                    example: ~ 
+
+        404:
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "user not found"
+                  data: 
+                    example: ~
+
+  /users/resend-otp:
+    put:
+      tags:
+        - "Users"    
+      summary: Resend Verify Otp Email User
+      description: Resend Verify Otp Email User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: flynowb6@gmail.com
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Resend OTP successfully"
+                  data:
+                    $ref: '#/components/schemas/UserResponse'
+
+        404:
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "user not found"
+                  data: 
+                    example: ~    
+
+  /users/forget-password:
+    post:
+      tags:
+        - "Users"
+      summary: Forget Password Email User
+      description: Forget Password Email User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: flynowb6@gmail.com
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Success Send Email Forget Password"
+                  
+        404:
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "user not found"
+                  data: 
+                    example: ~
+
+  /users/reset-password:
+    put:
+      tags:
+        - "Users"
+      summary: Reset Password Email User
+      parameters:
+        - schema:
+            type: string
+          name: token
+          in: query
+          description: token for update password
+      description: Reset Password Email User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: FlynowB6#
+                passwordConfirmation:
+                  type: string
+                  example: FlynowB6#
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Your password has been updated successfully!"
+                  data: 
+                    properties:
+                      id: 
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: Bagus Dwi
+                      email:
+                        type: string
+                        example: flynowb6@gmail.com
+
+        400:
+          description: Both password and password confirmation are required!!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Both password and password confirmation are required!!"
+                  data: 
+                    example: ~
+        
+        401:
+          description: Please ensure that the password and password confirmation match!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Please ensure that the password and password confirmation match!"
+                  data: 
+                    example: ~
+                  
+        403:
+          description: Invalid or expired token!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid or expired token!"
+                  data: 
+                    example: ~
+
+  /users/authenticate :
     get:
       tags:
-        - "Auth"
+        - "Users"
       summary: Authenticate user
       description: Authenticate user with the token.
                 
@@ -167,197 +472,6 @@ paths:
       security:
         - bearerAuth: []
 
-  /users:
-    get:
-      tags:
-        - "Users"
-      summary: Get all users
-      parameters:
-        - schema:
-            type: string
-          name: search
-          in: query
-          description: search for get first_name users
-      description: Get all users
-      responses:
-        200:
-          description: Success get all users
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: Success
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        first_name:
-                          type: string
-                          example: Bagus Dwi
-                        last_name:
-                          type: string
-                          example: Putra Adiyono
-                        email:
-                          type: string
-                          example: sugab.dwi88@gmail.com
-
-  /forget-pass:
-    post:
-      tags:
-        - "Users"
-      summary: Forget Password Email User
-      description: Forget Password Email User
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: sugab.dwi88@gmail.com
-
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "Success Send Email Forget Password"
-                  
-        404:
-          description: user not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "user not found"
-                  data: 
-                    example: ~
-
-  /reset-pass:
-    post:
-      tags:
-        - "Users"
-      summary: Reset Password Email User
-      parameters:
-        - schema:
-            type: string
-          name: token
-          in: query
-          description: token for update password
-      description: Reset Password Email User
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  example: qwerty
-                passwordConfirmation:
-                  type: string
-                  example: qwerty
-
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "Your password has been updated successfully!"
-                  data: 
-                    properties:
-                      id: 
-                        type: integer
-                        example: 1
-                      name:
-                        type: string
-                        example: Bagus Dwi
-                      email:
-                        type: string
-                        example: sugab.dwi88@gmail.com
-
-        400:
-          description: Both password and password confirmation are required!!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "Both password and password confirmation are required!!"
-                  data: 
-                    example: ~
-        
-        401:
-          description: Please ensure that the password and password confirmation match!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "Please ensure that the password and password confirmation match!"
-                  data: 
-                    example: ~
-                  
-        403:
-          description: Invalid or expired token!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "Invalid or expired token!"
-                  data: 
-                    example: ~
-
 components:
   securitySchemes:
     bearerAuth:       
@@ -371,27 +485,36 @@ components:
         id:
           type: integer
           example: 1
-        name:
+        fullname:
           type: string
-          example: Bagus Dwi
+          example: Flynow Foundation
+        family_name:
+          type: string
+          example: ~
         email:
           type: string
-          example: sugab.dwi88@gmail.com
-    LoginResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        name:
+          example: flynowb6@gmail.com
+        phoneNumber:
           type: string
-          example: Bagus Dwi
-        email:
+          example: "08123456789"
+        avatar_url:
           type: string
-          example: sugab.dwi88@gmail.com
-        token:
+          example: ~
+        google_id:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RfbmFtZSI6IkJhZ3VzIER3aSIsImxhc3RfbmFtZSI6IlB1dHJhIEFkaXlvbm8iLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsImlhdCI6MTcxNDY1NTQ1N30.7mHMjtq0QvKWfZ41Nb5XMXKyfkcg4l7LX34yC-HBj3A 
+          example: ~
+        otp:
+          type: string
+          example: 123456
+        otpCreatedAt:
+          type: string
+          example: 2024-05-24T16:03:46.444Z
+        isVerified:
+          type: boolean
+          example: false
+        role:
+          type: string
+          example: user
 
   requestBodies:
     createLogin:
@@ -400,24 +523,27 @@ components:
           schema:
             type: object
             properties:
-              email:
+              emailOrPhoneNumber:
                 type: string
-                example: sugab.dwi88@gmail.com
+                example: flynowb6@gmail.com
               password:
                 type: string
-                example: 123456
+                example: Flynowb6#
     createUser: 
       content:
         application/json:
           schema:
             type: object
             properties:
-              name:
+              fullname:
                 type: string
                 example: Bagus Dwi
               email:
                 type: string
-                example: sugab.dwi88@gmail.com
-              password:
+                example: flynowb6@gmail.com
+              phoneNumber:
                 type: string
-                example: 123456
+                example: "08123456789"
+              password: 
+                type: string
+                example: Flynowb6#

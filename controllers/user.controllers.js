@@ -215,6 +215,7 @@ module.exports = {
         where: { email },
         data: { isVerified: true },
       });
+      delete user.password;
 
       res.status(200).json({
         status: true,
@@ -229,10 +230,23 @@ module.exports = {
     try {
       const { email } = req.body;
 
+      // Check for existing user with the same email
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          status: false,
+          message: "User not found!",
+        });
+      }
+
       // Generate a new OTP and its creation timestamp
       const otpObject = generatedOTP();
       otp = otpObject.code;
       otpCreatedAt = otpObject.createdAt;
+      delete user.password;
 
       // Send the new OTP via email
       const html = await nodemailer.getHTML("otp.ejs", { email, otp });
@@ -255,12 +269,104 @@ module.exports = {
   },
   forgetPassword: async (req, res, next) => {
     try {
+      const { email } = req.body;
+
+      const user = await prisma.user.findUnique({ where: { email } });
+
+      if (!user) {
+        return res.status(404).json({
+          status: false,
+          message: "user not found",
+          data: null,
+        });
+      }
+
+      const token = jwt.sign({ email: user.email }, JWT_SECRET_KEY);
+
+      const html = await nodemailer.getHTML("link-reset.ejs", {
+        name: user.fullname,
+        url: `${req.protocol}://${req.get('host')}/api/v1/users/reset-password?token=${token}`,
+      });
+
+      await nodemailer.sendMail(email, "Password Reset Request", html);
+
+      // Setelah pengiriman email berhasil
+      return res.status(200).json({
+        status: true,
+        message: "Success Send Email Forget Password",
+      });
     } catch (error) {
       next(error);
     }
   },
   resetPassword: async (req, res, next) => {
     try {
+      const { token } = req.query;
+      const { password, passwordConfirmation } = req.body;
+      const passwordValidator =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/;
+
+      if (!password || !passwordConfirmation) {
+        return res.status(400).json({
+          status: false,
+          message: "Both password and password confirmation are required!",
+          data: null,
+        });
+      }
+
+      if (password !== passwordConfirmation) {
+        return res.status(401).json({
+          status: false,
+          message:
+            "Please ensure that the password and password confirmation match!",
+          data: null,
+        });
+      }
+
+      if (!passwordValidator.test(password)) {
+        return res.status(400).json({
+          status: false,
+          message:
+            "Invalid password format. It must contain at least 1 lowercase, 1 uppercase, 1 digit number, 1 symbol, and be between 8 and 12 characters long.",
+          data: null,
+        });
+      }
+
+      let hashPassword = await bcrypt.hash(password, 10);
+
+      // Verify the token
+      jwt.verify(token, JWT_SECRET_KEY, async (err, decoded) => {
+        if (err) {
+          return res.status(403).json({
+            status: false,
+            message: "Invalid or expired token!",
+            data: null,
+          });
+        }
+
+        // Update password for the user
+        const updateUser = await prisma.user.update({
+          where: { email: decoded.email },
+          data: { password: hashPassword },
+        });
+        delete updateUser.password;
+        //            const notification = await prisma.notification.create({
+        //                data: {
+        //                    title: "Password Updated!",
+        //                   message:
+        //                        "Your password has been updated successfully!",
+        //                    createdDate: new Date().toISOString(),
+        //                    user: { connect: { id: updateUser.id } },
+        //                },
+        //            });
+
+        // req.io.emit(`user-${updateUser.id}`, notification);
+        res.status(200).json({
+          status: true,
+          message: "Your password has been updated successfully!",
+          data: updateUser,
+        });
+      });
     } catch (error) {
       next(error);
     }
