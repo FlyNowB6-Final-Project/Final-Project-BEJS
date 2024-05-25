@@ -10,7 +10,7 @@ tags:
   - name: "Users"
     description: Operations about user
 paths:
-  /users/register :
+  /users/register:
     post:
       tags:
         - "Users"
@@ -68,7 +68,7 @@ paths:
                   data:
                     example: ~
 
-  /users/login :
+  /users/login:
     post:
       tags:
         - "Users"
@@ -93,13 +93,13 @@ paths:
                     example: Login was successfull
                   data:
                     allOf:
-                      - $ref: '#/components/schemas/UserResponse'
+                      - $ref: "#/components/schemas/UserResponse"
                       - type: object
                         properties:
-                          token :
+                          token:
                             type: integer
                             example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZnVsbG5hbWUiOiJCYWd1cyBEd2kgUHV0cmEgQWRpeW9ubyIsImZhbWlseV9uYW1lIjpudWxsLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDgyMjI5NzQ5NDYyIiwiYXZhdGFyX3VybCI6bnVsbCwiZ29vZ2xlX2lkIjpudWxsLCJvdHAiOiI2NjI1NDMiLCJvdHBDcmVhdGVkQXQiOiIyMDI0LTA1LTI0VDE2OjEzOjU2LjA4OFoiLCJpc1ZlcmlmaWVkIjp0cnVlLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNjU2NzI1OH0._tBfHd_s_J9UWnblX_tHjnTmmt5b2PdXpvekhjHRXF0
-                            
+
         400:
           description: invalid email or password!
           content:
@@ -114,7 +114,7 @@ paths:
                     type: string
                     example: invalid email or password!
                   data:
-                    example: ~   
+                    example: ~
 
         403:
           description: Verify Account User!
@@ -130,12 +130,12 @@ paths:
                     type: string
                     example: Account not verified. Please check your email!
                   data:
-                    example: ~ 
+                    example: ~
 
   /users/verify-otp:
     put:
       tags:
-        - "Users"    
+        - "Users"
       summary: Verify Otp Email User
       description: Verify Otp Email User
       requestBody:
@@ -148,7 +148,7 @@ paths:
                   type: string
                   format: email
                   example: flynowb6@gmail.com
-                otp: 
+                otp:
                   type: string
                   example: 123456
 
@@ -166,9 +166,9 @@ paths:
                   message:
                     type: string
                     example: "Activation successfully. You're Account is Verified"
-                  data: 
-                    $ref: '#/components/schemas/UserResponse'
-                  
+                  data:
+                    $ref: "#/components/schemas/UserResponse"
+
         400:
           description: OTP Expired
           content:
@@ -182,8 +182,8 @@ paths:
                   message:
                     type: string
                     example: "OTP has expired. Please resend new otp."
-                  data: 
-                    example: ~ 
+                  data:
+                    example: ~
 
         401:
           description: Invalid OTP
@@ -198,8 +198,8 @@ paths:
                   message:
                     type: string
                     example: "Invalid OTP"
-                  data: 
-                    example: ~ 
+                  data:
+                    example: ~
 
         404:
           description: user not found
@@ -214,13 +214,13 @@ paths:
                   message:
                     type: string
                     example: "user not found"
-                  data: 
+                  data:
                     example: ~
 
   /users/resend-otp:
     put:
       tags:
-        - "Users"    
+        - "Users"
       summary: Resend Verify Otp Email User
       description: Resend Verify Otp Email User
       requestBody:
@@ -249,7 +249,7 @@ paths:
                     type: string
                     example: "Resend OTP successfully"
                   data:
-                    $ref: '#/components/schemas/UserResponse'
+                    $ref: "#/components/schemas/UserResponse"
 
         404:
           description: user not found
@@ -264,8 +264,8 @@ paths:
                   message:
                     type: string
                     example: "user not found"
-                  data: 
-                    example: ~    
+                  data:
+                    example: ~
 
   /users/forget-password:
     post:
@@ -298,7 +298,7 @@ paths:
                   message:
                     type: string
                     example: "Success Send Email Forget Password"
-                  
+
         404:
           description: user not found
           content:
@@ -312,7 +312,7 @@ paths:
                   message:
                     type: string
                     example: "user not found"
-                  data: 
+                  data:
                     example: ~
 
   /users/reset-password:
@@ -354,9 +354,9 @@ paths:
                   message:
                     type: string
                     example: "Your password has been updated successfully!"
-                  data: 
+                  data:
                     properties:
-                      id: 
+                      id:
                         type: integer
                         example: 1
                       name:
@@ -379,9 +379,9 @@ paths:
                   message:
                     type: string
                     example: "Both password and password confirmation are required!!"
-                  data: 
+                  data:
                     example: ~
-        
+
         401:
           description: Please ensure that the password and password confirmation match!
           content:
@@ -395,9 +395,9 @@ paths:
                   message:
                     type: string
                     example: "Please ensure that the password and password confirmation match!"
-                  data: 
+                  data:
                     example: ~
-                  
+
         403:
           description: Invalid or expired token!
           content:
@@ -411,10 +411,10 @@ paths:
                   message:
                     type: string
                     example: "Invalid or expired token!"
-                  data: 
+                  data:
                     example: ~
 
-  /users/authenticate :
+  /users/authenticate:
     get:
       tags:
         - "Users"
@@ -671,21 +671,18 @@ paths:
             schema:
               type: object
               properties:
-                from:
-                  type: string
-                  example: jakarta
-                destination:
-                  type: string
-                  example: melbourne
+                city_arrive_id:
+                  type: integer
+                  example: 2
+                city_destination_id:
+                  type: integer
+                  example: 1
                 date_departure:
                   type: string
-                  example: 20/06/2024
-                date_return:
-                  type: string
-                  example: 20/06/2024
-                # total_passenger:
-                #   type: integer
-                # example: 2
+                  example: 25-05-2024
+                # date_return:
+                #   type: string
+                #   example: 20/06/2024
                 seat_class:
                   type: integer
                   example: 2
@@ -700,7 +697,7 @@ paths:
                       example: 1
       responses:
         "200":
-          description: Succes
+          description: OK
           content:
             application/json:
               schema:
@@ -710,40 +707,10 @@ paths:
                     type: boolean
                   message:
                     type: string
-                    example: success retrive data
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        plane:
-                          type: string
-                          example: jetAir
-                        arive_at:
-                          type: string
-                          example: 07:00
-                        leave_at:
-                          type: string
-                          example: 07:30
-                        from:
-                          type: string
-                          example: jakarta
-                        destination:
-                          type: string
-                          example: melbourne
-                        estimation:
-                          type: string
-                          example: "7.30"
-                        seat_class:
-                          type: array
-                          items:
-                            properties:
-                              class:
-                                type: string
-                                example: ekonomi
-                              price:
-                                type: string
-                                example: 100000
+                      $ref: "#/components/schemas/FlightSchedule"
     get:
       parameters:
         - name: query
@@ -821,6 +788,99 @@ components:
         role:
           type: string
           example: user
+    FlightSchedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: ID Jadwal Penerbangan
+        flight_number:
+          type: string
+          example: mup-570825
+          description: Nomor Penerbangan
+        time_arrive:
+          type: string
+          example: 14:45
+          description: Waktu Tiba
+        time_departure:
+          type: string
+          example: 06:00
+          description: Waktu Berangkat
+        date_flight:
+          type: string
+          example: 25-05-2024
+          description: Tanggal Penerbangan
+        estimation_minute:
+          type: integer
+          example: 240
+          description: Estimasi Menit
+        city_arrive_id:
+          type: integer
+          example: 2
+          description: ID Kota Tiba
+        city_destination_id:
+          type: integer
+          example: 1
+          description: ID Kota Tujuan
+        city_arrive:
+          $ref: "#/components/schemas/City"
+        city_destination:
+          $ref: "#/components/schemas/City"
+        DetailFlight:
+          type: array
+          items:
+            $ref: "#/components/schemas/DetailFlight"
+
+    DetailFlight:
+      type: object
+      properties:
+        price:
+          type: integer
+          example: 500000
+          description: Harga
+        detailPlaneId:
+          $ref: "#/components/schemas/PlaneDetail"
+
+    PlaneDetail:
+      type: object
+      properties:
+        seat_class:
+          $ref: "#/components/schemas/SeatClass"
+        plane:
+          $ref: "#/components/schemas/Plane"
+
+    SeatClass:
+      type: object
+      properties:
+        type_class:
+          type: string
+          example: Ekonomi
+          description: Jenis Kelas
+
+    Plane:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Boeing 737-800
+          description: Nama Pesawat
+
+    City:
+      type: object
+      properties:
+        code:
+          type: string
+          example: CGK
+          description: Kode Kota
+        name:
+          type: string
+          example: Tangerang
+          description: Nama Kota
+        airport_name:
+          type: string
+          example: Bandara Internasional Soekarno-Hatta
+          description: Nama Bandara
 
   requestBodies:
     createLogin:
@@ -835,7 +895,7 @@ components:
               password:
                 type: string
                 example: Flynowb6#
-    createUser: 
+    createUser:
       content:
         application/json:
           schema:
@@ -850,6 +910,6 @@ components:
               phoneNumber:
                 type: string
                 example: "08123456789"
-              password: 
+              password:
                 type: string
                 example: Flynowb6#
