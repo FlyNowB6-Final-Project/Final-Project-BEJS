@@ -7,26 +7,9 @@ const getDataFind = async (city_arrive_id, city_destination_id, date_departure) 
             where: {
                 city_arrive_id,
                 city_destination_id,
-                date_flight: date_departure
+                date_flight: date_departure,
             },
             include: {
-                DetailFlight: {
-                    select: {
-                        price: true,
-                        
-                        Plane: {
-                            select: {
-                                DetailPlane: true,
-                                airline_id: {
-                                    select: {
-                                        code: true,
-                                        name: true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 city_arrive: {
                     select: {
                         code: true,
@@ -39,6 +22,27 @@ const getDataFind = async (city_arrive_id, city_destination_id, date_departure) 
                         code: true,
                         name: true,
                         airport_name: true
+                    }
+                },
+                DetailFlight: {
+                    select: {
+                        price: true,
+                        detailPlaneId: {
+                            select: {
+
+                                seat_class: {
+                                    select: {
+                                        type_class: true
+                                    }
+                                },
+                                plane: {
+                                    select: {
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 },
             }

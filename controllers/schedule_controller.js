@@ -31,12 +31,17 @@ const findSchedule = async (req, res, next) => {
     }
 
     data.forEach((v) => {
-        v.time_arrive = new Date(v.time_arrive).getUTCHours()
-        v.time_departure = new Date(v.time_departure).getUTCHours()
+
+        v.time_arrive = formatTimeToUTC(v.time_arrive)
+        v.time_departure = formatTimeToUTC(v.time_departure)
 
         let day = v.date_flight.getUTCDate();
         let month = v.date_flight.getUTCMonth() + 1;
         let year = v.date_flight.getUTCFullYear();
+
+        day = day.toString().padStart(2, '0')
+        month = month.toString().padStart(2, '0')
+        
         let fullDate = `${day}-${month}-${year}`;
         v.date_flight = fullDate
     })
@@ -47,6 +52,12 @@ const findSchedule = async (req, res, next) => {
     })
 }
 
+function formatTimeToUTC(dateString) {
+    const date = new Date(dateString);
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+}
 
 module.exports = {
     findSchedule
