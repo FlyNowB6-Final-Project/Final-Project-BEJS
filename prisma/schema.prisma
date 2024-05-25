@@ -37,10 +37,10 @@ model Flight {
   flight_number       String         @unique
   city_arrive         City           @relation(name: "arrive", fields: [city_arrive_id], references: [id])
   city_destination    City           @relation(name: "destination", fields: [city_destination_id], references: [id])
-  time_arrive         DateTime
-  time_departure      DateTime
-  date_flight         DateTime
-  flight_estimation   String
+  time_arrive         DateTime       @db.Time()
+  time_departure      DateTime       @db.Time()
+  date_flight         DateTime       @db.Date
+  estimation_minute   Int
   DetailFlight        DetailFlight[]
   city_arrive_id      Int
   city_destination_id Int
@@ -49,38 +49,38 @@ model Flight {
 }
 
 model DetailFlight {
-  id        Int     @id @default(autoincrement())
-  price     String
-  order     Order[]
-  flight    Flight? @relation(fields: [flight_id], references: [id])
-  flight_id Int?
-  Plane     Plane?  @relation(fields: [plane_id], references: [id])
-  plane_id  Int?
+  id              Int         @id @default(autoincrement())
+  price           Int
+  order           Order[]
+  flight          Flight?     @relation(fields: [flight_id], references: [id])
+  flight_id       Int?
+  detailPlaneId   DetailPlane @relation(fields: [detail_plane_id], references: [id])
+  detail_plane_id Int
 
   @@map("detail_flight")
 }
 
 model Plane {
-  id           Int            @id @default(autoincrement())
-  name         String
-  brand        String?
-  series       String         @unique
-  capacity     Int
-  DetailFlight DetailFlight[]
-  airline_id   Airlines       @relation(fields: [airlinesId], references: [id])
-  airlinesId   Int
-  DetailPlane  DetailPlane[]
+  id          Int           @id @default(autoincrement())
+  name        String
+  brand       String?
+  series      String        @unique
+  capacity    Int
+  airline_id  Airlines      @relation(fields: [airlinesId], references: [id])
+  airlinesId  Int
+  DetailPlane DetailPlane[]
 
   @@map("planes")
 }
 
 model DetailPlane {
-  id            Int       @id @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   total_seat    Int
-  seat_class    SeatClass @relation(fields: [seat_class_id], references: [id])
-  plane         Plane     @relation(fields: [plane_id], references: [id])
+  seat_class    SeatClass      @relation(fields: [seat_class_id], references: [id])
+  plane         Plane          @relation(fields: [plane_id], references: [id])
   seat_class_id Int
   plane_id      Int
+  DetailFlight  DetailFlight[]
 
   @@map("detail_plane")
 }
