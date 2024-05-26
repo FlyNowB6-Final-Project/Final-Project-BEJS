@@ -1,26 +1,26 @@
 const data = [
     {
-        name: 'asia',
+        name: 'Asia',
         code: 'AS'
     },
     {
-        name: 'amerika',
+        name: 'Amerika',
         code: 'AM'
     },
     {
-        name: 'eropa',
+        name: 'Eropa',
         code: 'EU'
     },
     {
-        name: 'afrika',
+        name: 'Afrika',
         code: 'AF'
     },
     {
-        name: 'australia',
+        name: 'Australia',
         code: 'AU'
     },
     {
-        name: 'antarctica',
+        name: 'Antarctica',
         code: 'AN'
     }
 ];

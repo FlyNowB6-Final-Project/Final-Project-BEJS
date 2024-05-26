@@ -75,11 +75,11 @@ module.exports = {
 
       // Generate and store OTP for email verification
       const otpObject = generatedOTP();
-      otp = otpObject.code;
-      otpCreatedAt = otpObject.createdAt;
+      const otp = otpObject.code;
+      const otpCreatedAt = otpObject.createdAt;
 
       // Encrypt user password
-      let encryptedPassword = await bcrypt.hash(password, 10);
+      const encryptedPassword = await bcrypt.hash(password, 10);
       const user = await prisma.user.create({
         data: {
           fullname,
@@ -97,16 +97,14 @@ module.exports = {
       await nodemailer.sendMail(email, "Email Activation", html);
 
       // Register Notification
-      //   const notification = await prisma.notification.create({
-      //     data: {
-      //       title: "Welcome!",
-      //       message: "Your account has been created successfully.",
-      //       createdDate: formattedDate(new Date()),
-      //       user: { connect: { id: user.id } },
-      //     },
-      //   });
-
-      //   global.io.emit(`user-${user.id}`, notification);
+      const notification = await prisma.notification.create({
+        data: {
+          title: "Welcome!",
+          message: "Your account has been created successfully.",
+          createdAt: new Date().toISOString(),
+          user: { connect: { id: user.id } },
+        },
+      });
 
       res.status(201).json({
         status: true,
@@ -159,7 +157,7 @@ module.exports = {
       }
 
       delete user.password;
-      let token = jwt.sign(user, JWT_SECRET_KEY);
+      const token = jwt.sign(user, JWT_SECRET_KEY);
 
       return res.status(201).json({
         status: true,
@@ -285,7 +283,9 @@ module.exports = {
 
       const html = await nodemailer.getHTML("link-reset.ejs", {
         name: user.fullname,
-        url: `${req.protocol}://${req.get('host')}/api/v1/users/reset-password?token=${token}`,
+        url: `${req.protocol}://${req.get(
+          "host"
+        )}/api/v1/users/reset-password?token=${token}`,
       });
 
       await nodemailer.sendMail(email, "Password Reset Request", html);
@@ -350,17 +350,16 @@ module.exports = {
           data: { password: hashPassword },
         });
         delete updateUser.password;
-        //            const notification = await prisma.notification.create({
-        //                data: {
-        //                    title: "Password Updated!",
-        //                   message:
-        //                        "Your password has been updated successfully!",
-        //                    createdDate: new Date().toISOString(),
-        //                    user: { connect: { id: updateUser.id } },
-        //                },
-        //            });
 
-        // req.io.emit(`user-${updateUser.id}`, notification);
+        const notification = await prisma.notification.create({
+          data: {
+            title: "Password Updated!",
+            message: "Your password has been updated successfully!",
+            createdAt: new Date().toISOString(),
+            user: { connect: { id: updateUser.id } },
+          },
+        });
+
         res.status(200).json({
           status: true,
           message: "Your password has been updated successfully!",

@@ -11,6 +11,8 @@ tags:
     description: Operations about user
   - name: "Ticket"
     description: Operations about Flight Schedule
+  - name: "Notification"
+    description: Operations about Notification
 paths:
   /users/register:
     post:
@@ -525,7 +527,7 @@ paths:
       description: Get All type_class
       responses:
         "200":
-          description: Succes
+          description: Success
           content:
             application/json:
               schema:
@@ -556,7 +558,7 @@ paths:
       description: Get All city
       responses:
         "200":
-          description: Succes
+          description: Success
           content:
             application/json:
               schema:
@@ -588,7 +590,115 @@ paths:
                         country:
                           type: string
                           example: Indoensia
+  /continents:
+    get:
+      tags:
+        - "Ticket"
+      summary: Get All continents
+      description: Get All continents
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success retrive continent data
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: Asia
+                        code:
+                          type: string
+                          example: AS
+  /notifications:
+    get:
+      tags:
+        - "Notification"
+      summary: Get All notification
+      description: Get All notification
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Notifications retrieved successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title: 
+                          type: string 
+                          example: Password Updated!
+                        message:
+                          type: string
+                          example: Your password has been updated successfully!
+                        isRead:
+                          type: boolean
+                          example: false
+                        createdAt:
+                          type: string
+                          example: 2024-05-26T14:20:18.724Z
+                        user_id: 
+                          type: integer
+                          example: 1
+      security:
+        - bearerAuth: []
 
+  /notifications/markAsRead:
+    put:
+      tags:
+        - "Notification"
+      summary: Update Status notification
+      description: Update Status notification
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Notifications marked as read for the user
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                        example: 2
+      security:
+        - bearerAuth: []
+                        
 components:
   securitySchemes:
     bearerAuth:
