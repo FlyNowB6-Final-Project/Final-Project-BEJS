@@ -557,7 +557,7 @@ paths:
       summary: Get All city and Find city
       description: Get All city and Find city
       parameters:
-        - in: path
+        - in: query
           name: find
           schema:
             type: string
