@@ -359,7 +359,7 @@ paths:
                     type: string
                     example: "Your password has been updated successfully!"
                   data:
-                     $ref: '#/components/schemas/UserResponse'
+                    $ref: "#/components/schemas/UserResponse"
 
         400:
           description: Both password and password confirmation are required!!
@@ -533,7 +533,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  status: 
+                  status:
                     type: boolean
                     example: true
                   message:
@@ -554,8 +554,15 @@ paths:
     get:
       tags:
         - "Ticket"
-      summary: Get All city
-      description: Get All city
+      summary: Get All city and Find city
+      description: Get All city and Find city
+      parameters:
+        - in: path
+          name: Find
+          schema:
+            type: string
+          required: true
+
       responses:
         "200":
           description: Success
@@ -564,7 +571,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  status: 
+                  status:
                     type: boolean
                     example: true
                   message:
@@ -604,7 +611,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  status: 
+                  status:
                     type: boolean
                     example: true
                   message:
@@ -638,7 +645,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  status: 
+                  status:
                     type: boolean
                     example: true
                   message:
@@ -652,8 +659,8 @@ paths:
                         id:
                           type: integer
                           example: 1
-                        title: 
-                          type: string 
+                        title:
+                          type: string
                           example: Password Updated!
                         message:
                           type: string
@@ -664,7 +671,7 @@ paths:
                         createdAt:
                           type: string
                           example: 2024-05-26T14:20:18.724Z
-                        user_id: 
+                        user_id:
                           type: integer
                           example: 1
       security:
@@ -684,7 +691,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  status: 
+                  status:
                     type: boolean
                     example: true
                   message:
@@ -698,7 +705,7 @@ paths:
                         example: 2
       security:
         - bearerAuth: []
-                        
+
 components:
   securitySchemes:
     bearerAuth:
