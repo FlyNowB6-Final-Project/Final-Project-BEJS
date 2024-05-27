@@ -558,11 +558,10 @@ paths:
       description: Get All city and Find city
       parameters:
         - in: path
-          name: Find
+          name: find
           schema:
             type: string
           required: true
-
       responses:
         "200":
           description: Success
