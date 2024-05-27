@@ -1,4 +1,5 @@
 const scheduleService = require("../service/schedule_service")
+const { formatTimeToUTC, formatAddZeroFront, convertToIso } = require("../utils/formattedDate")
 
 const findSchedule = async (req, res, next) => {
     const { city_arrive_id, city_destination_id, date_departure, seat_class, passenger } = req.body
@@ -13,14 +14,10 @@ const findSchedule = async (req, res, next) => {
 
     let [day, month, year] = date_departure.split('-');
 
-    if (day.length < 2) {
-        day = '0' + day;
-    }
-    if (month.length < 2) {
-        month = '0' + month;
-    }
+    day = formatAddZeroFront(day)
+    month = formatAddZeroFront(month)
 
-    let isoDate = `${year}-${month}-${day}T00:00:00.000Z`;
+    let isoDate = convertToIso({ day, month, year })
     let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate)
     if (!data) {
         return res.status(400).json({
@@ -41,7 +38,7 @@ const findSchedule = async (req, res, next) => {
 
         day = day.toString().padStart(2, '0')
         month = month.toString().padStart(2, '0')
-        
+
         let fullDate = `${day}-${month}-${year}`;
         v.date_flight = fullDate
     })
@@ -52,12 +49,7 @@ const findSchedule = async (req, res, next) => {
     })
 }
 
-function formatTimeToUTC(dateString) {
-    const date = new Date(dateString);
-    const hours = date.getUTCHours().toString().padStart(2, '0');
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
-}
+
 
 module.exports = {
     findSchedule
