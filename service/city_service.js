@@ -7,7 +7,8 @@ const get = async (params) => {
             {
                 where: {
                     name: {
-                        contains: params
+                        contains: params,
+                        mode: "insensitive"
                     }
                 },
                 select: {
@@ -17,7 +18,7 @@ const get = async (params) => {
                     airport_name: true,
                     country: {
                         select: {
-                            name : true
+                            name: true
                         }
                     }
                 }
