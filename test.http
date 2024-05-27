@@ -1,8 +1,10 @@
-GET http://localhost:3000/api/v1/cities
+GET http://localhost:3000/api/v1/city
 
 ###
 GET http://localhost:3000/api/v1/class
 
+###
+GET http://localhost:3000/api/v1/continents
 
 ###
 POST http://localhost:3000/api/v1/schedule
