@@ -109,13 +109,13 @@ model Passenger {
   title           String
   fullname        String
   family_name     String
-  birth_date      String
+  birth_date      DateTime
   nationality     String
   identity_type   String?
-  identity_number String   @unique
+  identity_number String
   expired_date    DateTime
   issuing_country String
-  age_group       Int
+  age_group       Int?
   gender          String?
   order           Order    @relation(fields: [order_id], references: [id])
   order_id        Int
@@ -164,10 +164,9 @@ model Order {
   passenger        Passenger[]
   user             User?        @relation(fields: [user_id], references: [id])
   user_id          Int?
-  payment          Payment      @relation(fields: [payment_id], references: [id])
-  payment_id       Int          @unique
   detailFlight     DetailFlight @relation(fields: [detail_flight_id], references: [id])
   detail_flight_id Int
+  Payment          Payment[]
 
   @@map("orders")
 }
@@ -177,7 +176,8 @@ model Payment {
   amount         String
   method_payment String
   createdAt      DateTime
-  order          Order?
+  order          Order    @relation(fields: [order_id], references: [id])
+  order_id       Int
 
   @@map("payments")
 }
