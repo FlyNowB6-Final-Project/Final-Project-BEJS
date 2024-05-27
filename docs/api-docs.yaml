@@ -4,20 +4,29 @@ info:
   description: API Pemesanan Ticketing Pesawat
   version: 1.0.0
 servers:
+  - url: https://express-development.up.railway.app/api/v1
   - url: http://localhost:3000/api/v1
 tags:
   - name: "Users"
-    description: Operations about user
+    description: Operations about User
+  - name: "Ticket"
+    description: Operations about Flight Schedule
+  - name: "Destination"
+    description: Operations about Destination
+  - name: "Order"
+    description: Operations about order
+  - name: "Notification"
+    description: Operations about Notification
 paths:
-  /auth/register :
+  /users/register:
     post:
       tags:
-        - "Auth"
+        - "Users"
       summary: Register user
       description: Register user with the provided information.
       requestBody:
-        $ref: '#/components/requestBodies/createUser'
-                
+        $ref: "#/components/requestBodies/createUser"
+
       responses:
         201:
           description: User created was successful
@@ -33,7 +42,7 @@ paths:
                     type: string
                     example: User Created Successfully
                   data:
-                    $ref: '#/components/schemas/UserResponse'
+                    $ref: "#/components/schemas/UserResponse"
 
         400:
           description: Input must be required!
@@ -67,15 +76,15 @@ paths:
                   data:
                     example: ~
 
-  /auth/login :
+  /users/login:
     post:
       tags:
-        - "Auth"
+        - "Users"
       summary: Login user
       description: Login user with the provided information.
       requestBody:
-        $ref: '#/components/requestBodies/createLogin'
-                
+        $ref: "#/components/requestBodies/createLogin"
+
       responses:
         201:
           description: Login was successful
@@ -91,7 +100,13 @@ paths:
                     type: string
                     example: Login was successfull
                   data:
-                    $ref: '#/components/schemas/LoginResponse'
+                    allOf:
+                      - $ref: "#/components/schemas/UserResponse"
+                      - type: object
+                        properties:
+                          token:
+                            type: integer
+                            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZnVsbG5hbWUiOiJCYWd1cyBEd2kgUHV0cmEgQWRpeW9ubyIsImZhbWlseV9uYW1lIjpudWxsLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDgyMjI5NzQ5NDYyIiwiYXZhdGFyX3VybCI6bnVsbCwiZ29vZ2xlX2lkIjpudWxsLCJvdHAiOiI2NjI1NDMiLCJvdHBDcmVhdGVkQXQiOiIyMDI0LTA1LTI0VDE2OjEzOjU2LjA4OFoiLCJpc1ZlcmlmaWVkIjp0cnVlLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNjU2NzI1OH0._tBfHd_s_J9UWnblX_tHjnTmmt5b2PdXpvekhjHRXF0
 
         400:
           description: invalid email or password!
@@ -107,15 +122,304 @@ paths:
                     type: string
                     example: invalid email or password!
                   data:
-                    example: ~         
+                    example: ~
 
-  /auth/authenticate :
+        403:
+          description: Verify Account User!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Account not verified. Please check your email!
+                  data:
+                    example: ~
+
+  /users/verify-otp:
+    put:
+      tags:
+        - "Users"
+      summary: Verify Otp Email User
+      description: Verify Otp Email User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: flynowb6@gmail.com
+                otp:
+                  type: string
+                  example: 123456
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Activation successfully. You're Account is Verified"
+                  data:
+                    $ref: "#/components/schemas/UserResponse"
+
+        400:
+          description: OTP Expired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "OTP has expired. Please resend new otp."
+                  data:
+                    example: ~
+
+        401:
+          description: Invalid OTP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid OTP"
+                  data:
+                    example: ~
+
+        404:
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "user not found"
+                  data:
+                    example: ~
+
+  /users/resend-otp:
+    put:
+      tags:
+        - "Users"
+      summary: Resend Verify Otp Email User
+      description: Resend Verify Otp Email User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: flynowb6@gmail.com
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Resend OTP successfully"
+                  data:
+                    $ref: "#/components/schemas/UserResponse"
+
+        404:
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "user not found"
+                  data:
+                    example: ~
+
+  /users/forget-password:
+    post:
+      tags:
+        - "Users"
+      summary: Forget Password Email User
+      description: Forget Password Email User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: flynowb6@gmail.com
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Success Send Email Forget Password"
+
+        404:
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "user not found"
+                  data:
+                    example: ~
+
+  /users/reset-password:
+    put:
+      tags:
+        - "Users"
+      summary: Reset Password Email User
+      parameters:
+        - schema:
+            type: string
+          name: token
+          in: query
+          description: token for update password
+      description: Reset Password Email User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: FlynowB6#
+                passwordConfirmation:
+                  type: string
+                  example: FlynowB6#
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Your password has been updated successfully!"
+                  data:
+                     $ref: '#/components/schemas/UserResponse'
+
+        400:
+          description: Both password and password confirmation are required!!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Both password and password confirmation are required!!"
+                  data:
+                    example: ~
+
+        401:
+          description: Please ensure that the password and password confirmation match!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Please ensure that the password and password confirmation match!"
+                  data:
+                    example: ~
+
+        403:
+          description: Invalid or expired token!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid or expired token!"
+                  data:
+                    example: ~
+
+  /users/authenticate:
     get:
       tags:
-        - "Auth"
+        - "Users"
       summary: Authenticate user
       description: Authenticate user with the token.
-                
+
       responses:
         200:
           description: Success
@@ -131,7 +435,7 @@ paths:
                     type: string
                     example: OK
                   data:
-                    $ref: '#/components/schemas/UserResponse'
+                    $ref: "#/components/schemas/UserResponse"
 
         403:
           description: Token not provided!
@@ -163,25 +467,49 @@ paths:
                     type: string
                     example: jwt malformed
                   data:
-                    example: ~        
+                    example: ~
       security:
         - bearerAuth: []
 
-  /users:
-    get:
+  /ticket/schedule:
+    post:
       tags:
-        - "Users"
-      summary: Get all users
-      parameters:
-        - schema:
-            type: string
-          name: search
-          in: query
-          description: search for get first_name users
-      description: Get all users
+        - "Ticket"
+      summary: Find ticket
+      description: Find ticket
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                city_arrive_id:
+                  type: integer
+                  example: 2
+                city_destination_id:
+                  type: integer
+                  example: 1
+                date_departure:
+                  type: string
+                  example: 25-05-2024
+                # date_return:
+                #   type: string
+                #   example: 20/06/2024
+                seat_class:
+                  type: integer
+                  example: 2
+                passenger:
+                  type: object
+                  properties:
+                    adult:
+                      type: integer
+                      example: 1
+                    children:
+                      type: integer
+                      example: 1
       responses:
-        200:
-          description: Success get all users
+        "200":
+          description: OK
           content:
             application/json:
               schema:
@@ -189,10 +517,32 @@ paths:
                 properties:
                   status:
                     type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FlightSchedule"
+  /ticket/class:
+    get:
+      tags:
+        - "Ticket"
+      summary: Get All type_class
+      description: Get All type_class
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: boolean
                     example: true
                   message:
                     type: string
-                    example: Success
+                    example: success retrive city data
                   data:
                     type: array
                     items:
@@ -201,117 +551,105 @@ paths:
                         id:
                           type: integer
                           example: 1
-                        first_name:
+                        type_class:
                           type: string
-                          example: Bagus Dwi
-                        last_name:
-                          type: string
-                          example: Putra Adiyono
-                        email:
-                          type: string
-                          example: sugab.dwi88@gmail.com
-
-  /forget-pass:
-    post:
+                          example: Ekonomi
+  /city:
+    get:
       tags:
-        - "Users"
-      summary: Forget Password Email User
-      description: Forget Password Email User
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: sugab.dwi88@gmail.com
-
+        - "Destination"
+      summary: Get All city
+      description: Get All city
       responses:
-        200:
+        "200":
           description: Success
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
+                  status: 
                     type: boolean
                     example: true
                   message:
                     type: string
-                    example: "Success Send Email Forget Password"
-                  
-        404:
-          description: user not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "user not found"
-                  data: 
-                    example: ~
-
-  /reset-pass:
-    post:
+                    example: success retrive city data
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: Tangerang
+                        code:
+                          type: string
+                          example: CGK
+                        airport_name:
+                          type: string
+                          example: Bandara Internasional Soekarno-Hatta
+                        country:
+                          type: string
+                          example: Indoensia
+  /continents:
+    get:
       tags:
-        - "Users"
-      summary: Reset Password Email User
-      parameters:
-        - schema:
-            type: string
-          name: token
-          in: query
-          description: token for update password
-      description: Reset Password Email User
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  example: qwerty
-                passwordConfirmation:
-                  type: string
-                  example: qwerty
-
+        - "Destination"
+      summary: Get All continents
+      description: Get All continents
       responses:
-        200:
+        "200":
           description: Success
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
+                  status: 
                     type: boolean
                     example: true
                   message:
                     type: string
-                    example: "Your password has been updated successfully!"
-                  data: 
-                    properties:
-                      id: 
-                        type: integer
-                        example: 1
-                      name:
-                        type: string
-                        example: Bagus Dwi
-                      email:
-                        type: string
-                        example: sugab.dwi88@gmail.com
+                    example: success retrive continent data
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: Asia
+                        code:
+                          type: string
+                          example: AS
 
+  /ticket/order:
+    post:
+      tags:
+        - "Order"
+      summary: Create a new order
+      description: Create a new order with details of the flight and passengers.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        201:
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
         400:
-          description: Both password and password confirmation are required!!
+          description: Bad request, missing or invalid fields
           content:
             application/json:
               schema:
@@ -322,12 +660,11 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: "Both password and password confirmation are required!!"
-                  data: 
+                    example: "Missing 'field_name' in passenger details"
+                  data:
                     example: ~
-        
         401:
-          description: Please ensure that the password and password confirmation match!
+          description: Unauthorized, user not authenticated
           content:
             application/json:
               schema:
@@ -338,31 +675,178 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: "Please ensure that the password and password confirmation match!"
-                  data: 
+                    example: "User not authenticated"
+                  data:
                     example: ~
-                  
-        403:
-          description: Invalid or expired token!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "Invalid or expired token!"
-                  data: 
-                    example: ~
+      security:
+        - bearerAuth: []
 
+  /ticket/orders:
+    get:
+      tags:
+        - "Order"
+      summary: Retrieve all orders
+      description: Retrieve a list of all orders made by authenticated users.
+      responses:
+        200:
+          description: Successfully retrieved all orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponse'
+        401:
+          description: Unauthorized, user not authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User not authenticated"
+                  data:
+                    example: ~
+      security:
+        - bearerAuth: []
+
+  /ticket/order/{orderId}:
+    get:
+      tags:
+        - "Order"
+      summary: Retrieve a specific order
+      description: Retrieve details of a specific order by order ID.
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the order to retrieve
+      responses:
+        200:
+          description: Successfully retrieved the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        404:
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Order not found"
+                  data:
+                    example: ~
+        401:
+          description: Unauthorized, user not authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User not authenticated"
+                  data:
+                    example: ~
+      security:
+        - bearerAuth: []
+            
+  /notifications:
+    get:
+      tags:
+        - "Notification"
+      summary: Get All notification
+      description: Get All notification
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Notifications retrieved successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title: 
+                          type: string 
+                          example: Password Updated!
+                        message:
+                          type: string
+                          example: Your password has been updated successfully!
+                        isRead:
+                          type: boolean
+                          example: false
+                        createdAt:
+                          type: string
+                          example: 2024-05-26T14:20:18.724Z
+                        user_id: 
+                          type: integer
+                          example: 1
+      security:
+        - bearerAuth: []
+
+  /notifications/markAsRead:
+    put:
+      tags:
+        - "Notification"
+      summary: Update Status notification
+      description: Update Status notification
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Notifications marked as read for the user
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                        example: 2
+      security:
+        - bearerAuth: []
+                        
 components:
   securitySchemes:
-    bearerAuth:       
+    bearerAuth:
       type: http
-      scheme: bearer       
+      scheme: bearer
       bearerFormat: JWT
   schemas:
     UserResponse:
@@ -371,27 +855,201 @@ components:
         id:
           type: integer
           example: 1
-        name:
+        fullname:
           type: string
-          example: Bagus Dwi
+          example: Flynow Foundation
+        family_name:
+          type: string
+          example: ~
         email:
           type: string
-          example: sugab.dwi88@gmail.com
-    LoginResponse:
+          example: flynowb6@gmail.com
+        phoneNumber:
+          type: string
+          example: "08123456789"
+        avatar_url:
+          type: string
+          example: ~
+        google_id:
+          type: string
+          example: ~
+        otp:
+          type: string
+          example: 123456
+        otpCreatedAt:
+          type: string
+          example: 2024-05-24T16:03:46.444Z
+        isVerified:
+          type: boolean
+          example: false
+        role:
+          type: string
+          example: user
+    FlightSchedule:
       type: object
       properties:
         id:
           type: integer
           example: 1
+          description: ID Jadwal Penerbangan
+        flight_number:
+          type: string
+          example: mup-570825
+          description: Nomor Penerbangan
+        time_arrive:
+          type: string
+          example: 14:45
+          description: Waktu Tiba
+        time_departure:
+          type: string
+          example: 06:00
+          description: Waktu Berangkat
+        date_flight:
+          type: string
+          example: 25-05-2024
+          description: Tanggal Penerbangan
+        estimation_minute:
+          type: integer
+          example: 240
+          description: Estimasi Menit
+        city_arrive_id:
+          type: integer
+          example: 2
+          description: ID Kota Tiba
+        city_destination_id:
+          type: integer
+          example: 1
+          description: ID Kota Tujuan
+        city_arrive:
+          $ref: "#/components/schemas/City"
+        city_destination:
+          $ref: "#/components/schemas/City"
+        DetailFlight:
+          type: array
+          items:
+            $ref: "#/components/schemas/DetailFlight"
+
+    DetailFlight:
+      type: object
+      properties:
+        price:
+          type: integer
+          example: 500000
+          description: Harga
+        detailPlaneId:
+          $ref: "#/components/schemas/PlaneDetail"
+
+    PlaneDetail:
+      type: object
+      properties:
+        seat_class:
+          $ref: "#/components/schemas/SeatClass"
+        plane:
+          $ref: "#/components/schemas/Plane"
+
+    SeatClass:
+      type: object
+      properties:
+        type_class:
+          type: string
+          example: Ekonomi
+          description: Jenis Kelas
+
+    Plane:
+      type: object
+      properties:
         name:
           type: string
-          example: Bagus Dwi
-        email:
+          example: Boeing 737-800
+          description: Nama Pesawat
+
+    City:
+      type: object
+      properties:
+        code:
           type: string
-          example: sugab.dwi88@gmail.com
-        token:
+          example: CGK
+          description: Kode Kota
+        name:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RfbmFtZSI6IkJhZ3VzIER3aSIsImxhc3RfbmFtZSI6IlB1dHJhIEFkaXlvbm8iLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsImlhdCI6MTcxNDY1NTQ1N30.7mHMjtq0QvKWfZ41Nb5XMXKyfkcg4l7LX34yC-HBj3A 
+          example: Tangerang
+          description: Nama Kota
+        airport_name:
+          type: string
+          example: Bandara Internasional Soekarno-Hatta
+          description: Nama Bandara
+
+    OrderRequest:
+      type: object
+      required:
+        - detailFlightId
+        - passengers
+      properties:
+        detailFlightId:
+          type: integer
+          example: 2
+        passengers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Passenger'
+            
+    Passenger:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Mr
+        fullname:
+          type: string
+          example: John Doe
+        family_name:
+          type: string
+          example: Doe
+        birth_date:
+          type: string
+          format: date
+          example: "1990-01-01"
+        nationality:
+          type: string
+          example: USA
+        identity_type:
+          type: string
+          example: passport
+        identity_number:
+          type: string
+          example: P12345612
+        expired_date:
+          type: string
+          format: date
+          example: "2030-01-01"
+        issuing_country:
+          type: string
+          example: USA
+
+    OrderResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user:
+          $ref: '#/components/schemas/UserResponse'
+        detailFlight:
+          $ref: '#/components/schemas/FlightSchedule'
+        passengers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Passenger'
+        status:
+          type: string
+          example: unpaid
+        code:
+          type: string
+          example: ORD123456
+        expired_paid:
+          type: string
+          format: date-time
+          example: "2024-05-25T14:20:18.724Z"
 
   requestBodies:
     createLogin:
@@ -400,24 +1058,27 @@ components:
           schema:
             type: object
             properties:
-              email:
+              emailOrPhoneNumber:
                 type: string
-                example: sugab.dwi88@gmail.com
+                example: flynowb6@gmail.com
               password:
                 type: string
-                example: 123456
-    createUser: 
+                example: Flynowb6#
+    createUser:
       content:
         application/json:
           schema:
             type: object
             properties:
-              name:
+              fullname:
                 type: string
-                example: Bagus Dwi
+                example: Flynow Foundation
               email:
                 type: string
-                example: sugab.dwi88@gmail.com
+                example: flynowb6@gmail.com
+              phoneNumber:
+                type: string
+                example: "08123456789"
               password:
                 type: string
-                example: 123456
+                example: Flynowb6#

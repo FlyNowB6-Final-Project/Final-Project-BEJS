@@ -6,6 +6,13 @@ const fs = require("fs");
 const path = require("path");
 
 const User = require("./user.routes")
+const cityRoute = require("./city.routes")
+const classRoute = require("./seat_class.routes")
+const scheduleRoute = require("./schedule.routes")
+const continentRoute = require("./continent.routes")
+const Payments = require("./payment.routes")
+const Order = require("./order.routes")
+const Notifications = require("./notif.routes")
 
 const swagger_path = path.resolve(__dirname, "../docs/api-docs.yaml");
 const file = fs.readFileSync(swagger_path, "utf-8");
@@ -16,5 +23,12 @@ router.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 // API
 router.use("/api/v1", User)
+router.use("/api/v1", cityRoute)
+router.use("/api/v1", classRoute)
+router.use("/api/v1", scheduleRoute)
+router.use("/api/v1", continentRoute)
+router.use("/api/v1", Payments)
+router.use("/api/v1", Order)
+router.use("/api/v1", Notifications)
 
 module.exports = router;
