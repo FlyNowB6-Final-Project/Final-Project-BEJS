@@ -484,11 +484,11 @@ paths:
               type: object
               properties:
                 city_arrive_id:
-                  type: integer
-                  example: 2
+                  type: string
+                  example: surabaya
                 city_destination_id:
-                  type: integer
-                  example: 1
+                  type: string
+                  example: Tangerang
                 date_departure:
                   type: string
                   example: 25-05-2024
