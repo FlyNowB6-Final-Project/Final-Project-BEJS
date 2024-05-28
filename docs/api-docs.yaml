@@ -554,10 +554,202 @@ paths:
                         type_class:
                           type: string
                           example: Ekonomi
-  /city:
+
+  /ticket/flights:
     get:
       tags:
         - "Ticket"
+      summary: Get all flights
+      description: Gets a list of all flights available in the database.
+      responses:
+        '200':
+          description: Successfully Get all flights
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "All flights retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BasicFlightInfo'
+
+  /ticket/flight/{flightId}:
+    get:
+      tags:
+        - "Ticket"
+      summary: Get detailed flight information
+      description: Get detailed information about a specific flight by its ID.
+      parameters:
+        - in: path
+          name: flightId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the flight to retrieve
+      responses:
+        '200':
+          description: Flight details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedFlightInfo'
+        '404':
+          description: Flight not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Flight not found"
+
+  /planes:
+    get:
+      tags:
+        - "Destination"
+      summary: Get all planes
+      description: Get a list of all planes available in the database.
+      responses:
+        '200':
+          description: All planes Get successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "All planes retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: "Boeing 737-800"
+                        brand:
+                          type: string
+                          example: "Boeing"
+                        series:
+                          type: string
+                          example: "10748"
+                        capacity:
+                          type: integer
+                          example: 189
+                        airlinesId:
+                          type: integer
+                          example: 1
+
+  /plane/{planeId}:
+    get:
+      tags:
+        - "Destination"
+      summary: Get detailed plane information
+      description: Get detailed information about a specific plane by its ID.
+      parameters:
+        - in: path
+          name: planeId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the plane to retrieve
+      responses:
+        '200':
+          description: Plane details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Plane details retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "Boeing 737-800"
+                      brand:
+                        type: string
+                        example: "Boeing"
+                      series:
+                        type: string
+                        example: "10748"
+                      capacity:
+                        type: integer
+                        example: 189
+                      airlinesId:
+                        type: integer
+                        example: 1
+                      DetailPlane:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            total_seat:
+                              type: integer
+                              example: 80
+                            seat_class_id:
+                              type: integer
+                              example: 1
+                            plane_id:
+                              type: integer
+                              example: 1
+                            seat_class:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                type_class:
+                                  type: string
+                                  example: "Ekonomi"
+        '404':
+          description: Plane not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Plane not found"
+
+  /cities:
+    get:
+      tags:
+        - "Destination"
       summary: Get All city and Find city
       description: Get All city and Find city
       parameters:
@@ -934,6 +1126,47 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/DetailFlight"
+
+    BasicFlightInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        flight_number:
+          type: string
+          example: "sup-570725"
+        time_arrive:
+          type: string
+          format: date-time
+          example: "1970-01-01T15:30:00.000Z"
+        time_departure:
+          type: string
+          format: date-time
+          example: "1970-01-01T05:00:00.000Z"
+        date_flight:
+          type: string
+          format: date-time
+          example: "2024-05-25T00:00:00.000Z"
+        estimation_minute:
+          type: integer
+          example: 240
+        city_arrive_id:
+          type: integer
+          example: 1
+        city_destination_id:
+          type: integer
+          example: 2
+
+    DetailedFlightInfo:
+      allOf:
+        - $ref: '#/components/schemas/BasicFlightInfo'
+        - type: object
+          properties:
+            city_arrive:
+              $ref: '#/components/schemas/City'
+            city_destination:
+              $ref: '#/components/schemas/City'
 
     DetailFlight:
       type: object
