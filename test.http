@@ -1,10 +1,8 @@
-GET http://localhost:3000/api/v1/city
+GET http://localhost:3000/api/v1/city?find=p
 
 ###
 GET http://localhost:3000/api/v1/class
 
-###
-GET http://localhost:3000/api/v1/continents
 
 ###
 POST http://localhost:3000/api/v1/schedule
@@ -19,5 +17,4 @@ Content-Type: application/json
         "adult" : 1,
         "children" : 1
     }
-
 }
