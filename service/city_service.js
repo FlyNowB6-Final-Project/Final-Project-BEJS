@@ -32,11 +32,12 @@ const get = async (params) => {
 
 const getCityId = async (params) => {
     try {
-        let id = await prisma.city.findUnique(
+        let id = await prisma.city.findFirst(
             {
                 where: {
                     name: {
-                        contains: params
+                        contains: params,
+                        mode: "insensitive"
                     }
                 },
                 select: {
@@ -48,7 +49,7 @@ const getCityId = async (params) => {
         if (!id) {
             return 0
         }
-        return id
+        return id.id
     } catch (error) {
         throw error
     }
