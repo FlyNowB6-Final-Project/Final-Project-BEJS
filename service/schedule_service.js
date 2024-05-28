@@ -3,19 +3,13 @@ const { getCityId } = require("./city_service");
 const prisma = new PrismaClient()
 
 const getDataFind = async (city_arrive_id, city_destination_id, date_departure) => {
-    // Mendapatkan ID kota
     let arrive = await getCityId(city_arrive_id)
     let destination = await getCityId(city_destination_id)
 
-    // Pengecekan nilai arrive dan destination
     if (!arrive || !destination) {
         return null
     }
 
-    console.log(arrive)
-    console.log(destination)
-
-    // Mencari data penerbangan
     return await prisma.flight.findMany({
         where: {
             city_arrive_id: arrive,
