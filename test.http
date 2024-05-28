@@ -20,3 +20,6 @@ Content-Type: application/json
         "children" : 1
     }
 }
+
+###
+GET http://localhost:3000/api/v1/ticket/schedule/recomendation
