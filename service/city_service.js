@@ -17,7 +17,7 @@ const get = async (params) => {
                     airport_name: true,
                     country: {
                         select: {
-                            name : true
+                            name: true
                         }
                     }
                 }
@@ -29,6 +29,31 @@ const get = async (params) => {
     }
 }
 
+const getCityId = async (params) => {
+    try {
+        let id = await prisma.city.findUnique(
+            {
+                where: {
+                    name: {
+                        contains: params
+                    }
+                },
+                select: {
+                    id: true
+                }
+
+            }
+        );
+        if (!id) {
+            return 0
+        }
+        return id
+    } catch (error) {
+        throw error
+    }
+}
+
 module.exports = {
     get,
+    getCityId
 }
