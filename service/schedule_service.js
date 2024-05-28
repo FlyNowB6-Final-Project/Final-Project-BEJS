@@ -1,7 +1,15 @@
 const { PrismaClient } = require("@prisma/client");
+const { getCityId } = require("./city_service");
 const prisma = new PrismaClient()
 
 const getDataFind = async (city_arrive_id, city_destination_id, date_departure) => {
+    let arrive = getCityId(city_arrive_id)
+    let destination = getCityId(city_destination_id)
+
+    if (arrive == 0 || destination == 0) {
+        return null
+    }
+
     return await prisma.flight.findMany(
         {
             where: {

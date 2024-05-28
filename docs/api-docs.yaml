@@ -8,9 +8,13 @@ servers:
   - url: http://localhost:3000/api/v1
 tags:
   - name: "Users"
-    description: Operations about user
+    description: Operations about User
   - name: "Ticket"
     description: Operations about Flight Schedule
+  - name: "Destination"
+    description: Operations about Destination
+  - name: "Order"
+    description: Operations about order
   - name: "Notification"
     description: Operations about Notification
 paths:
@@ -467,7 +471,7 @@ paths:
       security:
         - bearerAuth: []
 
-  /schedule:
+  /ticket/schedule:
     post:
       tags:
         - "Ticket"
@@ -519,7 +523,7 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/FlightSchedule"
-  /class:
+  /ticket/class:
     get:
       tags:
         - "Ticket"
@@ -550,10 +554,202 @@ paths:
                         type_class:
                           type: string
                           example: Ekonomi
-  /city:
+
+  /ticket/flights:
     get:
       tags:
         - "Ticket"
+      summary: Get all flights
+      description: Gets a list of all flights available in the database.
+      responses:
+        '200':
+          description: Successfully Get all flights
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "All flights retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BasicFlightInfo'
+
+  /ticket/flight/{flightId}:
+    get:
+      tags:
+        - "Ticket"
+      summary: Get detailed flight information
+      description: Get detailed information about a specific flight by its ID.
+      parameters:
+        - in: path
+          name: flightId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the flight to retrieve
+      responses:
+        '200':
+          description: Flight details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedFlightInfo'
+        '404':
+          description: Flight not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Flight not found"
+
+  /planes:
+    get:
+      tags:
+        - "Destination"
+      summary: Get all planes
+      description: Get a list of all planes available in the database.
+      responses:
+        '200':
+          description: All planes Get successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "All planes retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: "Boeing 737-800"
+                        brand:
+                          type: string
+                          example: "Boeing"
+                        series:
+                          type: string
+                          example: "10748"
+                        capacity:
+                          type: integer
+                          example: 189
+                        airlinesId:
+                          type: integer
+                          example: 1
+
+  /plane/{planeId}:
+    get:
+      tags:
+        - "Destination"
+      summary: Get detailed plane information
+      description: Get detailed information about a specific plane by its ID.
+      parameters:
+        - in: path
+          name: planeId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the plane to retrieve
+      responses:
+        '200':
+          description: Plane details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Plane details retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "Boeing 737-800"
+                      brand:
+                        type: string
+                        example: "Boeing"
+                      series:
+                        type: string
+                        example: "10748"
+                      capacity:
+                        type: integer
+                        example: 189
+                      airlinesId:
+                        type: integer
+                        example: 1
+                      DetailPlane:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            total_seat:
+                              type: integer
+                              example: 80
+                            seat_class_id:
+                              type: integer
+                              example: 1
+                            plane_id:
+                              type: integer
+                              example: 1
+                            seat_class:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                type_class:
+                                  type: string
+                                  example: "Ekonomi"
+        '404':
+          description: Plane not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Plane not found"
+
+  /cities:
+    get:
+      tags:
+        - "Destination"
       summary: Get All city and Find city
       description: Get All city and Find city
       parameters:
@@ -599,7 +795,7 @@ paths:
   /continents:
     get:
       tags:
-        - "Ticket"
+        - "Destination"
       summary: Get All continents
       description: Get All continents
       responses:
@@ -630,6 +826,145 @@ paths:
                         code:
                           type: string
                           example: AS
+
+  /ticket/order:
+    post:
+      tags:
+        - "Order"
+      summary: Create a new order
+      description: Create a new order with details of the flight and passengers.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        201:
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        400:
+          description: Bad request, missing or invalid fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Missing 'field_name' in passenger details"
+                  data:
+                    example: ~
+        401:
+          description: Unauthorized, user not authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User not authenticated"
+                  data:
+                    example: ~
+      security:
+        - bearerAuth: []
+
+  /ticket/orders:
+    get:
+      tags:
+        - "Order"
+      summary: Retrieve all orders
+      description: Retrieve a list of all orders made by authenticated users.
+      responses:
+        200:
+          description: Successfully retrieved all orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponse'
+        401:
+          description: Unauthorized, user not authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User not authenticated"
+                  data:
+                    example: ~
+      security:
+        - bearerAuth: []
+
+  /ticket/order/{orderId}:
+    get:
+      tags:
+        - "Order"
+      summary: Retrieve a specific order
+      description: Retrieve details of a specific order by order ID.
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the order to retrieve
+      responses:
+        200:
+          description: Successfully retrieved the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        404:
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Order not found"
+                  data:
+                    example: ~
+        401:
+          description: Unauthorized, user not authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User not authenticated"
+                  data:
+                    example: ~
+      security:
+        - bearerAuth: []
+            
   /notifications:
     get:
       tags:
@@ -792,6 +1127,47 @@ components:
           items:
             $ref: "#/components/schemas/DetailFlight"
 
+    BasicFlightInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        flight_number:
+          type: string
+          example: "sup-570725"
+        time_arrive:
+          type: string
+          format: date-time
+          example: "1970-01-01T15:30:00.000Z"
+        time_departure:
+          type: string
+          format: date-time
+          example: "1970-01-01T05:00:00.000Z"
+        date_flight:
+          type: string
+          format: date-time
+          example: "2024-05-25T00:00:00.000Z"
+        estimation_minute:
+          type: integer
+          example: 240
+        city_arrive_id:
+          type: integer
+          example: 1
+        city_destination_id:
+          type: integer
+          example: 2
+
+    DetailedFlightInfo:
+      allOf:
+        - $ref: '#/components/schemas/BasicFlightInfo'
+        - type: object
+          properties:
+            city_arrive:
+              $ref: '#/components/schemas/City'
+            city_destination:
+              $ref: '#/components/schemas/City'
+
     DetailFlight:
       type: object
       properties:
@@ -841,6 +1217,78 @@ components:
           type: string
           example: Bandara Internasional Soekarno-Hatta
           description: Nama Bandara
+
+    OrderRequest:
+      type: object
+      required:
+        - detailFlightId
+        - passengers
+      properties:
+        detailFlightId:
+          type: integer
+          example: 2
+        passengers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Passenger'
+            
+    Passenger:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Mr
+        fullname:
+          type: string
+          example: John Doe
+        family_name:
+          type: string
+          example: Doe
+        birth_date:
+          type: string
+          format: date
+          example: "1990-01-01"
+        nationality:
+          type: string
+          example: USA
+        identity_type:
+          type: string
+          example: passport
+        identity_number:
+          type: string
+          example: P12345612
+        expired_date:
+          type: string
+          format: date
+          example: "2030-01-01"
+        issuing_country:
+          type: string
+          example: USA
+
+    OrderResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user:
+          $ref: '#/components/schemas/UserResponse'
+        detailFlight:
+          $ref: '#/components/schemas/FlightSchedule'
+        passengers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Passenger'
+        status:
+          type: string
+          example: unpaid
+        code:
+          type: string
+          example: ORD123456
+        expired_paid:
+          type: string
+          format: date-time
+          example: "2024-05-25T14:20:18.724Z"
 
   requestBodies:
     createLogin:
