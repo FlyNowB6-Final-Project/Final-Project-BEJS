@@ -7,7 +7,8 @@ const get = async (params) => {
             {
                 where: {
                     name: {
-                        contains: params
+                        contains: params,
+                        mode: "insensitive"
                     }
                 },
                 select: {

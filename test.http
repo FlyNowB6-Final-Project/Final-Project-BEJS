@@ -1,4 +1,4 @@
-GET http://localhost:3000/api/v1/city
+GET http://localhost:3000/api/v1/city?find=p
 
 ###
 GET http://localhost:3000/api/v1/class
@@ -19,5 +19,4 @@ Content-Type: application/json
         "adult" : 1,
         "children" : 1
     }
-
 }
