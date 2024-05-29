@@ -827,18 +827,21 @@ paths:
                           type: string
                           example: AS
 
-  /ticket/order:
+  /ticket/order/{detailFlightId}:
     post:
       tags:
         - "Order"
       summary: Create a new order
       description: Create a new order with details of the flight and passengers.
+      parameters:
+        - in: path
+          name: detailFlightId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the flight detail for which the order is being created
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OrderRequest'
+        $ref: '#/components/requestBodies/orderRequest'
       responses:
         201:
           description: Order created successfully
@@ -858,22 +861,7 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: "Missing 'field_name' in passenger details"
-                  data:
-                    example: ~
-        401:
-          description: Unauthorized, user not authenticated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "User not authenticated"
+                    example: "Missing or invalid fields in request"
                   data:
                     example: ~
       security:
@@ -894,21 +882,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OrderResponse'
-        401:
-          description: Unauthorized, user not authenticated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "User not authenticated"
-                  data:
-                    example: ~
       security:
         - bearerAuth: []
 
@@ -945,21 +918,6 @@ paths:
                   message:
                     type: string
                     example: "Order not found"
-                  data:
-                    example: ~
-        401:
-          description: Unauthorized, user not authenticated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "User not authenticated"
                   data:
                     example: ~
       security:
@@ -1008,6 +966,59 @@ paths:
                         user_id:
                           type: integer
                           example: 1
+      security:
+        - bearerAuth: []
+
+    post:
+      tags:
+        - "Notification"
+      summary: Create a new notification for All users
+      description: Creates a new notification for all users.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Notification
+                message:
+                  type: string
+                  example: "Promotions Is Coming."
+      responses:
+        201:
+          description: Notifications created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Notifications created for all users"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification'
+        400:
+          description: Bad request, missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Title and message are required fields"
+                  data:
+                    example: null
       security:
         - bearerAuth: []
 
@@ -1218,20 +1229,6 @@ components:
           example: Bandara Internasional Soekarno-Hatta
           description: Nama Bandara
 
-    OrderRequest:
-      type: object
-      required:
-        - detailFlightId
-        - passengers
-      properties:
-        detailFlightId:
-          type: integer
-          example: 2
-        passengers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Passenger'
-            
     Passenger:
       type: object
       properties:
@@ -1290,7 +1287,40 @@ components:
           format: date-time
           example: "2024-05-25T14:20:18.724Z"
 
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Notification
+        message:
+          type: string
+          example: Promotions Is Coming.
+        isRead:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-05-26T14:20:18.724Z"
+        user_id:
+          type: integer
+          example: 1
+
   requestBodies:
+    orderRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              passengers:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Passenger'
     createLogin:
       content:
         application/json:
