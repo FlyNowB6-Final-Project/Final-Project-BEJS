@@ -286,7 +286,7 @@ module.exports = {
         // url: `${req.protocol}://${req.get(
         //   "host"
         // )}/api/v1/users/reset-password?token=${token}`,
-        url: `http://localhost:5173/lupasandi?token=${token}`
+        url: `http://localhost:5173/reset-password?token=${token}`
       });
 
       await nodemailer.sendMail(email, "Password Reset Request", html);
