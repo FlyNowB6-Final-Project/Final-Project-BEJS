@@ -151,17 +151,18 @@ model City {
 }
 
 model Order {
-  id               Int          @id @default(autoincrement())
-  status           String       @default("unpaid")
-  code             String       @unique
+  id               Int      @id @default(autoincrement())
+  status           String   @default("unpaid")
+  code             String   @unique
   detail_flight_id Int
   expired_paid     DateTime
-  payment_id       Int          @unique
-  user_id          Int?
-  detailFlight     DetailFlight @relation(fields: [detail_flight_id], references: [id])
-  payments         Payment      @relation(fields: [payment_id], references: [id])
-  user             User?        @relation(fields: [user_id], references: [id])
-  passenger        Passenger[]
+
+  user_id      Int?
+  detailFlight DetailFlight @relation(fields: [detail_flight_id], references: [id])
+
+  user      User?       @relation(fields: [user_id], references: [id])
+  passenger Passenger[]
+  Payment   Payment[]
 
   @@map("orders")
 }
@@ -171,7 +172,8 @@ model Payment {
   amount         String
   method_payment String
   createdAt      DateTime
-  orders         Order?
+  ordersId       Order    @relation(fields: [order_id], references: [id])
+  order_id        Int
 
   @@map("payments")
 }
