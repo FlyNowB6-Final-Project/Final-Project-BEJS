@@ -304,8 +304,6 @@ module.exports = {
     try {
       const { token } = req.query;
       const { password, passwordConfirmation } = req.body;
-      const passwordValidator =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/;
 
       if (!password || !passwordConfirmation) {
         return res.status(400).json({
@@ -320,15 +318,6 @@ module.exports = {
           status: false,
           message:
             "Please ensure that the password and password confirmation match!",
-          data: null,
-        });
-      }
-
-      if (!passwordValidator.test(password)) {
-        return res.status(400).json({
-          status: false,
-          message:
-            "Invalid password format. It must contain at least 1 lowercase, 1 uppercase, 1 digit number, 1 symbol, and be between 8 and 12 characters long.",
           data: null,
         });
       }
