@@ -21,3 +21,27 @@ Content-Type: application/json
     }
 
 }
+
+###
+POST http://localhost:3000/api/v1/users/register
+Content-Type: application/json
+
+{
+    "fullname": "testing bin njajal",
+    "email": "njajal@mail.com",
+    "phoneNumber": "08978848484",
+    "password": "revafidela"
+
+}
+
+###
+GET http://localhost:3000/api/v1/users/3
+
+
+###
+PUT http://localhost:3000/api/v1/users/update-profile/3
+Content-Type: application/json
+{
+  "fullname": "cishani",
+  "phoneNumber": "0987654321"
+}
