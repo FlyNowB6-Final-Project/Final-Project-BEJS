@@ -371,4 +371,15 @@ module.exports = {
       next(error);
     }
   },
+  googleOauth2: (req, res) => {
+    // let token = jwt.sign({ ...req.user }, JWT_SECRET_KEY);
+    let token = jwt.sign({id: req.user.id, password: null}, JWT_SECRET_KEY);
+
+    res.json({
+      status: true,
+      message: "OK",
+      err: null,
+      data: { user:req.user, token },
+    });
+  },
 };

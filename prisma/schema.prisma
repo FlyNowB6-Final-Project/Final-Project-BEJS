@@ -11,11 +11,11 @@ model User {
   id           Int            @id @default(autoincrement())
   fullname     String
   email        String         @unique
-  phoneNumber  String
-  password     String
+  phoneNumber  String?
+  password     String?
   google_id    String?
   isVerified   Boolean        @default(false)
-  role         String         @default("user")
+  role         String?         @default("user")
   avatar_url   String?
   family_name  String?
   otp          String?
