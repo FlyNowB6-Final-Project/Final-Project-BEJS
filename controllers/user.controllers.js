@@ -283,9 +283,10 @@ module.exports = {
 
       const html = await nodemailer.getHTML("link-reset.ejs", {
         name: user.fullname,
-        url: `${req.protocol}://${req.get(
-          "host"
-        )}/api/v1/users/reset-password?token=${token}`,
+        // url: `${req.protocol}://${req.get(
+        //   "host"
+        // )}/api/v1/users/reset-password?token=${token}`,
+        url: `http://localhost:5173:/lupasandi?token=${token}`
       });
 
       await nodemailer.sendMail(email, "Password Reset Request", html);
