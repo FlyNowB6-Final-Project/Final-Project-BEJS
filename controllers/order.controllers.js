@@ -81,7 +81,7 @@ module.exports = {
           title: "Payment Status: Unpaid",
           message: `Your order with booking code ${
             newOrder.code
-          } is currently unpaid. Please complete your payment  ${newOrder.expired_paid.toISOString()}.`,
+          } is currently unpaid. Please completed your payment  ${newOrder.expired_paid.toISOString()}.`,
           createdAt: new Date().toISOString(),
           user: { connect: { id: req.user.id } },
         },
