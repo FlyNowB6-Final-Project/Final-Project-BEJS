@@ -163,6 +163,7 @@ async function scheduleSeed(prisma) {
             }
         }
 
+        console.log("flight schedule data seeded successfulty");
         console.log('schedule data seeded successfully');
     } catch (error) {
         console.error('Error seeding schedule data:', error);
