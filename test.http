@@ -9,8 +9,8 @@ POST http://localhost:3000/api/v1/ticket/schedule
 Content-Type: application/json
 
 {
-    "city_arrive_id": "",
-    "city_destination_id": "",
+    "city_arrive_id": "surabaya",
+    "city_destination_id": "tangerang",
     "date_departure" : "25-05-2024",
     "seat_class" : 1,
     "passenger" : {
