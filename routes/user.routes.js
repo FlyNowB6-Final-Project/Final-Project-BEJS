@@ -1,6 +1,7 @@
 const router = require("express").Router();
-const { register, login, verifyOtp, resendOtp, forgetPassword, resetPassword, getDetail, updateProfile, auth } = require("../controllers/user.controllers");
+const { register, login, verifyOtp, resendOtp, forgetPassword, resetPassword,getDetail, updateProfile, auth, googleOauth2 } = require("../controllers/user.controllers");
 const restrict = require("../middlewares/auth.middlewares");
+const passport = require("../libs/passport")
 
 // API Auth Users
 router.post("/users/register", register);
@@ -12,5 +13,9 @@ router.put("/users/reset-password", resetPassword);
 router.get('/users/:id', getDetail);
 router.put('/users/update-profile/:id', updateProfile);
 router.get("/users/authenticate", restrict, auth);
+
+// Google OAuth
+router.get("/users/google",passport.authenticate("google", { scope: ["profile", "email"] }));  
+router.get("/users/google/callback",passport.authenticate("google", {failureRedirect: "/users/google",session: false,}),googleOauth2);
 
 module.exports = router;

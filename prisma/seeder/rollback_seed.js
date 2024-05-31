@@ -1,7 +1,9 @@
 async function roolbackSeed(prisma) {
     try {
-        await prisma.flight.deleteMany()
+        await prisma.passenger.deleteMany()
+        await prisma.order.deleteMany()
         await prisma.detailFlight.deleteMany()
+        await prisma.flight.deleteMany()
         await prisma.detailPlane.deleteMany()
         await prisma.plane.deleteMany()
         await prisma.airlines.deleteMany()

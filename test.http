@@ -1,18 +1,16 @@
-GET http://localhost:3000/api/v1/city
+GET http://localhost:3000/api/v1/city?find=p
 
 ###
 GET http://localhost:3000/api/v1/class
 
-###
-GET http://localhost:3000/api/v1/continents
 
 ###
-POST http://localhost:3000/api/v1/schedule
+POST http://localhost:3000/api/v1/ticket/schedule
 Content-Type: application/json
 
 {
-    "city_arrive_id": 2,
-    "city_destination_id": 1,
+    "city_arrive_id": "",
+    "city_destination_id": "",
     "date_departure" : "25-05-2024",
     "seat_class" : 1,
     "passenger" : {
@@ -20,28 +18,4 @@ Content-Type: application/json
         "children" : 1
     }
 
-}
-
-###
-POST http://localhost:3000/api/v1/users/register
-Content-Type: application/json
-
-{
-    "fullname": "testing bin njajal",
-    "email": "njajal@mail.com",
-    "phoneNumber": "08978848484",
-    "password": "revafidela"
-
-}
-
-###
-GET http://localhost:3000/api/v1/users/3
-
-
-###
-PUT http://localhost:3000/api/v1/users/update-profile/3
-Content-Type: application/json
-{
-  "fullname": "cishani",
-  "phoneNumber": "0987654321"
 }

@@ -7,7 +7,8 @@ const get = async (params) => {
             {
                 where: {
                     name: {
-                        contains: params
+                        contains: params,
+                        mode: "insensitive"
                     }
                 },
                 select: {
@@ -17,7 +18,7 @@ const get = async (params) => {
                     airport_name: true,
                     country: {
                         select: {
-                            name : true
+                            name: true
                         }
                     }
                 }
@@ -29,6 +30,32 @@ const get = async (params) => {
     }
 }
 
+const getCityId = async (params) => {
+    try {
+        let id = await prisma.city.findFirst(
+            {
+                where: {
+                    name: {
+                        contains: params,
+                        mode: "insensitive"
+                    }
+                },
+                select: {
+                    id: true
+                }
+
+            }
+        );
+        if (!id) {
+            return 0
+        }
+        return id.id
+    } catch (error) {
+        throw error
+    }
+}
+
 module.exports = {
     get,
+    getCityId
 }
