@@ -4,6 +4,7 @@ const path = require('path');
 const logger = require('morgan');
 const cors = require("cors");
 const routes = require("./routes");
+const task = require("./service/cron_schedule_service");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +20,8 @@ app.use(routes);
 app.get("/", (req, res) => {
   res.send(`<h1 align="center">Hello World</h1>`);
 });
+
+task.start()
 
 // 404 error handler
 app.use((req, res, next) => {
@@ -40,6 +43,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => console.log("Listening on port :", PORT));
-// server.listen(PORT, () => console.log("Listening on port :", PORT));
 
 module.exports = app;

@@ -55,6 +55,24 @@ const getDataFind = async (city_arrive_id, city_destination_id, date_departure) 
 }
 
 
+const createSchedule = async (flightData) => {
+    try {
+        const createdFlight = await prisma.flight.create({ data: flightData });
+
+        const detailData = v.detail_data.map(detail => ({
+            detail_plane_id: detail.detail_plane_id,
+            price: detail.price,
+            flight_id: createdFlight.id,
+        }));
+
+        return { createdFlight, detailData }
+    } catch (error) {
+        return { error }
+    }
+
+}
+
 module.exports = {
-    getDataFind
+    getDataFind,
+    createSchedule
 }
