@@ -12,7 +12,9 @@ module.exports = {
       });
     }
 
-    const { detailFlightId, passengers } = req.body;
+    const detailFlightId = req.params.detailFlightId;
+    const { passengers } = req.body;
+
     // Validate passenger data
     if (!passengers || !passengers.length) {
       return res.status(400).json({
@@ -49,7 +51,7 @@ module.exports = {
       const newOrder = await prisma.order.create({
         data: {
           user: { connect: { id: req.user.id } },
-          detailFlight: { connect: { id: detailFlightId } },
+          detailFlight: { connect: { id: parseInt(detailFlightId) } },
           code: generatedOrderCode(),
           status: "unpaid",
           expired_paid: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
@@ -79,7 +81,7 @@ module.exports = {
           title: "Payment Status: Unpaid",
           message: `Your order with booking code ${
             newOrder.code
-          } is currently unpaid. Please complete your payment  ${newOrder.expired_paid.toISOString()}.`,
+          } is currently unpaid. Please completed your payment  ${newOrder.expired_paid.toISOString()}.`,
           createdAt: new Date().toISOString(),
           user: { connect: { id: req.user.id } },
         },
@@ -99,7 +101,7 @@ module.exports = {
       const orders = await prisma.order.findMany({
         include: {
           passenger: true,
-          detailFlight: true, // Assuming you want to include details about the flight
+          detailFlight: true,
         },
       });
       return res.status(200).json({

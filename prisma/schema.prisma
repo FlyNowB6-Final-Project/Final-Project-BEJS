@@ -11,11 +11,11 @@ model User {
   id           Int            @id @default(autoincrement())
   fullname     String
   email        String         @unique
-  phoneNumber  String
-  password     String
+  phoneNumber  String?
+  password     String?
   google_id    String?
   isVerified   Boolean        @default(false)
-  role         String         @default("user")
+  role         String?         @default("user")
   avatar_url   String?
   family_name  String?
   otp          String?
@@ -100,18 +100,18 @@ model SeatClass {
 
 model Passenger {
   id              Int      @id @default(autoincrement())
-  fullname        String
-  birth_date      String
-  gender          String?
-  age_group       Int
-  expired_date    DateTime
-  family_name     String
-  identity_number String   @unique
-  identity_type   String?
-  issuing_country String
-  nationality     String
-  order_id        Int
   title           String
+  fullname        String
+  family_name     String
+  birth_date      DateTime
+  nationality     String
+  identity_type   String?
+  identity_number String
+  issuing_country String
+  expired_date    DateTime
+  gender          String?
+  age_group       Int?
+  order_id        Int
   order           Order    @relation(fields: [order_id], references: [id])
 
   @@map("passengers")
@@ -156,12 +156,11 @@ model Order {
   code             String       @unique
   detail_flight_id Int
   expired_paid     DateTime
-  payment_id       Int          @unique
   user_id          Int?
   detailFlight     DetailFlight @relation(fields: [detail_flight_id], references: [id])
-  payments         Payment      @relation(fields: [payment_id], references: [id])
   user             User?        @relation(fields: [user_id], references: [id])
   passenger        Passenger[]
+  Payment          Payment[]
 
   @@map("orders")
 }
@@ -171,7 +170,8 @@ model Payment {
   amount         String
   method_payment String
   createdAt      DateTime
-  orders         Order?
+  ordersId       Order    @relation(fields: [order_id], references: [id])
+  order_id       Int
 
   @@map("payments")
 }

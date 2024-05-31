@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY } = process.env;
 const { generatedOTP } = require("../utils/otpGenerator");
 const nodemailer = require("../utils/nodemailer");
-const { formattedDate } = require("../utils/formattedDate");
 
 module.exports = {
   register: async (req, res, next) => {
@@ -283,9 +282,10 @@ module.exports = {
 
       const html = await nodemailer.getHTML("link-reset.ejs", {
         name: user.fullname,
-        url: `${req.protocol}://${req.get(
-          "host"
-        )}/api/v1/users/reset-password?token=${token}`,
+        // url: `${req.protocol}://${req.get(
+        //   "host"
+        // )}/api/v1/users/reset-password?token=${token}`,
+        url: `http://localhost:5173/reset-password?token=${token}`
       });
 
       await nodemailer.sendMail(email, "Password Reset Request", html);
@@ -303,8 +303,6 @@ module.exports = {
     try {
       const { token } = req.query;
       const { password, passwordConfirmation } = req.body;
-      const passwordValidator =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/;
 
       if (!password || !passwordConfirmation) {
         return res.status(400).json({
@@ -319,15 +317,6 @@ module.exports = {
           status: false,
           message:
             "Please ensure that the password and password confirmation match!",
-          data: null,
-        });
-      }
-
-      if (!passwordValidator.test(password)) {
-        return res.status(400).json({
-          status: false,
-          message:
-            "Invalid password format. It must contain at least 1 lowercase, 1 uppercase, 1 digit number, 1 symbol, and be between 8 and 12 characters long.",
           data: null,
         });
       }
@@ -380,5 +369,16 @@ module.exports = {
     } catch (error) {
       next(error);
     }
+  },
+  googleOauth2: (req, res) => {
+    // let token = jwt.sign({ ...req.user }, JWT_SECRET_KEY);
+    let token = jwt.sign({id: req.user.id, password: null}, JWT_SECRET_KEY);
+
+    res.json({
+      status: true,
+      message: "OK",
+      err: null,
+      data: { user:req.user, token },
+    });
   },
 };
