@@ -21,6 +21,7 @@ async function main() {
     await seatClassSeed(prisma)
     await detailPlaneSeed(prisma)
     await scheduleSeed(prisma)
+    
 }
 
 main()
