@@ -30,10 +30,6 @@ const data = {
     ]
 }
 
-
-
-
-
 var task = cron.schedule('0 0 * * *', () => {
     let pushdata = data
     pushdata.date_flight = getNextWeekDate()

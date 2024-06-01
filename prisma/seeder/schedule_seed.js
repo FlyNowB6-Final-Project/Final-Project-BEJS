@@ -138,8 +138,10 @@ const data = [
 
 
 async function scheduleSeed(prisma) {
+    let dateNow = new Date()
+
     try {
-        for (let i = 1; i < 6; i++) {
+        for (let i = 1; i < 9; i++) {
             for (const v of data) {
                 const flightData = {
                     city_destination_id: v.city_destination_id,
@@ -147,7 +149,7 @@ async function scheduleSeed(prisma) {
                     flight_number: v.flight_number + i,
                     time_arrive: new Date(v.time_arrive),
                     time_departure: new Date(v.time_departure),
-                    date_flight: new Date(v.date_flight + i),
+                    date_flight: new Date(`${dateNow.getFullYear()}-${dateNow.getMonth() + 1}-${dateNow.getDate() + i}`),
                     estimation_minute: v.estimation_minute,
                 };
 
