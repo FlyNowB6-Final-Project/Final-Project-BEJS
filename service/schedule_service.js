@@ -54,7 +54,36 @@ const getDataFind = async (city_arrive_id, city_destination_id, date_departure) 
     })
 }
 
+let getDetailFlightById = async (detailFlightId) => {
+    return await prisma.detailFlight.findUnique({
+        where: {
+            id: detailFlightId
+        },
+        select: {
+            detailPlaneId: {
+                select: {
+                    plane: {
+                        select: {
+                            name: true
+                        }
+                    },
+
+                }
+            },
+            flight: {
+                select: {
+                    city_arrive: true,
+                    city_destination: true,
+                    estimation_minute: true
+                }
+            },
+            price: true
+        }
+    })
+}
+
 
 module.exports = {
-    getDataFind
+    getDataFind,
+    getDetailFlightById
 }

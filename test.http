@@ -18,6 +18,10 @@ Content-Type: application/json
     "passenger" : {
         "adult" : 1,
         "children" : 1
-    }
+    }  
 
 }
+
+
+###
+GET http://localhost:3000/api/v1/ticket/schedule/recomendation
