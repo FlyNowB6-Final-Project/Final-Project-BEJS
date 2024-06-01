@@ -413,13 +413,124 @@ paths:
                   data:
                     example: ~
 
+  /users/{id}:
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      tags:
+        - "Users"
+      summary: Get detail user by id
+      description: Get detail user by id
+
+      responses:
+        200:
+          description: Success get detail user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: OK
+                  data:
+                    example: ~
+        404:
+          description: user_id not found!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Users not found
+                  data:
+                    example: ~
+
+    put:
+      tags:
+        - "Users"
+      summary: Update user
+      description: Edit user by id.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                  example: RevaFidelaAdelPantjoro
+                phoneNumber:
+                  type: string
+                  example: 08947583901
+
+      responses:
+        200:
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Update Data Successfully
+                  data:
+                    example:
+
+        400:
+          description: Input must be provided!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: name and phone number are required
+                  data:
+                    example: ~
+
+        404:
+          description: user_id not found!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Users not found
+                  data:
+                    example: ~
+
   /users/authenticate:
     get:
       tags:
         - "Users"
       summary: Authenticate user
       description: Authenticate user with the token.
-
       responses:
         200:
           description: Success
