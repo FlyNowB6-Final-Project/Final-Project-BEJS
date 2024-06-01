@@ -1,3 +1,4 @@
+const orderService = require("../service/order_service")
 const scheduleService = require("../service/schedule_service")
 const { formatTimeToUTC, formatAddZeroFront, convertToIso } = require("../utils/formattedDate")
 
@@ -49,8 +50,38 @@ const findSchedule = async (req, res, next) => {
     })
 }
 
+const mostPurchaseSchedule = async (req, res, next) => {
+    let data = await orderService.getDataForRecomendation()
+
+    data.forEach((countryObject) => {
+        countryObject.order_count = Number(countryObject.order_count);
+    });
+
+    data.sort((a, b) => b.order_count - a.order_count);
+
+    data = data.slice(0, 5)
+
+    for (let item of data) {
+        item.detail = await scheduleService.getDetailFlightById(item.detail_flight_id);
+    }
+
+    if (!data) {
+        return res.status(400).json({
+            status: false,
+            message: "failed retrive schedule data",
+            data: null
+        })
+    }
+    return res.status(200).json({
+        status: true,
+        message: "success retrive schedule data",
+        data
+    })
+}
+
 
 
 module.exports = {
-    findSchedule
+    findSchedule,
+    mostPurchaseSchedule
 }

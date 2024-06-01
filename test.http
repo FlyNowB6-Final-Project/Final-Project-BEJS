@@ -3,19 +3,25 @@ GET http://localhost:3000/api/v1/city?find=p
 ###
 GET http://localhost:3000/api/v1/class
 
+###
+GET http://localhost:3000/api/v1/continents
 
 ###
 POST http://localhost:3000/api/v1/ticket/schedule
 Content-Type: application/json
 
 {
-    "city_arrive_id": "",
-    "city_destination_id": "",
+    "city_arrive_id": "tangerang",
+    "city_destination_id": "denpasar",
     "date_departure" : "25-05-2024",
     "seat_class" : 1,
     "passenger" : {
         "adult" : 1,
         "children" : 1
-    }
+    }  
 
 }
+
+
+###
+GET http://localhost:3000/api/v1/ticket/schedule/recomendation
