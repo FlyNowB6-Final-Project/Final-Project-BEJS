@@ -52,7 +52,7 @@ const findSchedule = async (req, res, next) => {
 
 const mostPurchaseSchedule = async (req, res, next) => {
     let data = await orderService.getDataForRecomendation()
-
+    console.log(data)
     if (!data) {
         return res.status(400).json({
             status: false,

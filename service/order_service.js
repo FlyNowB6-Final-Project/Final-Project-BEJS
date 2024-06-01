@@ -20,11 +20,11 @@ module.exports = {
     getDataForRecomendation: async () => {
         try {
             const result = await prisma.$queryRaw`
-                SELECT detail_flight_id, COUNT(id) as order_count
+                SELECT id, COUNT(id) AS order_count
                 FROM orders
-                GROUP BY detail_flight_id`;
+                GROUP BY detail_flight_id;
+                `;
 
-            console.log(result)
             return result
         } catch (error) {
             throw error
