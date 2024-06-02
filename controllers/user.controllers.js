@@ -5,8 +5,7 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY } = process.env;
 const { generatedOTP } = require("../utils/otpGenerator");
 const nodemailer = require("../utils/nodemailer");
-const { formattedDate } = require("../utils/formattedDate");
-const { name } = require("ejs");
+// const { formattedDate } = require("../utils/formattedDate");
 
 module.exports = {
   register: async (req, res, next) => {
@@ -361,92 +360,6 @@ module.exports = {
       next(error);
     }
   },
-  getDetail: async (req, res, next) => {
-    try {
-
-        let id = req.params.id;
-
-        // cek id users 
-        let existingUsers = await prisma.user.findUnique({
-            where: {
-                id: parseInt(id)
-            },
-        });
-
-        if (!existingUsers) {
-            return res.status(404).json({
-                status: false,
-                message: "Users not found",
-                data: null
-            });
-        }
-
-        let users = await prisma.user.findUnique({
-            where: {
-                id: parseInt(id)
-            },
-        });
-        delete users.password
-
-        res.status(200).json({
-            status: true,
-            message: 'OK',
-            data: users,
-        })
-
-    } catch (err) {
-        next(err);
-    }
-},
-  updateProfile: async (req, res, next) => {
-    try {
-        let id = req.params.id;
-        let {fullname, phoneNumber} = req.body;
-
-        // cek id users
-        let existingUsers = await prisma.user.findUnique({
-            where: {
-                id: parseInt(id)
-            },
-        });
-
-        if (!existingUsers) {
-            return res.status(404).json({
-                status: false,
-                message: "Users not found",
-                data: null
-            });
-        }
-
-        // validasi untuk update data
-        if (!fullname || !phoneNumber) {
-            return res.status(400).json({
-                status: false,
-                message: "name and phone number are required",
-                data: null
-            })
-        }
-        // update data
-        let updateUsers = await prisma.user.update({
-            where: {
-                id: parseInt(id)
-            },
-            data: {
-              fullname,
-              phoneNumber,
-            },
-        })
-        res.status(200).json({
-            status: true,
-            message: 'Update Data Successfully',
-            data: updateUsers
-        })
-
-    } catch (err) {
-        next(err);
-    }
-},
-  
   auth: async (req, res, next) => {
     try {
       return res.status(200).json({

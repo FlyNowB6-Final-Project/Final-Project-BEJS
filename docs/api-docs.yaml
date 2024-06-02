@@ -9,6 +9,8 @@ servers:
 tags:
   - name: "Users"
     description: Operations about User
+  - name: "Profiles"
+    description: Operations About Profile User
   - name: "Ticket"
     description: Operations about Flight Schedule
   - name: "Destination"
@@ -413,118 +415,6 @@ paths:
                   data:
                     example: ~
 
-  /users/{id}:
-    parameters:
-      - schema:
-          type: integer
-        name: id
-        in: path
-        required: true
-    get:
-      tags:
-        - "Users"
-      summary: Get detail user by id
-      description: Get detail user by id
-
-      responses:
-        200:
-          description: Success get detail user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: OK
-                  data:
-                    example: ~
-        404:
-          description: user_id not found!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: Users not found
-                  data:
-                    example: ~
-
-    put:
-      tags:
-        - "Users"
-      summary: Update user
-      description: Edit user by id.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                fullname:
-                  type: string
-                  example: RevaFidelaAdelPantjoro
-                phoneNumber:
-                  type: string
-                  example: 08947583901
-
-      responses:
-        200:
-          description: User updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: Update Data Successfully
-                  data:
-                    example:
-
-        400:
-          description: Input must be provided!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: name and phone number are required
-                  data:
-                    example: ~
-
-        404:
-          description: user_id not found!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: Users not found
-                  data:
-                    example: ~
-
   /users/authenticate:
     get:
       tags:
@@ -639,6 +529,123 @@ paths:
                                   token:
                                     type: integer
                                     example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZnVsbG5hbWUiOiJCYWd1cyBEd2kgUHV0cmEgQWRpeW9ubyIsImZhbWlseV9uYW1lIjpudWxsLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDgyMjI5NzQ5NDYyIiwiYXZhdGFyX3VybCI6bnVsbCwiZ29vZ2xlX2lkIjpudWxsLCJvdHAiOiI2NjI1NDMiLCJvdHBDcmVhdGVkQXQiOiIyMDI0LTA1LTI0VDE2OjEzOjU2LjA4OFoiLCJpc1ZlcmlmaWVkIjp0cnVlLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNjU2NzI1OH0._tBfHd_s_J9UWnblX_tHjnTmmt5b2PdXpvekhjHRXF0
+
+  /profile/{userId}:
+    parameters:
+      - schema:
+          type: integer
+        name: userId
+        in: path
+        required: true
+        description: The ID of the users to retrieve data user
+    get:
+      tags:
+        - "Profiles"
+      summary: Get detail user by id
+      description: Get detail user by id
+
+      responses:
+        200:
+          description: Success get detail user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: OK
+                  data:
+                    example: ~
+        404:
+          description: user_id not found!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Users not found
+                  data:
+                    example: ~
+      security:
+        - bearerAuth: []
+
+    put:
+      tags:
+        - "Profiles"
+      summary: Update user
+      description: Edit user by id.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                  example: RevaFidelaAdelPantjoro
+                phoneNumber:
+                  type: string
+                  example: 08947583901
+
+      responses:
+        200:
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Update Data Successfully
+                  data:
+                    example:
+
+        400:
+          description: Input must be provided!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: name and phone number are required
+                  data:
+                    example: ~
+
+        404:
+          description: user_id not found!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Users not found
+                  data:
+                    example: ~
+      security:
+        - bearerAuth: []
 
   /ticket/schedule:
     post:

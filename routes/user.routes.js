@@ -10,8 +10,6 @@ router.put("/users/verify-otp", verifyOtp);
 router.put("/users/resend-otp", resendOtp);
 router.post("/users/forget-password", forgetPassword);
 router.put("/users/reset-password", resetPassword);
-router.get('/users/:id', getDetail);
-router.put('/users/update-profile/:id', updateProfile);
 router.get("/users/authenticate", restrict, auth);
 
 // Google OAuth

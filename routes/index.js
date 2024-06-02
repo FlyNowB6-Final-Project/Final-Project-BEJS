@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 const User = require("./user.routes")
+const Profile = require("./profile.routes")
 const cityRoute = require("./city.routes")
 const classRoute = require("./seat_class.routes")
 const scheduleRoute = require("./schedule.routes")
@@ -25,6 +26,7 @@ router.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 // API
 router.use("/api/v1", User)
+router.use("/api/v1", Profile)
 router.use("/api/v1", cityRoute)
 router.use("/api/v1", classRoute)
 router.use("/api/v1", scheduleRoute)
