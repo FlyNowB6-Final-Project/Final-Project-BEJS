@@ -100,7 +100,6 @@ module.exports = {
     try {
       const orders = await prisma.order.findMany({
         include: {
-          passenger: true,
           detailFlight: true,
         },
       });

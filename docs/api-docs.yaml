@@ -10,13 +10,17 @@ tags:
   - name: "Users"
     description: Operations about User
   - name: "Profiles"
-    description: Operations About Profile User
+    description: Operations about Profile User
   - name: "Ticket"
     description: Operations about Flight Schedule
+  - name: "Plane"
+    description: Operations about Planes
   - name: "Destination"
     description: Operations about Destination
   - name: "Order"
-    description: Operations about order
+    description: Operations about Order
+  - name: "Payment"
+    description: Operations about Payment
   - name: "Notification"
     description: Operations about Notification
 paths:
@@ -872,7 +876,7 @@ paths:
   /planes:
     get:
       tags:
-        - "Destination"
+        - "Plane"
       summary: Get all planes
       description: Get a list of all planes available in the database.
       responses:
@@ -916,7 +920,7 @@ paths:
   /plane/{planeId}:
     get:
       tags:
-        - "Destination"
+        - "Plane"
       summary: Get detailed plane information
       description: Get detailed information about a specific plane by its ID.
       parameters:
@@ -1047,6 +1051,43 @@ paths:
                         country:
                           type: string
                           example: Indoensia
+  /countries: 
+    get:
+      tags:
+        - "Destination"
+      summary: Get All countries
+      description: Get All countries
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: All country retrieved successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: Indonesia
+                        code:
+                          type: string
+                          example: ID
+                        continent_id:
+                          type: integer
+                          example: 1
   /continents:
     get:
       tags:
