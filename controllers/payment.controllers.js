@@ -30,7 +30,7 @@ module.exports = {
       }
 
       // Check if the order is already paid
-      if (order.status === "PAID") {
+      if (order.status === "Paid") {
         return res.status(400).json({
           status: false,
           message: "Order has already been paid",
