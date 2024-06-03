@@ -3,7 +3,7 @@ const prisma = new PrismaClient()
 
 const get = async (params) => {
     try {
-        return await prisma.continent.findMany(
+        return await prisma.country.findMany(
             {
                 where: {
                     name: {
@@ -15,6 +15,7 @@ const get = async (params) => {
                     id: true,
                     name: true,
                     code: true,
+                    continent_id: true
                 }
             }
         );
@@ -23,9 +24,9 @@ const get = async (params) => {
     }
 }
 
-const getContinentId = async (params) => {
+const getCountryId = async (params) => {
     try {
-        let id = await prisma.continent.findFirst(
+        let id = await prisma.country.findFirst(
             {
                 where: {
                     name: {
@@ -50,5 +51,5 @@ const getContinentId = async (params) => {
 
 module.exports = {
     get,
-    getContinentId
+    getCountryId
 }

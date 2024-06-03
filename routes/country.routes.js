@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
-const { getAll} = require("../controllers/country.controllers");
+const { getAllCountries } = require("../controllers/country.controllers");
 
-router.get("/countries", getAll);
+router.get("/countries", getAllCountries);
 
 module.exports = router;

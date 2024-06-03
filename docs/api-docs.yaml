@@ -1016,7 +1016,6 @@ paths:
           name: find
           schema:
             type: string
-          required: true
       responses:
         "200":
           description: Success
@@ -1057,6 +1056,11 @@ paths:
         - "Destination"
       summary: Get All countries
       description: Get All countries
+      parameters:
+        - in: query
+          name: find
+          schema:
+            type: string
       responses:
         "200":
           description: Success
@@ -1094,6 +1098,11 @@ paths:
         - "Destination"
       summary: Get All continents
       description: Get All continents
+      parameters:
+        - in: query
+          name: find
+          schema:
+            type: string
       responses:
         "200":
           description: Success
