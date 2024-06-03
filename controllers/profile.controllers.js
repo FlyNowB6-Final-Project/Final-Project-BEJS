@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 module.exports = {
     getDetail: async (req, res, next) => {
         try {
-            let userId = req.user.id; // Get user ID from the middleware-added user object
+            let userId = req.user.id;
     
             let user = await prisma.user.findUnique({
                 where: {
@@ -20,7 +20,7 @@ module.exports = {
                 });
             }
     
-            delete user.password; // Remove password from the user object before sending it
+            delete user.password;
     
             res.status(200).json({
                 status: true,
@@ -34,7 +34,7 @@ module.exports = {
     },
     updateProfile: async (req, res, next) => {
         try {
-            let userId = req.user.id; // Get user ID from the middleware-added user object
+            let userId = req.user.id;
             let { fullname, phoneNumber } = req.body;
     
             let existingUser = await prisma.user.findUnique({
