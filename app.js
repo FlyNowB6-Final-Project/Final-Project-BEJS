@@ -17,7 +17,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(routes);
 
 app.get("/", (req, res) => {
-  res.send(`<h1 align="center">Hello World</h1>`);
+  res.send(`<h1 align="center">Welcome To API Flynow Foundation</h1>`);
 });
 
 // 404 error handler
