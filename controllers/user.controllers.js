@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY } = process.env;
 const { generatedOTP } = require("../utils/otpGenerator");
 const nodemailer = require("../utils/nodemailer");
+// const { formattedDate } = require("../utils/formattedDate");
 
 module.exports = {
   register: async (req, res, next) => {

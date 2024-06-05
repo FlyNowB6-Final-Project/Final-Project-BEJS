@@ -1,5 +1,9 @@
-async function roolbackSeed(prisma) {
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
+
+async function roolbackSeed() {
     try {
+        await prisma.payment.deleteMany()
         await prisma.passenger.deleteMany()
         await prisma.order.deleteMany()
         await prisma.detailFlight.deleteMany()

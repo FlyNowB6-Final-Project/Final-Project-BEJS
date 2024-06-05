@@ -6,10 +6,12 @@ const fs = require("fs");
 const path = require("path");
 
 const User = require("./user.routes")
+const Profile = require("./profile.routes")
 const cityRoute = require("./city.routes")
 const classRoute = require("./seat_class.routes")
 const scheduleRoute = require("./schedule.routes")
 const continentRoute = require("./continent.routes")
+const Country = require("./country.routes")
 const Flights = require("./flight.routes")
 const Plane = require("./plane.routes")
 const Payments = require("./payment.routes")
@@ -25,10 +27,12 @@ router.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 // API
 router.use("/api/v1", User)
+router.use("/api/v1", Profile)
 router.use("/api/v1", cityRoute)
 router.use("/api/v1", classRoute)
 router.use("/api/v1", scheduleRoute)
 router.use("/api/v1", Flights)
+router.use("/api/v1", Country)
 router.use("/api/v1", Plane)
 router.use("/api/v1", continentRoute)
 router.use("/api/v1", Payments)
