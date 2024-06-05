@@ -83,7 +83,35 @@ let getDetailFlightById = async (detailFlightId) => {
 }
 
 
+let getDetailFlight = async () => {
+    return await prisma.detailFlight.findMany({
+        select: {
+            detailPlaneId: {
+                select: {
+                    plane: {
+                        select: {
+                            name: true
+                        }
+                    },
+
+                }
+            },
+            flight: {
+                select: {
+                    city_arrive: true,
+                    city_destination: true,
+                    estimation_minute: true
+                }
+            },
+            price: true
+        },
+        take: 5
+    })
+}
+
+
 module.exports = {
     getDataFind,
-    getDetailFlightById
+    getDetailFlightById,
+    getDetailFlight
 }
