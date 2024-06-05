@@ -65,8 +65,7 @@ const mostPurchaseSchedule = async (req, res, next) => {
     for (let item of data) {
         item.detail = await scheduleService.getDetailFlightById(item.detail_flight_id);
     }
-
-    if (!data) {
+    if (data.length == 0) {
         data = await scheduleService.getDetailFlight()
     }
 
