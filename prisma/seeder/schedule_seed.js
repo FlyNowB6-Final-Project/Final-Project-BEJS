@@ -3,9 +3,9 @@ const data = [
         "city_arrive_id": 1,
         "city_destination_id": 2,
         "flight_number": "sup-5707",
-        "time_arrive": "2024-05-24T15:30:00.000Z",
-        "time_departure": "2024-05-24T05:00:00.000Z",
-        "date_flight": "2024-05-",
+        "time_arrive": "2024-06-24T15:30:00.000Z",
+        "time_departure": "2024-06-24T06:00:00.000Z",
+        "date_flight": "2024-06-",
         "estimation_minute": 240,
         "detail_data": [
             {
@@ -30,9 +30,9 @@ const data = [
         "city_arrive_id": 2,
         "city_destination_id": 1,
         "flight_number": "mup-5708",
-        "time_arrive": "2024-05-24T14:45:00.000Z",
-        "time_departure": "2024-05-24T06:00:00.000Z",
-        "date_flight": "2024-05-",
+        "time_arrive": "2024-06-24T14:45:00.000Z",
+        "time_departure": "2024-06-24T06:00:00.000Z",
+        "date_flight": "2024-06-",
         "estimation_minute": 240,
         "detail_data": [
             {
@@ -57,9 +57,9 @@ const data = [
         "city_arrive_id": 3,
         "city_destination_id": 1,
         "flight_number": "qua-5707",
-        "time_arrive": "2024-05-24T16:15:00.000Z",
-        "time_departure": "2024-05-24T07:00:00.000Z",
-        "date_flight": "2024-05-",
+        "time_arrive": "2024-06-24T16:15:00.000Z",
+        "time_departure": "2024-06-24T07:00:00.000Z",
+        "date_flight": "2024-06-",
         "estimation_minute": 240,
         "detail_data": [
             {
@@ -84,9 +84,9 @@ const data = [
         "city_arrive_id": 1,
         "city_destination_id": 3,
         "flight_number": "gua-5708",
-        "time_arrive": "2024-05-24T17:45:00.000Z",
-        "time_departure": "2024-05-24T08:30:00.000Z",
-        "date_flight": "2024-05-",
+        "time_arrive": "2024-06-24T17:45:00.000Z",
+        "time_departure": "2024-06-24T08:30:00.000Z",
+        "date_flight": "2024-06-",
         "estimation_minute": 180,
         "detail_data": [
             {
@@ -111,9 +111,9 @@ const data = [
         "city_arrive_id": 4,
         "city_destination_id": 3,
         "flight_number": "pug-5707",
-        "time_arrive": "2024-05-24T19:30:00.000Z",
-        "time_departure": "2024-05-24T10:00:00.000Z",
-        "date_flight": "2024-05-",
+        "time_arrive": "2024-06-24T19:30:00.000Z",
+        "time_departure": "2024-06-24T10:00:00.000Z",
+        "date_flight": "2024-06-",
         "estimation_minute": 180,
         "detail_data": [
             {
@@ -138,8 +138,10 @@ const data = [
 
 
 async function scheduleSeed(prisma) {
+    let dateNow = new Date()
+
     try {
-        for (let i = 25; i < 30; i++) {
+        for (let i = 1; i < 9; i++) {
             for (const v of data) {
                 const flightData = {
                     city_destination_id: v.city_destination_id,
@@ -147,7 +149,7 @@ async function scheduleSeed(prisma) {
                     flight_number: v.flight_number + i,
                     time_arrive: new Date(v.time_arrive),
                     time_departure: new Date(v.time_departure),
-                    date_flight: new Date(v.date_flight + i),
+                    date_flight: new Date(`${dateNow.getFullYear()}-${dateNow.getMonth() + 1}-${dateNow.getDate() + i}`),
                     estimation_minute: v.estimation_minute,
                 };
 
@@ -162,8 +164,6 @@ async function scheduleSeed(prisma) {
                 await prisma.detailFlight.createMany({ data: detailData });
             }
         }
-
-        console.log("flight schedule data seeded successfulty");
         console.log('schedule data seeded successfully');
     } catch (error) {
         console.error('Error seeding schedule data:', error);

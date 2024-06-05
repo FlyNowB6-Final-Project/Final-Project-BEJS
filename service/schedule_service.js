@@ -110,8 +110,26 @@ let getDetailFlight = async () => {
 }
 
 
+const createSchedule = async (flightData) => {
+    try {
+        const createdFlight = await prisma.flight.create({ data: flightData });
+
+        const detailData = v.detail_data.map(detail => ({
+            detail_plane_id: detail.detail_plane_id,
+            price: detail.price,
+            flight_id: createdFlight.id,
+        }));
+
+        return { createdFlight, detailData }
+    } catch (error) {
+        return { error }
+    }
+
+}
+
 module.exports = {
     getDataFind,
+    createSchedule,
     getDetailFlightById,
     getDetailFlight
 }
