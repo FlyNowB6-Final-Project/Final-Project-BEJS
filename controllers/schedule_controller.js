@@ -51,8 +51,15 @@ const findSchedule = async (req, res, next) => {
 }
 
 const mostPurchaseSchedule = async (req, res, next) => {
-    let data = await orderService.getDataForRecomendation()
-
+    const { continent } = req.query
+    let isContinent = false
+    let data
+    if (continent != null) {
+        isContinent = true
+        data = await orderService.getDataForRecomendationByContinent(Number(continent))
+    } else {
+        data = await orderService.getDataForRecomendation()
+    }
 
     data.forEach((countryObject) => {
         countryObject.order_count = Number(countryObject.order_count);
@@ -65,9 +72,10 @@ const mostPurchaseSchedule = async (req, res, next) => {
     for (let item of data) {
         item.detail = await scheduleService.getDetailFlightById(item.detail_flight_id);
     }
-    if (data.length == 0) {
+    if (data.length == 0 && !isContinent) {
         data = await scheduleService.getDetailFlight()
     }
+
 
     if (!data) {
         return res.status(400).json({
