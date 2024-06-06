@@ -234,50 +234,48 @@ module.exports = {
     }
   },
   confirmMidtrans: async (req, res, next) => {
+    let transactionResult;
     try {
-      const {
-        order_id,
-        transaction_status,
-        gross_amount,
-        payment_type,
-      } = req.body;
+      transactionResult = await prisma.$transaction(async (prisma) => {
+        const {
+          order_id,
+          transaction_id,
+          transaction_status,
+          gross_amount,
+          payment_type,
+        } = req.body;
 
-      if (
-        transaction_status !== "capture" &&
-        transaction_status !== "settlement"
-      ) {
-        if (!res.headersSent) {
-          return res.status(400).json({
-            status: false,
-            message:
-              "Transaction is not successful. Status: " + transaction_status,
-          });
-        }
-      }
-
-      // Validate order ID early
-      if (isNaN(order_id)) {
-        if(!res.headersSent){
-          return res.status(400).json({
-            status: false,
-            message: "Invalid order ID",
-          });
-        }
-      }
-
-      // Start a transaction to handle payment confirmation
-      const transactionResult = await prisma.$transaction(async (prisma) => {
-        const order = await prisma.order.findUnique({
-          where: { id: parseInt(order_id) },
-          include: { user: true }, // Ensure user data is included for notification
-        });
-
-        if (!order) {
-          throw new Error("Order not found");
+        if (
+          transaction_status !== "capture" &&
+          transaction_status !== "settlement"
+        ) {
+          if (!res.headersSent) {
+            return res.status(400).json({
+              status: false,
+              message:
+                "Transaction is not successful. Status: " + transaction_status,
+            });
+          }
         }
 
-        if (order.status === "paid") {
-          throw new Error("Order has already been paid");
+        const parts = order_id.split("-");
+        if (parts.length < 2 || isNaN(parseInt(parts[1]))) {
+          if (!res.headersSent) {
+            return res.status(400).json({
+              status: false,
+              message: "Invalid order ID format",
+            });
+          }
+        }
+        const orderId = parseInt(parts[1]);
+
+        if (isNaN(orderId)) {
+          if (!res.headersSent) {
+            return res.status(400).json({
+              status: false,
+              message: "Invalid order ID",
+            });
+          }
         }
 
         const payment = await prisma.payment.create({
@@ -289,37 +287,53 @@ module.exports = {
           },
         });
 
-        await prisma.order.update({
-          where: { id: parseInt(order_id) },
+        const updatedOrder = await prisma.order.update({
+          where: { id: orderId },
           data: { status: "paid" },
         });
 
+        // Create a notification for the user
         const notification = await prisma.notification.create({
           data: {
-            title: "Payment Status: Paid",
-            message: `Your order with ID ${order_id} is currently Paid. Enjoy your Flight`,
+            title: "Payment Successfully",
+            message: `Payment for booking ID ${orderId} has been successfully.`,
             createdAt: new Date().toISOString(),
-            user_id: order.user_id, // Correctly reference user_id from the order
+            user: { connect: { id: updatedOrder.user_id } },
           },
         });
 
         return {
           newPaymentId: payment.id,
-          updatedOrderId: order.id,
+          updatedOrderId: updatedOrder.id,
           notificationId: notification.id,
         };
       });
 
-      res.status(200).json({
-        status: true,
-        message: "Payment confirmed and booking status updated successfully",
-        data: transactionResult,
-      });
+      if (transactionResult && !res.headersSent) {
+        res.status(200).json({
+          status: true,
+          message: "Payment confirmed and order status updated successfully",
+          data: {
+            newPaymentId: transactionResult.newPaymentId,
+            updatedOrderId: transactionResult.updatedOrderId,
+          },
+        });
+      } else if (!res.headersSent) {
+        res.status(500).json({
+          status: false,
+          message: "Failed to save payment data and update booking status",
+          data: null,
+        });
+      }
     } catch (error) {
-      res.status(500).json({
-        status: false,
-        message: error.message || "An error occurred during the transaction",
-      });
+      console.error("Error during payment confirmation:", error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          status: false,
+          message: "Server error during payment confirmation",
+          data: null,
+        });
+      }
     }
   },
 };
