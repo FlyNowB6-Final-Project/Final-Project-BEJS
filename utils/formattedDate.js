@@ -22,5 +22,13 @@ module.exports = {
       data = '0' + data;
     }
     return data
+  },
+
+  getNextWeekDate: () => {
+    const currentDate = new Date();
+
+    const nextWeekDate = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    return nextWeekDate;
   }
 };
