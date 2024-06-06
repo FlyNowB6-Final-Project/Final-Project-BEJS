@@ -1388,7 +1388,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaymentResponse'
+                allOf:
+                  - $ref: '#/components/schemas/PaymentResponse'
+                  - type: object
+                    properties:
+                      originalPrice:
+                        type: string
+                        example: 2500000
+                      totalPrice:
+                        type: string
+                        example: 2775000
+
         400:
           description: Bad request, missing or invalid fields
           content:
