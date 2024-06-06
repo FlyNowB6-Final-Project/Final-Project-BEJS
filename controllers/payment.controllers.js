@@ -237,18 +237,32 @@ module.exports = {
     try {
       const {
         order_id,
-        transaction_id,
         transaction_status,
         gross_amount,
         payment_type,
       } = req.body;
 
+      if (
+        transaction_status !== "capture" &&
+        transaction_status !== "settlement"
+      ) {
+        if (!res.headersSent) {
+          return res.status(400).json({
+            status: false,
+            message:
+              "Transaction is not successful. Status: " + transaction_status,
+          });
+        }
+      }
+
       // Validate order ID early
       if (isNaN(order_id)) {
-        return res.status(400).json({
-          status: false,
-          message: "Invalid order ID",
-        });
+        if(!res.headersSent){
+          return res.status(400).json({
+            status: false,
+            message: "Invalid order ID",
+          });
+        }
       }
 
       // Start a transaction to handle payment confirmation
@@ -266,17 +280,11 @@ module.exports = {
           throw new Error("Order has already been paid");
         }
 
-        if (!["capture", "settlement"].includes(transaction_status)) {
-          throw new Error(`Transaction is not successful. Status: ${transaction_status}`);
-        }
-
         const payment = await prisma.payment.create({
           data: {
             order_id: parseInt(order_id),
-            transaction_id,
             amount: gross_amount,
             method_payment: payment_type,
-            status: transaction_status,
             createdAt: new Date().toISOString(),
           },
         });
