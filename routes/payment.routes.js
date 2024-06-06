@@ -6,7 +6,8 @@ const restrict = require("../middlewares/auth.middlewares");
 router.post("/payment/:orderId", restrict, create);
 router.get("/payments",restrict,  index);
 router.get("/payment/:id",restrict, show);
-router.post("/payment/midtrans/:orderId",restrict,  midtrans);
+router.post("/payment/midtrans/:orderId",  midtrans);
+// router.post("/payment/midtrans/:orderId",restrict,  midtrans);
 router.post("/payment/confirm-midtrans", confirmMidtrans);
 
 module.exports = router;
