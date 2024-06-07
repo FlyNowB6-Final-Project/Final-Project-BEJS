@@ -137,6 +137,15 @@ module.exports = {
         });
       }
 
+      // Validate only login google
+      if (!user.password && user.google_id) {
+        return res.status(401).json({
+          status: false,
+          message: 'Authentication failed. Please use Google OAuth to log in',
+          data: null,
+        });
+      }
+
       // Check if the provided password is correct
       let isPasswordCorrect = await bcrypt.compare(password, user.password);
       if (!isPasswordCorrect) {
