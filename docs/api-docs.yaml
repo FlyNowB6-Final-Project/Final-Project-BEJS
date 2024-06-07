@@ -1739,6 +1739,9 @@ components:
     DetailFlight:
       type: object
       properties:
+        id:
+          type: integer
+          example: 1
         price:
           type: integer
           example: 500000
