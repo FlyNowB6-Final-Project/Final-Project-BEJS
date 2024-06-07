@@ -19,33 +19,62 @@ const findSchedule = async (req, res, next) => {
     month = formatAddZeroFront(month)
 
     let isoDate = convertToIso({ day, month, year })
+
+    let allData = []
+
     let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate)
-    if (!data) {
+
+    if (!data || data.length === 0) {
         return res.status(400).json({
             status: false,
             message: "failed retrive schedule data",
             data: null
         })
     }
+     data.forEach(async (value) => {
+        let detailFlight = await scheduleService.getDetailFlightByFlightId(value.id)
+        let mergedData = detailFlight.map(flightDetail => ({
+            ...data,
+            ...flightDetail
+        }));
 
-    data.forEach((v) => {
-        v.time_arrive = formatTimeToUTC(v.time_arrive)
-        v.time_departure = formatTimeToUTC(v.time_departure)
-
-        let day = v.date_flight.getUTCDate();
-        let month = v.date_flight.getUTCMonth() + 1;
-        let year = v.date_flight.getUTCFullYear();
-
-        day = day.toString().padStart(2, '0')
-        month = month.toString().padStart(2, '0')
-
-        let fullDate = `${day}-${month}-${year}`;
-        v.date_flight = fullDate
+        console.log(mergedData)
+        allData.push(mergedData)
     })
+
+    // console.log(data)
+    // console.info(allData)
+
+
+
+
+    // detailFlight.forEach((v) => {
+    //     v.time_arrive = formatTimeToUTC(v.time_arrive)
+    //     v.time_departure = formatTimeToUTC(v.time_departure)
+
+    //     let day = v.date_flight.getUTCDate();
+    //     let month = v.date_flight.getUTCMonth() + 1;
+    //     let year = v.date_flight.getUTCFullYear();
+
+    //     day = day.toString().padStart(2, '0')
+    //     month = month.toString().padStart(2, '0')
+
+    //     let fullDate = `${day}-${month}-${year}`;
+    //     v.date_flight = fullDate
+    // })
+
+
+
+    // data.sort((a, b) => {
+    //     let timeA = new Date(`1970-01-01T${a.time_departure}Z`);
+    //     let timeB = new Date(`1970-01-01T${b.time_departure}Z`);
+    //     return timeA - timeB;
+    // });
+
     return res.status(200).json({
         status: true,
         message: "success retrive schedule data",
-        data
+        allData
     })
 }
 
