@@ -33,6 +33,7 @@ const getDataFind = async (city_arrive_id, city_destination_id, date_departure) 
             },
             DetailFlight: {
                 select: {
+                    id: true,
                     price: true,
                     detailPlaneId: {
                         select: {

@@ -17,14 +17,36 @@ module.exports = {
   },
   getDetailFlights: async (req, res, next) => {
     try {
-      const flightId = parseInt(req.params.id);
-      const flight = await prisma.flight.findUnique({
-        where: { id: flightId },
-        include: {
-          city_arrive: true,
-          city_destination: true,
+      const detailFlightId = parseInt(req.params.id);
+      // console.log(detailFlightId)
+      const flight = await prisma.detailFlight.findUnique({
+        where: {
+          id: detailFlightId
         },
-      });
+        select: {
+          id: true,
+          price: true,
+          flight: true,
+          detailPlaneId: {
+            select: {
+              seat_class: true,
+              plane: {
+                select: {
+                  id: true,
+                  name: true,
+                  airline_id: {
+                    select: {
+                      id: true,
+                      name: true,
+                      logo_url: true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      })
 
       if (flight) {
         delete flight.city_arrive_id;
