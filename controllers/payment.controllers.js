@@ -20,12 +20,18 @@ let snap = new midtransClient.Snap({
 module.exports = {
   create: async (req, res, next) => {
     try {
-      const { orderId } = req.params;
+      const orderId = parseInt(req.params.orderId);
+      if (isNaN(orderId)) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid order ID",
+        });
+      }
       const PPN = 11 / 100;
 
       // Retrieve the order along with detailFlight to get the price
       const order = await prisma.order.findUnique({
-        where: { id: parseInt(orderId) },
+        where: { id: orderId },
         include: {
           detailFlight: true,
         },
@@ -50,8 +56,7 @@ module.exports = {
       const baseAmount = order.detailFlight.price;
       const totalAmount = baseAmount + baseAmount * PPN;
 
-      const { method_payment } = req.body;
-      // const { method_payment, cardNumber, cardHolderName, cvv, expiryDate } = req.body;
+      const { method_payment, cardNumber, cardHolderName, cvv, expiryDate } = req.body;
 
       // Validate method_payment input
       if (!method_payment) {
@@ -61,25 +66,25 @@ module.exports = {
         });
       }
 
-      // let responseMessage = "";
-      // if (method_payment === "credit_card") {
-      //   if (!cardNumber || !cardHolderName || !cvv || !expiryDate) {
-      //     return res.status(400).json({
-      //       status: false,
-      //       message: "Credit card details are required",
-      //       data: null,
-      //     });
-      //   }
-      //   responseMessage = "Credit card payment validated successfully";
-      // } else if (method_payment === "bank_account_VA" || method_payment === "gopay") {
-      //   responseMessage = "Payment method validated successfully";
-      // } else {
-      //   return res.status(400).json({
-      //     status: false,
-      //     message: "Invalid payment method",
-      //     data: null,
-      //   });
-      // }
+      let responseMessage = "";
+      if (method_payment === "credit_card") {
+        if (!cardNumber || !cardHolderName || !cvv || !expiryDate) {
+          return res.status(400).json({
+            status: false,
+            message: "Credit card details are required",
+            data: null,
+          });
+        }
+        responseMessage = "Credit card payment validated successfully";
+      } else if (method_payment === "bank_account_VA" || method_payment === "gopay") {
+        responseMessage = "Payment method validated successfully";
+      } else {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid payment method",
+          data: null,
+        });
+      }
 
       // Create payment record
       const payment = await prisma.payment.create({
@@ -87,7 +92,7 @@ module.exports = {
           amount: totalAmount.toString(),
           method_payment,
           createdAt: new Date().toISOString(),
-          order_id: parseInt(orderId),
+          order_id: orderId,
         },
       });
 
@@ -103,7 +108,7 @@ module.exports = {
 
       // Update order status to 'PAID'
       await prisma.order.update({
-        where: { id: parseInt(orderId) },
+        where: { id: orderId },
         data: { status: "paid" },
       });
 
@@ -208,7 +213,7 @@ module.exports = {
       // Define payment parameters for Midtrans API
       let parameter = {
         transaction_details: {
-          order_id: orderId,
+          order_id: `Order with id ${orderId}-${Date.now()}`,
           gross_amount: Math.floor(totalAmount),
         },
         credit_card: {
@@ -222,7 +227,7 @@ module.exports = {
       };
 
       // Charge the transaction using Midtrans API
-      let transaction = await snap.createTransaction(parameter);
+      const transaction = await snap.createTransaction(parameter);
 
       res.status(200).json({
         status: true,
@@ -245,10 +250,13 @@ module.exports = {
           payment_type,
         } = req.body;
 
+        console.log("Transaction Details:", req.body); // Log incoming transaction details
+
         if (
           transaction_status !== "capture" &&
           transaction_status !== "settlement"
         ) {
+          console.log("Transaction not successful:", transaction_status); // Log unsuccessful transaction status
           if (!res.headersSent) {
             return res.status(400).json({
               status: false,
@@ -280,7 +288,7 @@ module.exports = {
 
         const payment = await prisma.payment.create({
           data: {
-            order_id: parseInt(order_id),
+            order_id: orderId,
             amount: gross_amount,
             method_payment: payment_type,
             createdAt: new Date().toISOString(),
