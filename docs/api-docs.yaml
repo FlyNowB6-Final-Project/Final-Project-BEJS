@@ -772,7 +772,123 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DetailedFlightInfo"
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Flight details retrieved successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      price:
+                        type: integer
+                        example: 500000
+                      flight:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          flight_number:
+                            type: string
+                            example: sup-570725
+                          time_arrive:
+                            type: string
+                            format: date-time
+                            example: 1970-01-01T15:30:00.000Z
+                          time_departure:
+                            type: string
+                            format: date-time
+                            example: 1970-01-01T05:00:00.000Z
+                          date_flight:
+                            type: string
+                            format: date-time
+                            example: 2024-05-25T00:00:00.000Z
+                          city_arrive_id:
+                            type: integer
+                            example: 1
+                          city_destination_id:
+                            type: integer
+                            example: 2
+                          estimation_minute:
+                            type: integer
+                            example: 240
+                          city_arrive:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: Tangerang
+                              code:
+                                type: string
+                                example: CGK
+                              airport_name:
+                                type: string
+                                example: Bandara Internasional Soekarno-Hatta
+                              country_id:
+                                type: integer
+                                example: 1
+                          city_destination:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 2
+                              name:
+                                type: string
+                                example: Denpasar
+                              code:
+                                type: string
+                                example: DPS
+                              airport_name:
+                                type: string
+                                example: Bandara Internasional Ngurah Rai
+                              country_id:
+                                type: integer
+                                example: 1
+                      detailPlaneId:
+                        type: object
+                        properties:
+                          seat_class:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              type_class:
+                                type: string
+                                example: Ekonomi
+                          plane:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: Boeing 737-800
+                              airline_id:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    example: 1
+                                  name:
+                                    type: string
+                                    example: Garuda Indonesia
+                                  logo_url:
+                                    type: string
+                                    example: http://example.com/logos/garuda.png
+
         "404":
           description: Flight not found
           content:
@@ -1051,7 +1167,7 @@ paths:
                         country:
                           type: string
                           example: Indoensia
-  /countries: 
+  /countries:
     get:
       tags:
         - "Destination"
@@ -1358,7 +1474,7 @@ paths:
                         example: 2
       security:
         - bearerAuth: []
- 
+
   /payment/{orderId}:
     post:
       tags:
@@ -1389,7 +1505,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/PaymentResponse'
+                  - $ref: "#/components/schemas/PaymentResponse"
                   - type: object
                     properties:
                       originalPrice:
@@ -1442,7 +1558,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PaymentResponse'
+                  $ref: "#/components/schemas/PaymentResponse"
       security:
         - bearerAuth: []
 
@@ -1465,7 +1581,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DetailPaymentResponse'
+                $ref: "#/components/schemas/DetailPaymentResponse"
         404:
           description: Payment not found
           content:
@@ -1481,7 +1597,6 @@ paths:
                     example: "Order not found"
       security:
         - bearerAuth: []
-    
 
 components:
   securitySchemes:
@@ -1777,7 +1892,7 @@ components:
             status:
               type: string
               example: paid
-            code: 
+            code:
               type: string
               example: muhxV5Li
             detail_flight_id:
@@ -1786,7 +1901,7 @@ components:
             expired_date:
               type: string
               example: 2024-06-03T13:28:14.904Z
-            user_id: 
+            user_id:
               type: integer
               example: 1
 

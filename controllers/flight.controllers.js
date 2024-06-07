@@ -26,7 +26,12 @@ module.exports = {
         select: {
           id: true,
           price: true,
-          flight: true,
+          flight: {
+            include: {
+              city_arrive: true,
+              city_destination: true
+            }
+          },
           detailPlaneId: {
             select: {
               seat_class: true,
