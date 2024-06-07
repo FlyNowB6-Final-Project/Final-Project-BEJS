@@ -556,7 +556,7 @@ paths:
                     type: string
                     example: OK
                   data:
-                    example: ~
+                    $ref: "#/components/schemas/UserResponse"
         404:
           description: user_id not found!
           content:
@@ -579,20 +579,26 @@ paths:
       tags:
         - "Profiles"
       summary: Update user
-      description: Edit user by id.
+      description: Edit user by id. Supports updating fullname, phoneNumber, and avatar.
       requestBody:
+        required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
                 fullname:
                   type: string
-                  example: RevaFidelaAdelPantjoro
+                  description: "Full name of the user"
+                  example: "RevaFidelaAdelPantjoro"
                 phoneNumber:
                   type: string
-                  example: 08947583901
-
+                  description: "Phone number of the user"
+                  example: "08947583901"
+                avatar:
+                  type: string
+                  format: binary
+                  description: "Avatar image file max 2MB"
       responses:
         200:
           description: User updated successfully
@@ -606,10 +612,9 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: Update Data Successfully
+                    example: "Update Data Successfully"
                   data:
-                    example:
-
+                    $ref: "#/components/schemas/UserResponse"
         400:
           description: Input must be provided!
           content:
@@ -622,10 +627,9 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: name and phone number are required
+                    example: "At least one field must be updated"
                   data:
                     example: ~
-
         404:
           description: user_id not found!
           content:
@@ -638,7 +642,96 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: Users not found
+                    example: "User not found"
+                  data:
+                    example: ~
+      security:
+        - bearerAuth: []
+
+  /profile/change-password:
+    put:
+      tags:
+        - "Profiles"
+      summary: Change user password
+      description: Allows a user to change their password by providing the old password, new password, and password confirmation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  description: "The current password of the user"
+                  example: "OldPassword123!"
+                newPassword:
+                  type: string
+                  description: "The new password for the user"
+                  example: "NewSecurePassword123!"
+                newPasswordConfirmation:
+                  type: string
+                  description: "Confirmation of the new password"
+                  example: "NewSecurePassword123!"
+      responses:
+        200:
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Your password has been successfully changed"
+                  data:
+                    $ref: "#/components/schemas/UserResponse"
+        400:
+          description: Bad request due to missing fields or invalid password format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "All fields must be provided and passwords must match the required format"
+                  data:
+                    example: ~
+        401:
+          description: Unauthorized if the old password is incorrect
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Incorrect old password"
+                  data:
+                    example: ~
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User not found"
                   data:
                     example: ~
       security:
