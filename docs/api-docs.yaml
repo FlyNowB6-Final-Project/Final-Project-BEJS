@@ -761,7 +761,7 @@ paths:
       description: Get detailed information about a specific flight by its ID.
       parameters:
         - in: path
-          name: flightId
+          name: detailFlightId
           required: true
           schema:
             type: integer

@@ -29,7 +29,6 @@ const findSchedule = async (req, res, next) => {
     }
 
     data.forEach((v) => {
-
         v.time_arrive = formatTimeToUTC(v.time_arrive)
         v.time_departure = formatTimeToUTC(v.time_departure)
 
