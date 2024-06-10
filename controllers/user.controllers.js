@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY } = process.env;
 const { generatedOTP } = require("../utils/otpGenerator");
 const nodemailer = require("../utils/nodemailer");
+const { formatDateToUTC, formatDateTimeToUTC } = require("../utils/formattedDate");
 // const { formattedDate } = require("../utils/formattedDate");
 
 module.exports = {
@@ -91,6 +92,7 @@ module.exports = {
         },
       });
       delete user.password;
+      user.otpCreatedAt = formatDateTimeToUTC(user.otpCreatedAt)
 
       // Send email verification OTP
       const html = await nodemailer.getHTML("otp.ejs", { email, otp });
@@ -167,6 +169,7 @@ module.exports = {
 
       delete user.password;
       const token = jwt.sign(user, JWT_SECRET_KEY);
+      user.otpCreatedAt = formatDateTimeToUTC(user.otpCreatedAt)
 
       return res.status(201).json({
         status: true,
@@ -223,6 +226,7 @@ module.exports = {
         data: { isVerified: true },
       });
       delete user.password;
+      user.otpCreatedAt = formatDateTimeToUTC(user.otpCreatedAt)
 
       res.status(200).json({
         status: true,
@@ -264,6 +268,8 @@ module.exports = {
         where: { email },
         data: { otp, otpCreatedAt },
       });
+
+      resendOtp.otpCreatedAt = formatDateTimeToUTC(resendOtp.otpCreatedAt)
 
       res.status(200).json({
         status: true,
@@ -347,6 +353,7 @@ module.exports = {
           data: { password: hashPassword },
         });
         delete updateUser.password;
+        updateUser.otpCreatedAt = formatDateTimeToUTC(updateUser.otpCreatedAt)
 
         const notification = await prisma.notification.create({
           data: {
@@ -380,13 +387,13 @@ module.exports = {
   },
   googleOauth2: (req, res) => {
     // let token = jwt.sign({ ...req.user }, JWT_SECRET_KEY);
-    let token = jwt.sign({id: req.user.id, password: null}, JWT_SECRET_KEY);
+    let token = jwt.sign({ id: req.user.id, password: null }, JWT_SECRET_KEY);
 
     res.json({
       status: true,
       message: "OK",
       err: null,
-      data: { user:req.user, token },
+      data: { user: req.user, token },
     });
   },
 };

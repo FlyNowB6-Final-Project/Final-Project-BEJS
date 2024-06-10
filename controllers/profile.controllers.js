@@ -24,6 +24,8 @@ module.exports = {
       }
 
       delete user.password;
+      user.otpCreatedAt = formatDateTimeToUTC(user.otpCreatedAt)
+
 
       res.status(200).json({
         status: true,
@@ -94,6 +96,8 @@ module.exports = {
           },
           data: updatedData,
         });
+
+        updatedUser.otpCreatedAt = formatDateTimeToUTC(updatedUser.otpCreatedAt)
 
         res.status(200).json({
           status: true,
@@ -178,6 +182,8 @@ module.exports = {
           user: { connect: { id: userId } },
         },
       });
+
+      updateUser.otpCreatedAt = formatDateTimeToUTC(updateUser.otpCreatedAt)
 
       res.status(200).json({
         status: true,

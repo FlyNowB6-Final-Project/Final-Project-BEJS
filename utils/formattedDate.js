@@ -17,6 +17,15 @@ module.exports = {
     return `${hours}:${minutes}`;
   },
 
+  formatDateToUTC: (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  },
+
+  formatDateTimeToUTC: (dateString) => {
+    return `${this.formatDateToUTC(dateString)} ${this.formatTimeToUTC(dateString)}`
+  },
+
   formatAddZeroFront: (data) => {
     if (data.length < 2) {
       data = '0' + data;
