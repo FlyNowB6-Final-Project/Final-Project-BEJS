@@ -4,6 +4,7 @@ const { formatTimeToUTC, formatAddZeroFront, convertToIso } = require("../utils/
 
 const findSchedule = async (req, res, next) => {
     const { city_arrive_id, city_destination_id, date_departure, seat_class, passenger } = req.body
+    const { page } = req.query
     if (!city_arrive_id || !city_destination_id || !date_departure || !seat_class || !passenger) {
         return res.status(400).json({
             status: false,
@@ -13,6 +14,10 @@ const findSchedule = async (req, res, next) => {
     }
 
 
+
+    let pagination = paginationPage(page)
+
+    // console.log(pagination, page)
     let [day, month, year] = date_departure.split('-');
 
     day = formatAddZeroFront(day)
@@ -24,7 +29,7 @@ const findSchedule = async (req, res, next) => {
 
     let allData = []
 
-    let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate)
+    let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate, pagination.skip, pagination.take)
 
     if (!data || data.length === 0) {
         return res.status(400).json({
@@ -123,6 +128,18 @@ const mostPurchaseSchedule = async (req, res, next) => {
 function calculateTotalPassengers(passenger) {
     const { adult, children } = passenger
     return Number(adult) + Number(children)
+}
+
+function paginationPage(page) {
+    let skip = 0
+    let take = 10
+
+    skip = (page - 1) * take
+    return {
+        skip,
+        take
+    }
+
 }
 
 
