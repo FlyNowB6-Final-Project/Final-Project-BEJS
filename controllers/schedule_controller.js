@@ -80,7 +80,7 @@ const findSchedule = async (req, res, next) => {
     return res.status(200).json({
         status: true,
         message: "success retrive schedule data",
-        allData
+        data: allData
     })
 }
 

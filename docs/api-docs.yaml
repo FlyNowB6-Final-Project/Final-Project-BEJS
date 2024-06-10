@@ -743,6 +743,14 @@ paths:
         - "Ticket"
       summary: Find ticket
       description: Find ticket
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: integer
+            example: 1
       requestBody:
         content:
           application/json:
@@ -1823,46 +1831,62 @@ components:
     FlightSchedule:
       type: object
       properties:
+        flightDetailId:
+          type: integer
+          description: Unique identifier for the flight detail.
+          example: 13
+        price:
+          type: integer
+          description: Price of a single ticket in the smallest currency unit (e.g., cents).
+          example: 300000
+        totalPrice:
+          type: integer
+          description: Total price for all tickets in the smallest currency unit (e.g., cents).
+          example: 600000
+        flightSeat:
+          type: string
+          description: Class of the flight seat.
+          example: Ekonomi
+        flightPlane:
+          type: string
+          description: Model of the airplane.
+          example: Boeing 737-900ER
         id:
           type: integer
-          example: 1
-          description: ID Jadwal Penerbangan
+          description: Unique identifier for the flight schedule.
+          example: 4
         flight_number:
           type: string
-          example: mup-570825
-          description: Nomor Penerbangan
+          description: Flight number.
+          example: gua-570825
         time_arrive:
           type: string
-          example: 14:45
-          description: Waktu Tiba
+          description: Time of arrival in HH:mm format.
+          example: 17:45
         time_departure:
           type: string
-          example: 06:00
-          description: Waktu Berangkat
+          description: Time of departure in HH:mm format.
+          example: 08:30
         date_flight:
           type: string
+          description: Date of the flight in dd-MM-yyyy format.
           example: 25-05-2024
-          description: Tanggal Penerbangan
-        estimation_minute:
-          type: integer
-          example: 240
-          description: Estimasi Menit
         city_arrive_id:
           type: integer
-          example: 2
-          description: ID Kota Tiba
+          description: Unique identifier for the arrival city.
+          example: 1
         city_destination_id:
           type: integer
-          example: 1
-          description: ID Kota Tujuan
+          description: Unique identifier for the destination city.
+          example: 3
+        estimation_minute:
+          type: integer
+          description: Estimated flight duration in minutes.
+          example: 180
         city_arrive:
           $ref: "#/components/schemas/City"
         city_destination:
           $ref: "#/components/schemas/City"
-        DetailFlight:
-          type: array
-          items:
-            $ref: "#/components/schemas/DetailFlight"
 
     BasicFlightInfo:
       type: object
