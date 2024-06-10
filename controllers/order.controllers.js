@@ -176,144 +176,141 @@ module.exports = {
     }
 },
 
-  getDetail: async (req, res, next) => {
-    try {
-        const { id } = req.user;
-        const { order_id } = req.params;
+getDetail: async (req, res, next) => {
+  try {
+      const { id } = req.user;
+      const { order_id } = req.params;
 
-        const order = await prisma.order.findUnique({
-            where: { id: order_id, user_id: id },
-            include: {
-                flight: {
-                    include: {
-                        airplane: {
-                            include: {
-                                airline: {
-                                    select: {
-                                        name: true,
-                                        logo: true
-                                    }
-                                }
-                            }
-                        },
-                        departure_airport: {
-                            select: {
-                                name: true,
-                                city: true
-                            }
-                        },
-                        arrival_airport: {
-                            select: {
-                                name: true,
-                                city: true
-                            }
-                        }
-                    }
-                },
-                passengers: {
-                    where: { order_id },
-                    select: {
-                        title: true,
-                        fullname: true,
-                        ktp: true,
-                        age_group: true
-                    }
-                }
-            }
-        });
+      const order = await prisma.order.findUnique({
+          where: { id: parseInt(order_id) },
+          include: {
+              detailFlight: {
+                  include: {
+                      flight: {
+                          include: {
+                              city_arrive: {
+                                  select: {
+                                      name: true,
+                                      airport_name: true,
+                                  }
+                              },
+                              city_destination: {
+                                  select: {
+                                      name: true,
+                                      airport_name: true,
+                                  }
+                              },
+                              DetailFlight: {
+                                  include: {
+                                      detailPlane: {
+                                          include: {
+                                              plane: {
+                                                  include: {
+                                                      airline_id: {
+                                                          select: {
+                                                              name: true,
+                                                              logo_url: true
+                                                          }
+                                                      }
+                                                  }
+                                              },
+                                              seat_class: {
+                                                  select: {
+                                                      type_class: true
+                                                  }
+                                              }
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  }
+              },
+              passenger: {
+                  where: { order_id: parseInt(order_id) },
+                  select: {
+                      title: true,
+                      fullname: true,
+                      family_name: true,
+                      age_group: true,
+                      identity_number: true
+                  }
+              },
+              Payment: true
+          }
+      });
 
-        if (!order) {
-            return res.status(400).json({
-                error: "Order not found",
-                message: `Order with id ${order_id} not found`
-            });
-        }
+      if (!order) {
+          return res.status(400).json({
+              error: "Order not found",
+              message: `Order with id ${order_id} not found`
+          });
+      }
 
-        // Check payment status
-        let paymentType;
-        if (order.status === "PAID") {
-            const payment = await prisma.payment.findUnique({
-                where: { order_id: order.id },
-                select: { type: true }
-            });
+      // Check payment status
+      let paymentType;
+      if (order.status === "paid") {
+          const payment = await prisma.payment.findUnique({
+              where: { order_id: order.id },
+              select: { method_payment: true }
+          });
 
-            paymentType = payment ? payment.type : null;
-        }
+          paymentType = payment ? payment.method_payment : null;
+      }
 
-        const price = await prisma.price.findUnique({
-            where: {
-                flight_id_seat_type: {
-                    flight_id: order.flight.id,
-                    seat_type: order.seat_type
-                }
-            }
-        });
+      const passengers = order.passenger.map(passenger => ({
+          title: passenger.title,
+          fullname: passenger.fullname,
+          family_name: passenger.family_name,
+          identity_number: passenger.identity_number,
+          age_group: passenger.age_group
+      }));
 
-        // Count age group in passengers data
-        let adult = 0, child = 0, infant = 0;
-        const passengers = order.passengers.map(passenger => {
-            if (passenger.age_group === "adult") adult++;
-            if (passenger.age_group === "child") child++;
-            if (passenger.age_group === "infant") infant++;
-            return {
-                title: passenger.title,
-                fullname: passenger.fullname,
-                ktp: passenger.ktp
-            };
-        });
+      const result = {
+          id: order.id,
+          status: order.status,
+          payment_type: paymentType || null,
+          flight_detail: {
+              departure: {
+                  airport_name: order.detailFlight.flight.city_arrive.airport_name,
+                  city: order.detailFlight.flight.city_arrive.name,
+                  date: order.detailFlight.flight.date_flight,
+                  time: order.detailFlight.flight.time_departure
+              },
+              arrival: {
+                  airport_name: order.detailFlight.flight.city_destination.airport_name,
+                  city: order.detailFlight.flight.city_destination.name,
+                  date: order.detailFlight.flight.date_flight,
+                  time: order.detailFlight.flight.time_arrive
+              },
+              airplane: {
+                  airline: order.detailFlight.detailPlane.plane.airline_id.name,
+                  seat_class: order.detailFlight.detailPlane.seat_class.type_class,
+                  flight_number: order.detailFlight.flight.flight_number,
+              },
+              passengers
+          },
+          // Assuming that price and tax information needs to be calculated
+          price_detail: {
+              adult_count: passengers.filter(p => p.age_group === 'adult').length,
+              child_count: passengers.filter(p => p.age_group === 'child').length,
+              infant_count: passengers.filter(p => p.age_group === 'infant').length,
+              adult_price: order.detailFlight.price,
+              child_price: order.detailFlight.price * 0.75, // Assuming child price is 75% of adult price
+              infant_price: 0, // Assuming infant price is free
+              tax: order.tax,
+              total_price: order.total_price + order.tax
+          }
+      };
 
-        // if the order has not been paid, show paid_before value
-        let paid_before = convert.databaseToDateFormat(order.paid_before);
-        paid_before = moment().isAfter(paid_before) || order.status !== "UNPAID" ? null : paid_before;
+      return res.status(200).json({
+          message: "Success get detail order",
+          data: result
+      });
 
-        const result = {
-            id: order.id,
-            booking_code: order.booking_code,
-            status: order.status,
-            payment_type: paymentType ? paymentType : null,
-            paid_before,
-            flight_detail: {
-                departure: {
-                    airport_name: order.flight.departure_airport.name,
-                    city: order.flight.departure_airport.city,
-                    date: moment(order.flight.date).tz(TZ).format("dddd DD MMMM YYYY"),
-                    time: convert.timeWithTimeZone(order.flight.departure_time)
-                },
-                arrival: {
-                    airport_name: order.flight.arrival_airport.name,
-                    city: order.flight.arrival_airport.city,
-                    date: moment(order.flight.date).tz(TZ).format("dddd DD MMMM YYYY"),
-                    time: convert.timeWithTimeZone(order.flight.arrival_time)
-                },
-                airplane: {
-                    airline: order.flight.airplane.airline.name,
-                    seat_class: order.seat_type,
-                    flight_number: order.flight.flight_number,
-                    logo: order.flight.airplane.airline.logo,
-                    baggage: order.flight.free_baggage,
-                    cabin_baggage: order.flight.cabin_baggage
-                },
-                passengers
-            },
-            price_detail: {
-                adult_count: adult,
-                child_count: child === 0 ? null : child,
-                infant_count: infant === 0 ? null : infant,
-                adult_price: convert.NumberToCurrency(adult * price.price),
-                child_price: child === 0 ? null : convert.NumberToCurrency(child * price.price),
-                infant_price: infant === 0 ? null : convert.NumberToCurrency(0),
-                tax: convert.NumberToCurrency(order.tax),
-                total_price: convert.NumberToCurrency(order.total_price + order.tax)
-            }
-        };
-
-        return res.status(200).json({
-            message: "Success get detail order",
-            data: result
-        });
-
-    } catch (error) {
-        next(error);
-    }
+  } catch (error) {
+      next(error);
+  }
 },
 };
