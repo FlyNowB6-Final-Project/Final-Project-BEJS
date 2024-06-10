@@ -31,19 +31,22 @@ const findSchedule = async (req, res, next) => {
             data: null
         })
     }
-     data.forEach(async (value) => {
-        let detailFlight = await scheduleService.getDetailFlightByFlightId(value.id)
+    for (const value of data) {
+        let detailFlight = await scheduleService.getDetailFlightByFlightId(value.id);
         let mergedData = detailFlight.map(flightDetail => ({
-            ...data,
-            ...flightDetail
+            flightDetailId: flightDetail.id,
+            price: flightDetail.price,
+            flightSeat: flightDetail.detailPlaneId.seat_class.type_class,
+            flightPlane: flightDetail.detailPlaneId.plane.name,
+            ...value,
+            // ...flightDetail
         }));
 
-        console.log(mergedData)
-        allData.push(mergedData)
-    })
+        allData.push(...mergedData);
+    }
 
     // console.log(data)
-    // console.info(allData)
+    console.info(allData)
 
 
 
