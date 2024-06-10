@@ -50,6 +50,7 @@ let getDetailFlightByFlightId = async (flightId) => {
                 select: {
                     seat_class: {
                         select: {
+                            id: true,
                             type_class: true
                         }
                     },

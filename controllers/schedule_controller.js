@@ -20,6 +20,8 @@ const findSchedule = async (req, res, next) => {
 
     let isoDate = convertToIso({ day, month, year })
 
+    totalPasenger = calculateTotalPassengers(passenger)
+
     let allData = []
 
     let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate)
@@ -33,23 +35,19 @@ const findSchedule = async (req, res, next) => {
     }
     for (const value of data) {
         let detailFlight = await scheduleService.getDetailFlightByFlightId(value.id);
-        let mergedData = detailFlight.map(flightDetail => ({
-            flightDetailId: flightDetail.id,
-            price: flightDetail.price,
-            flightSeat: flightDetail.detailPlaneId.seat_class.type_class,
-            flightPlane: flightDetail.detailPlaneId.plane.name,
-            ...value,
-            // ...flightDetail
-        }));
+        let mergedData = detailFlight
+            .filter(flightDetail => flightDetail.detailPlaneId.seat_class.id === seat_class)
+            .map(flightDetail => ({
+                flightDetailId: flightDetail.id,
+                price: flightDetail.price,
+                totalPrice: flightDetail.price * totalPasenger,
+                flightSeat: flightDetail.detailPlaneId.seat_class.type_class,
+                flightPlane: flightDetail.detailPlaneId.plane.name,
+                ...value,
+            }));
 
         allData.push(...mergedData);
     }
-
-    // console.log(data)
-    console.info(allData)
-
-
-
 
     allData.forEach((v) => {
         v.time_arrive = formatTimeToUTC(v.time_arrive)
@@ -122,6 +120,10 @@ const mostPurchaseSchedule = async (req, res, next) => {
     })
 }
 
+function calculateTotalPassengers(passenger) {
+    const { adult, children } = passenger
+    return Number(adult) + Number(children)
+}
 
 
 module.exports = {
