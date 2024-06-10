@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { formatTimeToUTC, formatDateToUTC } = require("../utils/formattedDate");
 const prisma = new PrismaClient();
 
 module.exports = {
@@ -56,10 +57,27 @@ module.exports = {
       if (flight) {
         delete flight.city_arrive_id;
         delete flight.city_destination_id;
+
+        let data = {
+          flightDetailId: flight.id,
+          flightId: flight.flight.id,
+          price: flight.price,
+          totalPrice: 600000,
+          flightSeat: flight.detailPlaneId.seat_class.type_class,
+          flightPlane: flight.detailPlaneId.plane,
+          flight_number: flight.flight.flight_number,
+          time_arrive: formatTimeToUTC(flight.flight.time_arrive),
+          time_departure: formatTimeToUTC(flight.flight.time_departure),
+          date_flight: formatDateToUTC(flight.flight.date_flight),
+          city_arrive: flight.flight.city_arrive,
+          city_destination: flight.flight.city_destination,
+          estimation_minute: flight.flight.estimation_minute,
+        }
+
         res.status(200).json({
           status: true,
           message: "Flight details retrieved successfully",
-          data: flight,
+          data: data,
         });
       } else {
         res.status(404).json({
