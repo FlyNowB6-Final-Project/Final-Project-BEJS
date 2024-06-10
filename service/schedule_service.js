@@ -16,6 +16,9 @@ const getDataFind = async (city_arrive_id, city_destination_id, date_departure) 
             city_destination_id: destination,
             date_flight: date_departure,
         },
+        orderBy: {
+            time_departure: "asc"
+        },
         include: {
             city_arrive: {
                 select: {
@@ -31,22 +34,28 @@ const getDataFind = async (city_arrive_id, city_destination_id, date_departure) 
                     airport_name: true
                 }
             },
-            DetailFlight: {
+        }
+    })
+}
+
+let getDetailFlightByFlightId = async (flightId) => {
+    return await prisma.detailFlight.findMany({
+        where: {
+            flight_id: flightId
+        },
+        select: {
+            id: true,
+            price: true,
+            detailPlaneId: {
                 select: {
-                    id: true,
-                    price: true,
-                    detailPlaneId: {
+                    seat_class: {
                         select: {
-                            seat_class: {
-                                select: {
-                                    type_class: true
-                                }
-                            },
-                            plane: {
-                                select: {
-                                    name: true
-                                }
-                            }
+                            type_class: true
+                        }
+                    },
+                    plane: {
+                        select: {
+                            name: true
                         }
                     }
                 }
@@ -132,5 +141,6 @@ module.exports = {
     getDataFind,
     createSchedule,
     getDetailFlightById,
-    getDetailFlight
+    getDetailFlight,
+    getDetailFlightByFlightId
 }
