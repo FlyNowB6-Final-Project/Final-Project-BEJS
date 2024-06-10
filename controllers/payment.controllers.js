@@ -56,7 +56,8 @@ module.exports = {
       const baseAmount = order.detailFlight.price;
       const totalAmount = baseAmount + baseAmount * PPN;
 
-      const { method_payment, cardNumber, cardHolderName, cvv, expiryDate } = req.body;
+      const { method_payment, cardNumber, cardHolderName, cvv, expiryDate } =
+        req.body;
 
       // Validate method_payment input
       if (!method_payment) {
@@ -76,7 +77,10 @@ module.exports = {
           });
         }
         responseMessage = "Credit card payment validated successfully";
-      } else if (method_payment === "bank_account_VA" || method_payment === "gopay") {
+      } else if (
+        method_payment === "bank_account_VA" ||
+        method_payment === "gopay"
+      ) {
         responseMessage = "Payment method validated successfully";
       } else {
         return res.status(400).json({
@@ -241,16 +245,14 @@ module.exports = {
   confirmMidtrans: async (req, res, next) => {
     let transactionResult;
     try {
+      const {
+        order_id,
+        transaction_id,
+        transaction_status,
+        gross_amount,
+        payment_type,
+      } = req.body;
       transactionResult = await prisma.$transaction(async (prisma) => {
-        const {
-          order_id,
-          transaction_id,
-          transaction_status,
-          gross_amount,
-          payment_type,
-        } = req.body;
-
-        console.log("Transaction Details:", req.body); // Log incoming transaction details
 
         if (
           transaction_status !== "capture" &&
@@ -267,7 +269,8 @@ module.exports = {
         }
 
         const parts = order_id.split("-");
-        if (parts.length < 2 || isNaN(parseInt(parts[1]))) {
+
+        if (parts.length < 2) {
           if (!res.headersSent) {
             return res.status(400).json({
               status: false,
@@ -275,7 +278,7 @@ module.exports = {
             });
           }
         }
-        const orderId = parseInt(parts[1]);
+        const orderId = parts[0].split(" ")[3];
 
         if (isNaN(orderId)) {
           if (!res.headersSent) {
@@ -288,7 +291,7 @@ module.exports = {
 
         const payment = await prisma.payment.create({
           data: {
-            order_id: orderId,
+            order_id: Number(orderId),
             amount: gross_amount,
             method_payment: payment_type,
             createdAt: new Date().toISOString(),
@@ -296,7 +299,7 @@ module.exports = {
         });
 
         const updatedOrder = await prisma.order.update({
-          where: { id: orderId },
+          where: { id: Number(orderId) },
           data: { status: "paid" },
         });
 
@@ -338,7 +341,8 @@ module.exports = {
       if (!res.headersSent) {
         res.status(500).json({
           status: false,
-          message: "Server error during payment confirmation",
+          // message: "Server error during payment confirmation",
+          message: error.message,
           data: null,
         });
       }
