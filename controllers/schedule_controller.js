@@ -4,7 +4,7 @@ const { formatTimeToUTC, formatAddZeroFront, convertToIso } = require("../utils/
 
 const findSchedule = async (req, res, next) => {
     const { city_arrive_id, city_destination_id, date_departure, seat_class, passenger } = req.body
-    const { page } = req.query
+    let { page } = req.query
     if (!city_arrive_id || !city_destination_id || !date_departure || !seat_class || !passenger) {
         return res.status(400).json({
             status: false,
@@ -15,7 +15,7 @@ const findSchedule = async (req, res, next) => {
 
 
 
-    let pagination = paginationPage(page)
+    let pagination = paginationPage(page ?? 1)
 
     // console.log(pagination, page)
     let [day, month, year] = date_departure.split('-');
