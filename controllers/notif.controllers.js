@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { convertToIso } = require('../utils/formattedDate');
+const { convertToIso, formatDateTimeToUTC } = require('../utils/formattedDate');
 
 module.exports = {
   index: async (req, res, next) => {
@@ -8,6 +8,10 @@ module.exports = {
       const notifications = await prisma.notification.findMany({
         where: { user_id: Number(req.user.id) },
       });
+
+      notifications.forEach(value => {
+        value.createdAt = formatDateTimeToUTC(value.createdAt)
+      })
 
       res.status(200).json({
         status: true,
@@ -26,6 +30,8 @@ module.exports = {
           isRead: true,
         },
       });
+
+      
 
       res.status(200).json({
         status: true,
@@ -71,7 +77,9 @@ module.exports = {
           });
         })
       );
-
+      newNotification.forEach(value => {
+        value.createdAt = formatDateTimeToUTC(value.createdAt)
+      })
       res.status(201).json({
         status: true,
         message: "Notifications created for all users",
