@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 const imageKit = require("../libs/imagekit");
 const multer = require("../libs/multer").image;
 const bcrypt = require("bcrypt");
+const { formatDateTimeToUTC } = require("../utils/formattedDate");
 
 module.exports = {
   getDetail: async (req, res, next) => {
