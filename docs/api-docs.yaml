@@ -1498,6 +1498,12 @@ paths:
         - "Notification"
       summary: Get All notification
       description: Get All notification
+      parameters:
+        - in: query
+          name: find
+          schema:
+            type: string
+          description: Search notification by title
       responses:
         "200":
           description: Success
@@ -1853,7 +1859,7 @@ paths:
       description: Retrieve details of a specific payment by payment ID.
       parameters:
         - in: path
-          name: id
+          name: paymentId
           required: true
           schema:
             type: integer

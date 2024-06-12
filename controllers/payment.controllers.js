@@ -149,8 +149,7 @@ module.exports = {
   },
   show: async (req, res, next) => {
     try {
-      const { id } = req.params;
-      const paymentId = parseInt(id);
+      const paymentId = parseInt(req.params.id);;
       if (isNaN(paymentId)) {
         return res.status(400).json({
           status: false,
