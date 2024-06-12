@@ -25,7 +25,6 @@ module.exports = {
   formatTimeToUTC,
   formatDateToUTC,
 
-
   formatDateTimeToUTC: (dateString) => {
     return `${formatDateToUTC(dateString)} ${formatTimeToUTC(dateString)}`
   },
