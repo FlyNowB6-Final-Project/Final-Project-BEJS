@@ -1,5 +1,5 @@
 
-const jsonResponse = (res, code = 200, { status = true, message = "Success", data = null, page = null, perPage = null, pageCount = null, totalCount = null }) => {
+const jsonResponse = (res, code = 200, { status = true, message = "Success", data = null, page, perPage, pageCount, totalCount }) => {
     return res.status(code).json({
         status,
         message,

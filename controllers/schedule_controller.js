@@ -16,7 +16,7 @@ const findSchedule = async (req, res, next) => {
     let allData = []
 
     let isoDate = convertToIso({ day, month, year })
-    let paginat = pagination.paginationPage(page)
+    let paginat = pagination.paginationPage(Number(page))
     let totalPasenger = calculateTotalPassengers(passenger)
 
     let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate, paginat.skip, paginat.take)
@@ -67,7 +67,7 @@ const findSchedule = async (req, res, next) => {
     return jsonResponse(res, 200, {
         message: "success retrive schedule data",
         data: allData,
-        page: page ?? 1,
+        page: Number(page) ?? 1,
         perPage: allData.length,
         pageCount: totalPage,
         totalCount: totalData,
