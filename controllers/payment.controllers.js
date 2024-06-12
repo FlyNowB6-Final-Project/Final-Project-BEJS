@@ -150,8 +150,15 @@ module.exports = {
   show: async (req, res, next) => {
     try {
       const { id } = req.params;
+      const paymentId = parseInt(id);
+      if (isNaN(paymentId)) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid payment ID",
+        });
+      }
       const payment = await prisma.payment.findUnique({
-        where: { id: parseInt(id) },
+        where: { id: paymentId },
         include: {
           ordersId: true,
         },
@@ -164,9 +171,7 @@ module.exports = {
         });
       }
 
-      payment.forEach(value => {
-        value.createdAt = formatDateTimeToUTC(value.createdAt)
-      })
+      payment.createdAt = formatDateTimeToUTC(payment.createdAt);
 
       res.status(200).json({
         status: true,
