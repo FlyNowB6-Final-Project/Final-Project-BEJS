@@ -7,6 +7,7 @@ const {
   PAYMENT_PROD_CLIENT_KEY,
   PAYMENT_PROD_SERVER_KEY,
 } = process.env;
+const { convertToIso, formatDateTimeToUTC } = require('../utils/formattedDate');
 
 // Setup Midtrans client
 const isProduction = false;
@@ -133,6 +134,10 @@ module.exports = {
     try {
       const payments = await prisma.payment.findMany();
 
+      payments.forEach(value => {
+        value.createdAt = formatDateTimeToUTC(value.createdAt)
+      })
+
       res.status(200).json({
         status: true,
         message: "All payments retrieved successfully",
@@ -158,6 +163,10 @@ module.exports = {
           message: "Payment not found",
         });
       }
+
+      payment.forEach(value => {
+        value.createdAt = formatDateTimeToUTC(value.createdAt)
+      })
 
       res.status(200).json({
         status: true,
@@ -303,11 +312,16 @@ module.exports = {
           data: { status: "paid" },
         });
 
+        // Retrieve the order to get the code
+        const order = await prisma.order.findUnique({
+          where: { id: Number(orderId) }
+        });
+
         // Create a notification for the user
         const notification = await prisma.notification.create({
           data: {
             title: "Payment Successfully",
-            message: `Payment for booking ID ${orderId} has been successfully.`,
+            message: `Payment for order code ${order.code} has been successfully.`,
             createdAt: new Date().toISOString(),
             user: { connect: { id: updatedOrder.user_id } },
           },
