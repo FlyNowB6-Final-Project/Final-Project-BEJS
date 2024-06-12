@@ -1,43 +1,32 @@
 const orderService = require("../service/order_service")
 const scheduleService = require("../service/schedule_service")
 const { formatTimeToUTC, formatAddZeroFront, convertToIso } = require("../utils/formattedDate")
-const paginationPage = require("../utils/pagination")
+const pagination = require("../utils/pagination")
+const jsonResponse = require("../utils/response")
 
 const findSchedule = async (req, res, next) => {
     const { city_arrive_id, city_destination_id, date_departure, seat_class, passenger } = req.body
-    let { page } = req.query
+    const { page } = req.query
     if (!city_arrive_id || !city_destination_id || !date_departure || !seat_class || !passenger) {
-        return res.status(400).json({
-            status: false,
-            message: "field cant empty",
-            data: null
-        })
+        return jsonResponse(res, 400, { status: false, message: "faield cant empty", })
     }
-
-
-
-    let pagination = paginationPage(page)
-
     let [day, month, year] = date_departure.split('-');
-
     day = formatAddZeroFront(day)
     month = formatAddZeroFront(month)
-
-    let isoDate = convertToIso({ day, month, year })
-
-    totalPasenger = calculateTotalPassengers(passenger)
-
     let allData = []
 
-    let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate, pagination.skip, pagination.take)
+    let isoDate = convertToIso({ day, month, year })
+    let paginat = pagination.paginationPage(page)
+    let totalPasenger = calculateTotalPassengers(passenger)
+
+    let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate, paginat.skip, paginat.take)
+    let totalData = await scheduleService.countDataFind(city_arrive_id, city_destination_id, isoDate,)
+    let totalPage = pagination.paginationPageTotal(totalData)
 
     if (!data || data.length === 0) {
-        return res.status(400).json({
-            status: false,
-            message: "failed retrive schedule data",
-            data: null
-        })
+        return jsonResponse(res, 400, { status: false, message: "failed retrive schedule data", })
     }
+
     for (const value of data) {
         let detailFlight = await scheduleService.getDetailFlightByFlightId(value.id);
         let mergedData = detailFlight
@@ -69,18 +58,19 @@ const findSchedule = async (req, res, next) => {
         v.date_flight = fullDate
     })
 
-
-
     allData.sort((a, b) => {
         let timeA = new Date(`1970-01-01T${a.time_departure}Z`);
         let timeB = new Date(`1970-01-01T${b.time_departure}Z`);
         return timeA - timeB;
     });
 
-    return res.status(200).json({
-        status: true,
+    return jsonResponse(res, 200, {
         message: "success retrive schedule data",
-        data: allData
+        data: allData,
+        page: page ?? 1,
+        perPage: allData.length,
+        pageCount: totalPage,
+        totalCount: totalData,
     })
 }
 
@@ -112,13 +102,13 @@ const mostPurchaseSchedule = async (req, res, next) => {
 
 
     if (!data) {
-        return res.status(400).json({
+        return jsonResponse(res, 400, {
             status: false,
             message: "failed retrive schedule data",
-            data: null
         })
     }
-    return res.status(200).json({
+
+    return jsonResponse(res, 200, {
         status: true,
         message: "success retrive schedule data",
         data

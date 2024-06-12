@@ -39,6 +39,22 @@ const getDataFind = async (city_arrive_id, city_destination_id, date_departure, 
         }
     })
 }
+const countDataFind = async (city_arrive_id, city_destination_id, date_departure) => {
+    let arrive = await getCityId(city_arrive_id)
+    let destination = await getCityId(city_destination_id)
+
+    if (!arrive || !destination) {
+        return null
+    }
+
+    return await prisma.flight.count({
+        where: {
+            city_arrive_id: arrive,
+            city_destination_id: destination,
+            date_flight: date_departure,
+        }
+    })
+}
 
 let getDetailFlightByFlightId = async (flightId) => {
     return await prisma.detailFlight.findMany({
@@ -142,6 +158,7 @@ const createSchedule = async (flightData) => {
 
 module.exports = {
     getDataFind,
+    countDataFind,
     createSchedule,
     getDetailFlightById,
     getDetailFlight,

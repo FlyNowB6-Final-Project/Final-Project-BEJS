@@ -9,5 +9,16 @@ function paginationPage(page = 1) {
     }
 }
 
+function paginationPageTotal(totalData, dataPerPage = 10) {
+    if (dataPerPage <= 0) {
+        throw new Error("dataPerPage must be greater than 0");
+    }
 
-module.exports = paginationPage
+    return Math.ceil(totalData / dataPerPage);
+}
+
+
+module.exports = {
+    paginationPage,
+    paginationPageTotal
+}
