@@ -22,7 +22,7 @@ const generateFileFilter = (mimetypes, maxSize) => {
 
 module.exports = {
   image: multer({
-    fileFilter: generateFileFilter(["image/png", "image/jpg", "image/jpeg"], 1),
+    fileFilter: generateFileFilter(["image/png", "image/jpg", "image/jpeg"], 2), // Set max size to 2MB
     onError: (err, next) => {
       next(err);
     },

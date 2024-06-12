@@ -1,3 +1,15 @@
+const formatTimeToUTC = (dateString) => {
+  const date = new Date(dateString);
+  const hours = date.getUTCHours().toString().padStart(2, '0');
+  const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+const formatDateToUTC = (dateString) => {
+  const date = new Date(dateString);
+  return date.toISOString().split('T')[0];
+}
+
 module.exports = {
   formattedDate: (timestamp) => {
     let date = new Date(timestamp);
@@ -10,11 +22,12 @@ module.exports = {
     return `${year}-${month}-${day}T${hour}:${minutes}:${second}.000Z`
   },
 
-  formatTimeToUTC: (dateString) => {
-    const date = new Date(dateString);
-    const hours = date.getUTCHours().toString().padStart(2, '0');
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
+  formatTimeToUTC,
+  formatDateToUTC,
+
+
+  formatDateTimeToUTC: (dateString) => {
+    return `${formatDateToUTC(dateString)} ${formatTimeToUTC(dateString)}`
   },
 
   formatAddZeroFront: (data) => {
@@ -22,5 +35,13 @@ module.exports = {
       data = '0' + data;
     }
     return data
+  },
+
+  getNextWeekDate: () => {
+    const currentDate = new Date();
+
+    const nextWeekDate = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    return nextWeekDate;
   }
 };

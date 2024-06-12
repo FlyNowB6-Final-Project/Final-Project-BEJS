@@ -2,7 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const { getCityId } = require("./city_service");
 const prisma = new PrismaClient()
 
-const getDataFind = async (city_arrive_id, city_destination_id, date_departure) => {
+const getDataFind = async (city_arrive_id, city_destination_id, date_departure, skip, take) => {
     let arrive = await getCityId(city_arrive_id)
     let destination = await getCityId(city_destination_id)
 
@@ -15,6 +15,11 @@ const getDataFind = async (city_arrive_id, city_destination_id, date_departure) 
             city_arrive_id: arrive,
             city_destination_id: destination,
             date_flight: date_departure,
+        },
+        skip,
+        take,
+        orderBy: {
+            time_departure: "asc"
         },
         include: {
             city_arrive: {
@@ -31,21 +36,29 @@ const getDataFind = async (city_arrive_id, city_destination_id, date_departure) 
                     airport_name: true
                 }
             },
-            DetailFlight: {
+        }
+    })
+}
+
+let getDetailFlightByFlightId = async (flightId) => {
+    return await prisma.detailFlight.findMany({
+        where: {
+            flight_id: flightId
+        },
+        select: {
+            id: true,
+            price: true,
+            detailPlaneId: {
                 select: {
-                    price: true,
-                    detailPlaneId: {
+                    seat_class: {
                         select: {
-                            seat_class: {
-                                select: {
-                                    type_class: true
-                                }
-                            },
-                            plane: {
-                                select: {
-                                    name: true
-                                }
-                            }
+                            id: true,
+                            type_class: true
+                        }
+                    },
+                    plane: {
+                        select: {
+                            name: true
                         }
                     }
                 }
@@ -83,7 +96,54 @@ let getDetailFlightById = async (detailFlightId) => {
 }
 
 
+let getDetailFlight = async () => {
+    return await prisma.detailFlight.findMany({
+        select: {
+            detailPlaneId: {
+                select: {
+                    plane: {
+                        select: {
+                            name: true
+                        }
+                    },
+
+                }
+            },
+            flight: {
+                select: {
+                    city_arrive: true,
+                    city_destination: true,
+                    estimation_minute: true
+                }
+            },
+            price: true
+        },
+        take: 5
+    })
+}
+
+
+const createSchedule = async (flightData) => {
+    try {
+        const createdFlight = await prisma.flight.create({ data: flightData });
+
+        const detailData = v.detail_data.map(detail => ({
+            detail_plane_id: detail.detail_plane_id,
+            price: detail.price,
+            flight_id: createdFlight.id,
+        }));
+
+        return { createdFlight, detailData }
+    } catch (error) {
+        return { error }
+    }
+
+}
+
 module.exports = {
     getDataFind,
-    getDetailFlightById
+    createSchedule,
+    getDetailFlightById,
+    getDetailFlight,
+    getDetailFlightByFlightId
 }
