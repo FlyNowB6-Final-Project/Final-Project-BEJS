@@ -1,6 +1,7 @@
 const orderService = require("../service/order_service")
 const scheduleService = require("../service/schedule_service")
 const { formatTimeToUTC, formatAddZeroFront, convertToIso } = require("../utils/formattedDate")
+const paginationPage = require("../utils/pagination")
 
 const findSchedule = async (req, res, next) => {
     const { city_arrive_id, city_destination_id, date_departure, seat_class, passenger } = req.body
@@ -15,9 +16,8 @@ const findSchedule = async (req, res, next) => {
 
 
 
-    let pagination = paginationPage(page ?? 1)
+    let pagination = paginationPage(page)
 
-    // console.log(pagination, page)
     let [day, month, year] = date_departure.split('-');
 
     day = formatAddZeroFront(day)
@@ -130,17 +130,7 @@ function calculateTotalPassengers(passenger) {
     return Number(adult) + Number(children)
 }
 
-function paginationPage(page) {
-    let skip = 0
-    let take = 10
 
-    skip = (page - 1) * take
-    return {
-        skip,
-        take
-    }
-
-}
 
 
 module.exports = {
