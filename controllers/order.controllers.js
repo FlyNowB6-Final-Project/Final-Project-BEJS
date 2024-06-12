@@ -150,7 +150,6 @@ module.exports = {
             }
             return {
                 id: order.id,
-                date: order.detailFlight.flight.date_flight,
                 status: status,
                 booking_code: order.code,
                 seat_class: order.detailFlight.detailPlane.seat_class.type_class,

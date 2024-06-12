@@ -1179,17 +1179,61 @@ paths:
     get:
       tags:
         - "Order"
-      summary: Retrieve all orders
-      description: Retrieve a list of all orders made by authenticated users.
+      summary: Get all order 
+      description: Get all order
+
       responses:
         200:
-          description: Successfully retrieved all orders
+          description: Get all orders successfully
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/OrderResponse"
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Get all orders successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        status:
+                          type: string
+                          example: "paid"
+                        booking_code:
+                          type: string
+                          example: "oq743ue8023"
+                        seat_class:
+                          type: string
+                          example: "Ekonomi"
+                        expired_paid:
+                          type: string
+                          example: "2030-01-01"
+                        price:
+                          type: integer
+                          example: 9000000
+                        departure_city:
+                          type: string
+                          example: "Tangerang"
+                        arrival_city:
+                          type: string
+                          example: "Tangerang"
+                        departure_time:
+                          type: string
+                          example: "06:00"    
+                        arrival_time:
+                          type: string
+                          example: "14:45"
+                        duration:
+                          type: string
+                          example: "240"
       security:
         - bearerAuth: []
 
