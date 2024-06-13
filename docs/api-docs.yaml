@@ -1399,6 +1399,56 @@ paths:
       security:
         - bearerAuth: []
 
+  /ticket/QR:
+    post:
+      tags:
+        - "Order"
+      summary: Create a QR-Code for order ticket
+      description: Create a QR-Code for order ticket
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                qr_data:
+                  type: string
+                  example: https://express-development-3576.up.railway.app/api-docs/#/
+      responses:
+        201:
+          description: Generate QR-Code Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Generate QR-Code Successfully"
+                  data:
+                    type: string
+                    example: https://ik.imagekit.io/flynowb6/1718302498610_uIm9OyuLP.png
+        400:
+          description: qr_data must be required and must be a string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "qr_data must be required and must be a string"
+                  data:
+                    example: null
+      security:
+        - bearerAuth: []
+
   /ticket/orders:
     get:
       tags:
