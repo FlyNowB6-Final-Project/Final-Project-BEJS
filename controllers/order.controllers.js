@@ -149,6 +149,7 @@ module.exports = {
                   time_arrive: true,
                   time_departure: true,
                   date_flight: true,
+                  estimation_minute: true,
                   city_arrive: {
                     select: {
                       id: true,
