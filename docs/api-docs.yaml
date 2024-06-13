@@ -1405,7 +1405,12 @@ paths:
         - "Order"
       summary: Get all order 
       description: Get all order
-
+      parameters:
+        - in: query
+          name: find
+          schema:
+            type: string
+          description: Search order by booking code
       responses:
         200:
           description: Get all orders successfully
