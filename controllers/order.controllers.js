@@ -103,9 +103,10 @@ module.exports = {
   getAll: async (req, res, next) => {
     try {
       const { id } = req.user;
+      const { find } = req.query;
 
       const orders = await prisma.order.findMany({
-        where: { user_id: id },
+        where: { user_id: id, code: { contains: find }, },
         select: {
           id: true,
           status: true,
@@ -114,6 +115,10 @@ module.exports = {
           expired_paid: true,
         },
       });
+
+      orders.forEach(value => {
+        value.expired_paid = formatDateTimeToUTC(value.expired_paid)
+      })
 
       return res.status(200).json({
         status: true,
@@ -192,6 +197,8 @@ module.exports = {
 
         order.detailFlight.detailPlane = detailPlane;
       }
+
+      order.expired_paid = formatDateTimeToUTC(order.expired_paid);
 
       return res.status(200).json({
         status: true,
