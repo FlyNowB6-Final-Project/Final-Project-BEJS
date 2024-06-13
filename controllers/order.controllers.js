@@ -2,6 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { generatedOrderCode } = require("../utils/orderCodeGenerator");
 const { formatDateTimeToUTC } = require("../utils/formattedDate");
+const imageKit = require("../libs/imagekit")
+const qr = require("qr-image");
 
 module.exports = {
   order: async (req, res, next) => {
@@ -204,6 +206,42 @@ module.exports = {
         status: true,
         message: "Get detail orders successfully",
         data: order,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  generateQR: async (req, res, next) => {
+    try {
+      let { qr_data } = req.body;
+
+      if (!qr_data) {
+        return res.status(400).json({
+          status: false,
+          message: "qr_data is required",
+          data: null,
+        });
+      }
+
+      if (typeof qr_data !== 'string') {
+        return res.status(400).json({
+          status: false,
+          message: "qr_data must be a string",
+          data: null,
+        });
+      }
+
+      let qrCode = qr.imageSync(qr_data, { type: "png" });
+
+      let { url } = await imageKit.upload({
+        fileName: Date.now() + ".png",
+        file: qrCode.toString("base64"),
+      });
+
+      return res.status(201).json({
+        status: true,
+        message: "Generate QR-Code Successfully",
+        data: url,
       });
     } catch (error) {
       next(error);
