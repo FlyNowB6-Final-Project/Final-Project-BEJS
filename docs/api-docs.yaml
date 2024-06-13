@@ -1373,7 +1373,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OrderResponse"
+                allOf:
+                  - $ref: "#/components/schemas/OrderResponse"
+                  - type: object
+                    properties:
+                      passenger:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Passenger"
         400:
           description: Bad request, missing or invalid fields
           content:
@@ -1416,41 +1423,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        status:
-                          type: string
-                          example: "paid"
-                        booking_code:
-                          type: string
-                          example: "oq743ue8023"
-                        seat_class:
-                          type: string
-                          example: "Ekonomi"
-                        expired_paid:
-                          type: string
-                          example: "2030-01-01"
-                        price:
-                          type: integer
-                          example: 9000000
-                        departure_city:
-                          type: string
-                          example: "Tangerang"
-                        arrival_city:
-                          type: string
-                          example: "Tangerang"
-                        departure_time:
-                          type: string
-                          example: "06:00"    
-                        arrival_time:
-                          type: string
-                          example: "14:45"
-                        duration:
-                          type: string
-                          example: "240"
+                      $ref: "#/components/schemas/OrderResponse"
       security:
         - bearerAuth: []
 
@@ -1473,7 +1446,92 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OrderResponse"
+                allOf:
+                  - $ref: "#/components/schemas/OrderResponse"
+                  - type: object
+                    properties:
+                      detailFlight:
+                        type: object
+                        properties:
+                          id: 
+                            type: integer
+                            example: 1
+                          flight_id:
+                            type: integer
+                            example: 1
+                          detail_plane_id:
+                            type: integer
+                            example: 1
+                          flight:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 4
+                              flight_number:
+                                type: string
+                                example: gua-570825
+                              time_arrive:
+                                type: string
+                                example: 17:45
+                              time_departure:
+                                type: string
+                                example: 08:30
+                              date_flight:
+                                type: string
+                                example: 25-05-2024
+                              estimation_minute:
+                                type: integer
+                                example: 180 
+                              city_arrive:
+                                $ref: "#/components/schemas/City"
+                              city_destination:
+                                $ref: "#/components/schemas/City"
+                          detailPlane:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              total_seat:
+                                type: integer
+                                example: 80
+                              seat_class_id:
+                                type: integer
+                                example: 1
+                              plane_id:
+                                type: integer
+                                example: 1
+                              plane: 
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    example: 2
+                                  name:
+                                    type: string
+                                    example: Airbus A320
+                                  brand:
+                                    type: string
+                                    example: Airbus
+                                  capacity:
+                                    type: integer
+                                    example: 180
+                                  airlinesId:
+                                    type: integer
+                                    example: 2
+                                  series:
+                                    type: string
+                                    example: 72635
+                              seat_class:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    example: 1
+                                  type_class:
+                                    type: string
+                                    example: "Ekonomi"
         404:
           description: Order not found
           content:
@@ -1965,35 +2023,27 @@ components:
           example: Boeing 737-900ER
         id:
           type: integer
-          description: Unique identifier for the flight schedule.
           example: 4
         flight_number:
           type: string
-          description: Flight number.
           example: gua-570825
         time_arrive:
           type: string
-          description: Time of arrival in HH:mm format.
           example: 17:45
         time_departure:
           type: string
-          description: Time of departure in HH:mm format.
           example: 08:30
         date_flight:
           type: string
-          description: Date of the flight in dd-MM-yyyy format.
           example: 25-05-2024
         city_arrive_id:
           type: integer
-          description: Unique identifier for the arrival city.
           example: 1
         city_destination_id:
           type: integer
-          description: Unique identifier for the destination city.
           example: 3
         estimation_minute:
           type: integer
-          description: Estimated flight duration in minutes.
           example: 180
         city_arrive:
           $ref: "#/components/schemas/City"
@@ -2133,24 +2183,22 @@ components:
         id:
           type: integer
           example: 1
-        user:
-          $ref: "#/components/schemas/UserResponse"
-        detailFlight:
-          $ref: "#/components/schemas/FlightSchedule"
-        passengers:
-          type: array
-          items:
-            $ref: "#/components/schemas/Passenger"
         status:
           type: string
           example: unpaid
         code:
           type: string
           example: ORD123456
+        detail_flight_id:
+          type: integer
+          example: 30
         expired_paid:
           type: string
           format: date-time
           example: "2024-05-25T14:20:18.724Z"
+        user_id:
+          type: integer
+          example: 1
 
     PaymentResponse:
       type: object
