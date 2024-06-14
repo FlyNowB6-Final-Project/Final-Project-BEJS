@@ -5,12 +5,22 @@ const { convertToIso, formatDateTimeToUTC } = require('../utils/formattedDate');
 module.exports = {
   index: async (req, res, next) => {
     try {
-      const { find } = req.query;
+      const { find, filter } = req.query;
+
+      const conditions = {
+        user_id: Number(req.user.id),
+      };
+
+      if (find) {
+        conditions.title = { contains: find, mode: "insensitive" };
+      }
+
+      if (filter) {
+        conditions.title = { equals: filter, mode: 'insensitive' };
+      }
+
       const notifications = await prisma.notification.findMany({
-        where: {
-          user_id: Number(req.user.id),
-          title: { contains: find, mode: "insensitive" }
-        },
+        where: conditions,
       });
 
       notifications.forEach(value => {

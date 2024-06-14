@@ -1461,6 +1461,23 @@ paths:
           schema:
             type: string
           description: Search order by booking code
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          description: Filter orders by expiration date. Use format YYYY-MM-DD.
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          description: Filter orders by expiration date. Use format YYYY-MM-DD.
+        - in: query
+          name: filter
+          schema:
+            type: string
+          description: Filter orders by status order ('paid', 'unpaid', 'cancelled').
       responses:
         200:
           description: Get all orders successfully
@@ -1478,7 +1495,56 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/OrderResponse"
+                      allOf:
+                        - $ref: "#/components/schemas/OrderResponse"
+                        - type: object
+                          properties:
+                            detailFlight:
+                              type: object
+                              properties:
+                                id: 
+                                  type: integer
+                                  example: 1
+                                price: 
+                                  type: integer
+                                  example: 10000000
+                                detailPlaneId:
+                                  type: object
+                                  properties:
+                                    seat_class:
+                                      type: object
+                                      properties:
+                                        id: 
+                                          type: integer
+                                          example: 1
+                                        type_class:
+                                          type: string
+                                          example: Ekonomi
+                                flight:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 4
+                                    flight_number:
+                                      type: string
+                                      example: gua-570825
+                                    time_arrive:
+                                      type: string
+                                      example: 17:45
+                                    time_departure:
+                                      type: string
+                                      example: 08:30
+                                    date_flight:
+                                      type: string
+                                      example: 25-05-2024
+                                    estimation_minute:
+                                      type: integer
+                                      example: 180 
+                                    city_arrive:
+                                      $ref: "#/components/schemas/City"
+                                    city_destination:
+                                      $ref: "#/components/schemas/City"
       security:
         - bearerAuth: []
 
@@ -1521,6 +1587,9 @@ paths:
                           detail_plane_id:
                             type: integer
                             example: 1
+                          price: 
+                            type: integer
+                            example: 10000000
                           flight:
                             type: object
                             properties:
@@ -1621,6 +1690,11 @@ paths:
           schema:
             type: string
           description: Search notification by title
+        - in: query
+          name: filter
+          schema:
+            type: string
+          description: Filter notification by title ('welcome', 'password', 'order', 'payment', 'notification').
       responses:
         "200":
           description: Success
