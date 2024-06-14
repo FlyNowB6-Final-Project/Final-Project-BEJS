@@ -19,7 +19,7 @@ module.exports = {
   getDetailFlights: async (req, res, next) => {
     try {
       const detailFlightId = parseInt(req.params.id);
-      // console.log(detailFlightId)
+      const { passenger } = req.query
       const flight = await prisma.detailFlight.findUnique({
         where: {
           id: detailFlightId
@@ -62,7 +62,7 @@ module.exports = {
           flightDetailId: flight.id,
           flightId: flight.flight.id,
           price: flight.price,
-          totalPrice: 600000,
+          totalPrice: flight.price * Number(passenger ?? 1),
           flightSeat: flight.detailPlaneId.seat_class.type_class,
           flightPlane: flight.detailPlaneId.plane,
           flight_number: flight.flight.flight_number,

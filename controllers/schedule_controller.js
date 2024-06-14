@@ -64,6 +64,13 @@ const findSchedule = async (req, res, next) => {
         return timeA - timeB;
     });
 
+    if (!allData) {
+        return jsonResponse(res, 400, {
+            status: false,
+            message: "schedule data not found",
+        })
+    }
+
     return jsonResponse(res, 200, {
         message: "success retrive schedule data",
         data: allData,
@@ -104,7 +111,7 @@ const mostPurchaseSchedule = async (req, res, next) => {
     if (!data) {
         return jsonResponse(res, 400, {
             status: false,
-            message: "failed retrive schedule data",
+            message: "schedule data not found",
         })
     }
 
