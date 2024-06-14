@@ -144,6 +144,7 @@ module.exports = {
           code: true,
           detail_flight_id: true,
           expired_paid: true,
+          passenger: true,
           detailFlight: {
             select: {
               id: true,
