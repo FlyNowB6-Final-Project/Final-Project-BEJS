@@ -1503,6 +1503,10 @@ paths:
               schema:
                 allOf:
                   - $ref: "#/components/schemas/OrderResponse"
+                  - type: array
+                    properties:
+                      passenger: 
+                        $ref: "#/components/schemas/Passenger"
                   - type: object
                     properties:
                       detailFlight:
