@@ -1,8 +1,8 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { generatedOrderCode } = require("../utils/orderCodeGenerator");
-const { formatDateTimeToUTC } = require("../utils/formattedDate");
-const imageKit = require("../libs/imagekit");
+const { formatDateTimeToUTC, formatDateToUTC, formatTimeToUTC } = require("../utils/formattedDate");
+const imageKit = require("../libs/imagekit")
 const qr = require("qr-image");
 
 module.exports = {
@@ -273,7 +273,9 @@ module.exports = {
 
         order.detailFlight.detailPlane = detailPlane;
       }
-
+      order.detailFlight.flight.date_flight = formatDateToUTC(order.detailFlight.flight.date_flight)
+      order.detailFlight.flight.time_arrive = formatTimeToUTC(order.detailFlight.flight.time_arrive)
+      order.detailFlight.flight.time_departure = formatTimeToUTC(order.detailFlight.flight.time_departure)
       order.expired_paid = formatDateTimeToUTC(order.expired_paid);
 
       return res.status(200).json({

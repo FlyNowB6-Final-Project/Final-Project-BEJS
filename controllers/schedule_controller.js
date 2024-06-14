@@ -1,43 +1,39 @@
 const orderService = require("../service/order_service")
 const scheduleService = require("../service/schedule_service")
 const { formatTimeToUTC, formatAddZeroFront, convertToIso } = require("../utils/formattedDate")
+const pagination = require("../utils/pagination")
+const jsonResponse = require("../utils/response")
 
 const findSchedule = async (req, res, next) => {
     const { city_arrive_id, city_destination_id, date_departure, seat_class, passenger } = req.body
-    let { page } = req.query
+    const { page } = req.query
     if (!city_arrive_id || !city_destination_id || !date_departure || !seat_class || !passenger) {
-        return res.status(400).json({
-            status: false,
-            message: "field cant empty",
-            data: null
-        })
+        return jsonResponse(res, 400, { status: false, message: "faield cant empty", })
     }
-
-
-
-    let pagination = paginationPage(page ?? 1)
-
-    // console.log(pagination, page)
     let [day, month, year] = date_departure.split('-');
+
+    let dateNow = new Date(date_departure)
+    const yesterday = new Date(dateNow.getDate() - 1)
+    if (dateNow <= yesterday) {
+        return jsonResponse(res, 400, { status: false, message: "The departure date has already passed", })
+    }
 
     day = formatAddZeroFront(day)
     month = formatAddZeroFront(month)
-
-    let isoDate = convertToIso({ day, month, year })
-
-    totalPasenger = calculateTotalPassengers(passenger)
-
     let allData = []
 
-    let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate, pagination.skip, pagination.take)
+    let isoDate = convertToIso({ day, month, year })
+    let paginat = pagination.paginationPage(Number(page))
+    let totalPasenger = calculateTotalPassengers(passenger)
+
+    let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate, paginat.skip, paginat.take)
+    let totalData = await scheduleService.countDataFind(city_arrive_id, city_destination_id, isoDate,)
+    let totalPage = pagination.paginationPageTotal(totalData)
 
     if (!data || data.length === 0) {
-        return res.status(400).json({
-            status: false,
-            message: "failed retrive schedule data",
-            data: null
-        })
+        return jsonResponse(res, 400, { status: false, message: "failed retrive schedule data", })
     }
+
     for (const value of data) {
         let detailFlight = await scheduleService.getDetailFlightByFlightId(value.id);
         let mergedData = detailFlight
@@ -69,18 +65,26 @@ const findSchedule = async (req, res, next) => {
         v.date_flight = fullDate
     })
 
-
-
     allData.sort((a, b) => {
         let timeA = new Date(`1970-01-01T${a.time_departure}Z`);
         let timeB = new Date(`1970-01-01T${b.time_departure}Z`);
         return timeA - timeB;
     });
 
-    return res.status(200).json({
-        status: true,
+    if (!allData) {
+        return jsonResponse(res, 400, {
+            status: false,
+            message: "schedule data not found",
+        })
+    }
+
+    return jsonResponse(res, 200, {
         message: "success retrive schedule data",
-        data: allData
+        data: allData,
+        page: Number(page) ?? 1,
+        perPage: allData.length,
+        pageCount: totalPage,
+        totalCount: totalData,
     })
 }
 
@@ -96,29 +100,38 @@ const mostPurchaseSchedule = async (req, res, next) => {
     }
 
     data.forEach((countryObject) => {
-        countryObject.order_count = Number(countryObject.order_count);
+        countryObject.order_count = Number(countryObject.order_count)
     });
 
-    data.sort((a, b) => b.order_count - a.order_count);
+    data.sort((a, b) => b.order_count - a.order_count)
 
     data = data.slice(0, 5)
 
-    for (let item of data) {
-        item.detail = await scheduleService.getDetailFlightById(item.detail_flight_id);
-    }
+    // for (let item of data) {
+    //     item = await scheduleService.getDetailFlightById(item.detail_flight_id);
+    //     delete item.detail_flight_id
+    //     delete item.order_count
+    // }
+
+    data = await Promise.all(data.map(async (item) => {
+        return await scheduleService.getDetailFlightById(item.detail_flight_id)
+
+    }))
+
     if (data.length == 0 && !isContinent) {
+        console.log("in data null")
         data = await scheduleService.getDetailFlight()
     }
 
 
     if (!data) {
-        return res.status(400).json({
+        return jsonResponse(res, 400, {
             status: false,
-            message: "failed retrive schedule data",
-            data: null
+            message: "schedule data not found",
         })
     }
-    return res.status(200).json({
+
+    return jsonResponse(res, 200, {
         status: true,
         message: "success retrive schedule data",
         data
@@ -130,17 +143,7 @@ function calculateTotalPassengers(passenger) {
     return Number(adult) + Number(children)
 }
 
-function paginationPage(page) {
-    let skip = 0
-    let take = 10
 
-    skip = (page - 1) * take
-    return {
-        skip,
-        take
-    }
-
-}
 
 
 module.exports = {

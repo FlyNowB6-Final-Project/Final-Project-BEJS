@@ -1,0 +1,72 @@
+[
+    {
+        "name": "Boeing 737-800",
+        "brand": "Boeing",
+        "series": "10748",
+        "capacity": 189,
+        "airlinesId": 1
+    },
+    {
+        "name": "Airbus A320",
+        "brand": "Airbus",
+        "series": "72635",
+        "capacity": 180,
+        "airlinesId": 2
+    },
+    {
+        "name": "Boeing 737-900ER",
+        "brand": "Boeing",
+        "series": "33790",
+        "capacity": 215,
+        "airlinesId": 3
+    },
+    {
+        "name": "Airbus A320neo",
+        "brand": "Airbus",
+        "series": "19748",
+        "capacity": 186,
+        "airlinesId": 4
+    },
+    {
+        "name": "Airbus A320",
+        "brand": "Airbus",
+        "series": "55342",
+        "capacity": 180,
+        "airlinesId": 5
+    },
+    {
+        "name": "Boeing 737-801",
+        "brand": "Boeing",
+        "series": "18362",
+        "capacity": 189,
+        "airlinesId": 6
+    },
+    {
+        "name": "Boeing 737-500",
+        "brand": "Boeing",
+        "series": "33975",
+        "capacity": 110,
+        "airlinesId": 7
+    },
+    {
+        "name": "ATR 42-300",
+        "brand": "ATR",
+        "series": "36829",
+        "capacity": 50,
+        "airlinesId": 8
+    },
+    {
+        "name": "ATR 72-500",
+        "brand": "ATR",
+        "series": "99864",
+        "capacity": 74,
+        "airlinesId": 9
+    },
+    {
+        "name": "Airbus A320",
+        "brand": "Airbus",
+        "series": "56472",
+        "capacity": 180,
+        "airlinesId": 10
+    }
+]
