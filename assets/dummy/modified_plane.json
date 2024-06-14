@@ -3,168 +3,168 @@
     "name": "Airbus A320",
     "brand": "",
     "series": "AirbusA320",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 1
   },
   {
     "name": "Airbus A320",
     "brand": "",
     "series": "AirbusA320-3-3-29",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 1
   },
   {
     "name": "ATR-72",
     "brand": "",
     "series": "ATR-72",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 1
   },
   {
     "name": "ATR-72",
     "brand": "",
     "series": "ATR-72-2-2-31",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 1
   },
   {
     "name": "ATR-72",
     "brand": "",
     "series": "ATR-72-2-2-28",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 1
   },
   {
     "name": "Airbus A320",
     "brand": "",
     "series": "AirbusA320-3-3-32",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 4
   },
   {
     "name": "ARJ21",
     "brand": "",
     "series": "ARJ21-2-3-31",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 4
   },
   {
     "name": "Boeing 737",
     "brand": "",
     "series": "Boeing737-3-3-31",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 5
   },
   {
     "name": "Airbus A332",
     "brand": "",
     "series": "AirbusA332-3-3-31",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 5
   },
   {
     "name": "Bombardier CR1000",
     "brand": "",
     "series": "BombardierCR1000-2-2-31",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 5
   },
   {
     "name": "Canadair Regional Jet 1000",
     "brand": "",
     "series": "CanadairRegionalJet1000-2-2-31",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 5
   },
   {
     "name": "Boeing 737-800",
     "brand": "",
     "series": "Boeing737-800-3-3-31",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 5
   },
   {
     "name": "Airbus A330",
     "brand": "",
     "series": "AirbusA330-2-4-2-32",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 5
   },
   {
     "name": "Boeing 737",
     "brand": "",
     "series": "Boeing737-3-3-29",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 6
   },
   {
     "name": "Boeing 737",
     "brand": "",
     "series": "Boeing737-3-3-31",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 6
   },
   {
     "name": "Boeing 737",
     "brand": "",
     "series": "Boeing737-3-3",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 6
   },
   {
     "name": "737M",
     "brand": "",
     "series": "737M-3-3",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 6
   },
   {
     "name": "Boeing 737",
     "brand": "",
     "series": "Boeing737-3-3-32",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 7
   },
   {
     "name": "Airbus A320",
     "brand": "",
     "series": "AirbusA320-3-3-32",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 7
   },
   {
     "name": "Boeing 737-800",
     "brand": "",
     "series": "Boeing737-800-3-3-32",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 7
   },
   {
     "name": "Boeing 737",
     "brand": "",
     "series": "Boeing737-3-3-29",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 9
   },
   {
     "name": "Boeing 737",
     "brand": "",
     "series": "Boeing737-3-3-29",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 10
   },
   {
     "name": "ATR-72",
     "brand": "",
     "series": "ATR-72-2-2",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 11
   },
   {
     "name": "Boeing 737",
     "brand": "",
     "series": "Boeing737-3-3-30",
-    "capacity": "",
+    "capacity": 300,
     "airlinesId": 12
   }
 ]
