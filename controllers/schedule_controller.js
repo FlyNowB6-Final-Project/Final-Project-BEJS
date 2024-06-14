@@ -11,6 +11,13 @@ const findSchedule = async (req, res, next) => {
         return jsonResponse(res, 400, { status: false, message: "faield cant empty", })
     }
     let [day, month, year] = date_departure.split('-');
+
+    let dateNow = new Date(date_departure)
+    const yesterday = new Date(dateNow.getDate() - 1)
+    if (dateNow <= yesterday) {
+        return jsonResponse(res, 400, { status: false, message: "The departure date has already passed", })
+    }
+
     day = formatAddZeroFront(day)
     month = formatAddZeroFront(month)
     let allData = []
