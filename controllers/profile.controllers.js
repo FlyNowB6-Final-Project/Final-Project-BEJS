@@ -177,8 +177,8 @@ module.exports = {
       // Create a notification for the user
       await prisma.notification.create({
         data: {
-          title: "Password Updated!",
-          message: "Password successfully changed!",
+          title: "Password",
+          message: "Your password has been updated successfully!",
           createdAt: new Date().toISOString(),
           user: { connect: { id: userId } },
         },

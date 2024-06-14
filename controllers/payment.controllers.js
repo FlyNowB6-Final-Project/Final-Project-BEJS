@@ -120,7 +120,7 @@ module.exports = {
       // Create notification for the payment status
       const notification = await prisma.notification.create({
         data: {
-          title: "Payment Status: Paid",
+          title: "Payment",
           message: `Your order with booking code ${order.code} is currently Paid. Enjoy you're Flight`,
           createdAt: new Date().toISOString(),
           user: { connect: { id: req.user.id } },
@@ -324,8 +324,8 @@ module.exports = {
         // Create a notification for the user
         const notification = await prisma.notification.create({
           data: {
-            title: "Payment Successfully",
-            message: `Payment for order code ${order.code} has been successfully.`,
+            title: "Payment",
+            message: `Your order with booking code ${order.code} is currently Paid. Enjoy you're Flight.`,
             createdAt: new Date().toISOString(),
             user: { connect: { id: updatedOrder.user_id } },
           },

@@ -81,11 +81,12 @@ module.exports = {
 
       const notification = await prisma.notification.create({
         data: {
-          title: "Payment Status: Unpaid",
-          message: `Your order with booking code ${newOrder.code
-            } is currently unpaid. Please completed your payment ${formatDateTimeToUTC(
-              newOrder.expired_paid.toISOString()
-            )}.`,
+          title: "Order",
+          message: `Your order with booking code ${
+            newOrder.code
+          } is currently unpaid. Please completed your payment before ${formatDateTimeToUTC(
+            newOrder.expired_paid.toISOString()
+          )}.`,
           createdAt: new Date().toISOString(),
           user: { connect: { id: req.user.id } },
         },
@@ -104,22 +105,94 @@ module.exports = {
   getAll: async (req, res, next) => {
     try {
       const { id } = req.user;
-      const { find } = req.query;
+      const { find, startDate, endDate, filter } = req.query;
+
+      const conditions = {
+        user_id: id,
+      };
+
+      if (find) {
+        conditions.code = { contains: find };
+      }
+
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setUTCHours(0, 0, 0, 0);
+
+        if (endDate) {
+          const end = new Date(endDate);
+          end.setUTCHours(23, 59, 59, 999);
+          conditions.expired_paid = {
+            gte: start,
+            lte: end
+          };
+        } else {
+          conditions.expired_paid = {
+            gte: start
+          };
+        }
+      }
+
+      if (filter) {
+        conditions.status = { equals: filter, mode: 'insensitive' };
+      }
 
       const orders = await prisma.order.findMany({
-        where: { user_id: id, code: { contains: find }, },
+        where: conditions,
         select: {
           id: true,
           status: true,
           code: true,
           detail_flight_id: true,
           expired_paid: true,
+          detailFlight: {
+            select: {
+              id: true,
+              price: true,
+              detailPlaneId: {
+                select: {
+                  seat_class: {
+                    select: {
+                      id: true,
+                      type_class: true,
+                    },
+                  },
+                },
+              },
+              flight: {
+                select: {
+                  id: true,
+                  flight_number: true,
+                  time_arrive: true,
+                  time_departure: true,
+                  date_flight: true,
+                  estimation_minute: true,
+                  city_arrive: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true,
+                      airport_name: true,
+                    },
+                  },
+                  city_destination: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true,
+                      airport_name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       });
 
-      orders.forEach(value => {
-        value.expired_paid = formatDateTimeToUTC(value.expired_paid)
-      })
+      orders.forEach((value) => {
+        value.expired_paid = formatDateTimeToUTC(value.expired_paid);
+      });
 
       return res.status(200).json({
         status: true,
@@ -149,6 +222,7 @@ module.exports = {
               id: true,
               flight_id: true,
               detail_plane_id: true,
+              price: true,
               flight: {
                 select: {
                   id: true,
@@ -225,7 +299,7 @@ module.exports = {
         });
       }
 
-      if (typeof qr_data !== 'string') {
+      if (typeof qr_data !== "string") {
         return res.status(400).json({
           status: false,
           message: "qr_data must be a string",

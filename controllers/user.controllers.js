@@ -101,7 +101,7 @@ module.exports = {
       // Register Notification
       const notification = await prisma.notification.create({
         data: {
-          title: "Welcome!",
+          title: "Welcome",
           message: "Your account has been created successfully.",
           createdAt: new Date().toISOString(),
           user: { connect: { id: user.id } },
@@ -357,7 +357,7 @@ module.exports = {
 
         const notification = await prisma.notification.create({
           data: {
-            title: "Password Updated!",
+            title: "Password",
             message: "Your password has been updated successfully!",
             createdAt: new Date().toISOString(),
             user: { connect: { id: updateUser.id } },
