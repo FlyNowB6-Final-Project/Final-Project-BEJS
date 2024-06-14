@@ -89,6 +89,8 @@ let getDetailFlightById = async (detailFlightId) => {
             id: detailFlightId
         },
         select: {
+            id: true,
+            flight_id: true,
             detailPlaneId: {
                 select: {
                     plane: {
@@ -115,6 +117,8 @@ let getDetailFlightById = async (detailFlightId) => {
 let getDetailFlight = async () => {
     return await prisma.detailFlight.findMany({
         select: {
+            id: true,
+            flight_id: true,
             detailPlaneId: {
                 select: {
                     plane: {
