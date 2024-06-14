@@ -5,8 +5,12 @@ const { convertToIso, formatDateTimeToUTC } = require('../utils/formattedDate');
 module.exports = {
   index: async (req, res, next) => {
     try {
+      const { find } = req.query;
       const notifications = await prisma.notification.findMany({
-        where: { user_id: Number(req.user.id) },
+        where: {
+          user_id: Number(req.user.id),
+          title: { contains: find, mode: "insensitive" }
+        },
       });
 
       notifications.forEach(value => {
@@ -29,14 +33,47 @@ module.exports = {
         data: {
           isRead: true,
         },
-      });
-
-      
+      }); 
 
       res.status(200).json({
         status: true,
         message: "Notifications marked as read for the user",
         data: notifications,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+  readNotificationId: async (req, res, next) => {
+    try {
+      const { notificationId } = req.params;
+      if (!notificationId) {
+        return res.status(400).json({
+          status: false,
+          message: "Notification ID is required",
+        });
+      }
+
+      const notification = await prisma.notification.update({
+        where: { id: Number(notificationId) },
+        data: {
+          isRead: true,
+        },
+      });
+
+      if (!notification) {
+        return res.status(404).json({
+          status: false,
+          message: "Notification not found",
+        });
+      }
+
+      notification.createdAt = formatDateTimeToUTC(notification.createdAt);
+
+      res.status(200).json({
+        status: true,
+        message: "Notification marked as read",
+        data: notification,
       });
     } catch (err) {
       next(err);

@@ -1,6 +1,9 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { generatedOrderCode } = require("../utils/orderCodeGenerator");
+const { formatDateTimeToUTC } = require("../utils/formattedDate");
+const imageKit = require("../libs/imagekit")
+const qr = require("qr-image");
 
 module.exports = {
   order: async (req, res, next) => {
@@ -81,7 +84,9 @@ module.exports = {
           title: "Payment Status: Unpaid",
           message: `Your order with booking code ${
             newOrder.code
-          } is currently unpaid. Please completed your payment  ${newOrder.expired_paid.toISOString()}.`,
+          } is currently unpaid. Please completed your payment ${formatDateTimeToUTC(
+            newOrder.expired_paid.toISOString()
+          )}.`,
           createdAt: new Date().toISOString(),
           user: { connect: { id: req.user.id } },
         },
@@ -96,220 +101,150 @@ module.exports = {
       next(error);
     }
   },
-  
+
   getAll: async (req, res, next) => {
     try {
-        const { id } = req.user;
-        
-        const orders = await prisma.order.findMany({
-            where: { user_id: id },
-            include: {
-                detailFlight: {
-                    include: {
-                        flight: {
-                            include: {
-                                city_arrive: {
-                                    select: {
-                                        name: true,
-                                    }
-                                },
-                                city_destination: {
-                                    select: {
-                                        name: true,
-                                    }
-                                }
-                            },
-                            select: {
-                                id: true,
-                                date_flight: true,
-                                time_departure: true,
-                                time_arrive: true,
-                                estimation_minute: true,
-                            }
-                        }
-                    }
-                },
-            },
-            orderBy: {
-                detailFlight: {
-                    flight: {
-                        date_flight: 'desc',
-                    },
-                },
-            },
-        });
-
-        const result = await Promise.all(orders.map(async (order) => {
-            let status = order.status;
-            if (order.status === "unpaid" && moment().isAfter(order.expired_paid)) {
-                await prisma.order.update({
-                    where: { id: order.id },
-                    data: { status: "canceled" }
-                }).catch(error => next(error));
-                status = "canceled";
-            }
-            return {
-                id: order.id,
-                status: status,
-                booking_code: order.code,
-                seat_class: order.detailFlight.detailPlane.seat_class.type_class,
-                paid_before: order.expired_paid,
-                price: convert.NumberToCurrency(order.detailFlight.price),
-                flight_detail: {
-                    departure_city: order.detailFlight.flight.city_arrive.name,
-                    arrival_city: order.detailFlight.flight.city_destination.name,
-                    departure_time: order.detailFlight.flight.time_departure,
-                    arrival_time: order.detailFlight.flight.time_arrive,
-                    duration: convert.DurationToString(order.detailFlight.flight.estimation_minute),
-                },
-            };
-        }));
-
-        return res.status(200).json({
-            message: "Success get all orders",
-            data: result
-        });
-
-    } catch (error) {
-        next(error);
-    }
-},
-
-getDetail: async (req, res, next) => {
-  try {
       const { id } = req.user;
-      const { order_id } = req.params;
+      const { find } = req.query;
+
+      const orders = await prisma.order.findMany({
+        where: { user_id: id, code: { contains: find }, },
+        select: {
+          id: true,
+          status: true,
+          code: true,
+          detail_flight_id: true,
+          expired_paid: true,
+        },
+      });
+
+      orders.forEach(value => {
+        value.expired_paid = formatDateTimeToUTC(value.expired_paid)
+      })
+
+      return res.status(200).json({
+        status: true,
+        message: "Get all orders successfully",
+        data: orders,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  getDetail: async (req, res, next) => {
+    try {
+      const { orderId } = req.params;
 
       const order = await prisma.order.findUnique({
-          where: { id: parseInt(order_id) },
-          include: {
-              detailFlight: {
-                  include: {
-                      flight: {
-                          include: {
-                              city_arrive: {
-                                  select: {
-                                      name: true,
-                                      airport_name: true,
-                                  }
-                              },
-                              city_destination: {
-                                  select: {
-                                      name: true,
-                                      airport_name: true,
-                                  }
-                              },
-                              DetailFlight: {
-                                  include: {
-                                      detailPlane: {
-                                          include: {
-                                              plane: {
-                                                  include: {
-                                                      airline_id: {
-                                                          select: {
-                                                              name: true,
-                                                              logo_url: true
-                                                          }
-                                                      }
-                                                  }
-                                              },
-                                              seat_class: {
-                                                  select: {
-                                                      type_class: true
-                                                  }
-                                              }
-                                          }
-                                      }
-                                  }
-                              }
-                          }
-                      }
-                  }
+        where: { id: parseInt(orderId) },
+        select: {
+          id: true,
+          status: true,
+          code: true,
+          detail_flight_id: true,
+          expired_paid: true,
+          detailFlight: {
+            select: {
+              id: true,
+              flight_id: true,
+              detail_plane_id: true,
+              flight: {
+                select: {
+                  id: true,
+                  flight_number: true,
+                  time_arrive: true,
+                  time_departure: true,
+                  date_flight: true,
+                  estimation_minute: true,
+                  city_arrive: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true,
+                      airport_name: true,
+                    },
+                  },
+                  city_destination: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true,
+                      airport_name: true,
+                    },
+                  },
+                },
               },
-              passenger: {
-                  where: { order_id: parseInt(order_id) },
-                  select: {
-                      title: true,
-                      fullname: true,
-                      family_name: true,
-                      age_group: true,
-                      identity_number: true
-                  }
-              },
-              Payment: true
-          }
+            },
+          },
+        },
       });
 
       if (!order) {
-          return res.status(400).json({
-              error: "Order not found",
-              message: `Order with id ${order_id} not found`
-          });
+        return res.status(404).json({
+          status: false,
+          message: `Order with id ${orderId} not found`,
+          data: null,
+        });
       }
 
-      // Check payment status
-      let paymentType;
-      if (order.status === "paid") {
-          const payment = await prisma.payment.findUnique({
-              where: { order_id: order.id },
-              select: { method_payment: true }
-          });
-
-          paymentType = payment ? payment.method_payment : null;
-      }
-
-      const passengers = order.passenger.map(passenger => ({
-          title: passenger.title,
-          fullname: passenger.fullname,
-          family_name: passenger.family_name,
-          identity_number: passenger.identity_number,
-          age_group: passenger.age_group
-      }));
-
-      const result = {
-          id: order.id,
-          status: order.status,
-          payment_type: paymentType || null,
-          flight_detail: {
-              departure: {
-                  airport_name: order.detailFlight.flight.city_arrive.airport_name,
-                  city: order.detailFlight.flight.city_arrive.name,
-                  date: order.detailFlight.flight.date_flight,
-                  time: order.detailFlight.flight.time_departure
-              },
-              arrival: {
-                  airport_name: order.detailFlight.flight.city_destination.airport_name,
-                  city: order.detailFlight.flight.city_destination.name,
-                  date: order.detailFlight.flight.date_flight,
-                  time: order.detailFlight.flight.time_arrive
-              },
-              airplane: {
-                  airline: order.detailFlight.detailPlane.plane.airline_id.name,
-                  seat_class: order.detailFlight.detailPlane.seat_class.type_class,
-                  flight_number: order.detailFlight.flight.flight_number,
-              },
-              passengers
+      if (order.detailFlight && order.detailFlight.detail_plane_id) {
+        const detailPlane = await prisma.detailPlane.findUnique({
+          where: { id: order.detailFlight.detail_plane_id },
+          include: {
+            plane: true,
+            seat_class: true,
           },
-          // Assuming that price and tax information needs to be calculated
-          price_detail: {
-              adult_count: passengers.filter(p => p.age_group === 'adult').length,
-              child_count: passengers.filter(p => p.age_group === 'child').length,
-              infant_count: passengers.filter(p => p.age_group === 'infant').length,
-              adult_price: order.detailFlight.price,
-              child_price: order.detailFlight.price * 0.75, // Assuming child price is 75% of adult price
-              infant_price: 0, // Assuming infant price is free
-              tax: order.tax,
-              total_price: order.total_price + order.tax
-          }
-      };
+        });
+
+        order.detailFlight.detailPlane = detailPlane;
+      }
+
+      order.expired_paid = formatDateTimeToUTC(order.expired_paid);
 
       return res.status(200).json({
-          message: "Success get detail order",
-          data: result
+        status: true,
+        message: "Get detail orders successfully",
+        data: order,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  generateQR: async (req, res, next) => {
+    try {
+      let { qr_data } = req.body;
+
+      if (!qr_data) {
+        return res.status(400).json({
+          status: false,
+          message: "qr_data is required",
+          data: null,
+        });
+      }
+
+      if (typeof qr_data !== 'string') {
+        return res.status(400).json({
+          status: false,
+          message: "qr_data must be a string",
+          data: null,
+        });
+      }
+
+      let qrCode = qr.imageSync(qr_data, { type: "png" });
+
+      let { url } = await imageKit.upload({
+        fileName: Date.now() + ".png",
+        file: qrCode.toString("base64"),
       });
 
-  } catch (error) {
+      return res.status(201).json({
+        status: true,
+        message: "Generate QR-Code Successfully",
+        data: url,
+      });
+    } catch (error) {
       next(error);
-  }
-},
+    }
+  },
 };

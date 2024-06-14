@@ -1373,7 +1373,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OrderResponse"
+                allOf:
+                  - $ref: "#/components/schemas/OrderResponse"
+                  - type: object
+                    properties:
+                      passenger:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Passenger"
         400:
           description: Bad request, missing or invalid fields
           content:
@@ -1392,13 +1399,68 @@ paths:
       security:
         - bearerAuth: []
 
+  /ticket/QR:
+    post:
+      tags:
+        - "Order"
+      summary: Create a QR-Code for order ticket
+      description: Create a QR-Code for order ticket
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                qr_data:
+                  type: string
+                  example: https://express-development-3576.up.railway.app/api-docs/#/
+      responses:
+        201:
+          description: Generate QR-Code Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Generate QR-Code Successfully"
+                  data:
+                    type: string
+                    example: https://ik.imagekit.io/flynowb6/1718302498610_uIm9OyuLP.png
+        400:
+          description: qr_data must be required and must be a string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "qr_data must be required and must be a string"
+                  data:
+                    example: null
+      security:
+        - bearerAuth: []
+
   /ticket/orders:
     get:
       tags:
         - "Order"
       summary: Get all order 
       description: Get all order
-
+      parameters:
+        - in: query
+          name: find
+          schema:
+            type: string
+          description: Search order by booking code
       responses:
         200:
           description: Get all orders successfully
@@ -1416,41 +1478,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        status:
-                          type: string
-                          example: "paid"
-                        booking_code:
-                          type: string
-                          example: "oq743ue8023"
-                        seat_class:
-                          type: string
-                          example: "Ekonomi"
-                        expired_paid:
-                          type: string
-                          example: "2030-01-01"
-                        price:
-                          type: integer
-                          example: 9000000
-                        departure_city:
-                          type: string
-                          example: "Tangerang"
-                        arrival_city:
-                          type: string
-                          example: "Tangerang"
-                        departure_time:
-                          type: string
-                          example: "06:00"    
-                        arrival_time:
-                          type: string
-                          example: "14:45"
-                        duration:
-                          type: string
-                          example: "240"
+                      $ref: "#/components/schemas/OrderResponse"
       security:
         - bearerAuth: []
 
@@ -1473,7 +1501,92 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OrderResponse"
+                allOf:
+                  - $ref: "#/components/schemas/OrderResponse"
+                  - type: object
+                    properties:
+                      detailFlight:
+                        type: object
+                        properties:
+                          id: 
+                            type: integer
+                            example: 1
+                          flight_id:
+                            type: integer
+                            example: 1
+                          detail_plane_id:
+                            type: integer
+                            example: 1
+                          flight:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 4
+                              flight_number:
+                                type: string
+                                example: gua-570825
+                              time_arrive:
+                                type: string
+                                example: 17:45
+                              time_departure:
+                                type: string
+                                example: 08:30
+                              date_flight:
+                                type: string
+                                example: 25-05-2024
+                              estimation_minute:
+                                type: integer
+                                example: 180 
+                              city_arrive:
+                                $ref: "#/components/schemas/City"
+                              city_destination:
+                                $ref: "#/components/schemas/City"
+                          detailPlane:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              total_seat:
+                                type: integer
+                                example: 80
+                              seat_class_id:
+                                type: integer
+                                example: 1
+                              plane_id:
+                                type: integer
+                                example: 1
+                              plane: 
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    example: 2
+                                  name:
+                                    type: string
+                                    example: Airbus A320
+                                  brand:
+                                    type: string
+                                    example: Airbus
+                                  capacity:
+                                    type: integer
+                                    example: 180
+                                  airlinesId:
+                                    type: integer
+                                    example: 2
+                                  series:
+                                    type: string
+                                    example: 72635
+                              seat_class:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    example: 1
+                                  type_class:
+                                    type: string
+                                    example: "Ekonomi"
         404:
           description: Order not found
           content:
@@ -1498,6 +1611,12 @@ paths:
         - "Notification"
       summary: Get All notification
       description: Get All notification
+      parameters:
+        - in: query
+          name: find
+          schema:
+            type: string
+          description: Search notification by title
       responses:
         "200":
           description: Success
@@ -1591,15 +1710,15 @@ paths:
       security:
         - bearerAuth: []
 
-  /notifications/markAsRead:
+  /notifications/markAsRead/all:
     put:
       tags:
         - "Notification"
-      summary: Update Status notification
-      description: Update Status notification
+      summary: Mark all notifications as read
+      description: Marks all notifications as read for the logged-in user.
       responses:
         "200":
-          description: Success
+          description: Notifications marked as read successfully
           content:
             application/json:
               schema:
@@ -1617,6 +1736,68 @@ paths:
                       count:
                         type: integer
                         example: 2
+      security:
+        - bearerAuth: []
+
+  /notification/markAsRead/{notificationId}:
+    put:
+      tags:
+        - "Notification"
+      summary: "Mark a specific notification as read"
+      description: "Marks a specific notification as read for the logged-in user, identified by the notification ID."
+      parameters:
+        - in: path
+          name: notificationId
+          required: true
+          schema:
+            type: integer
+          description: "The ID of the notification to mark as read"
+      responses:
+        200:
+          description: "Notification marked as read successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Notification marked as read"
+                  data:
+                    $ref: "#/components/schemas/Notification"
+        400:
+          description: "Notification ID is required"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Notification ID is required"
+                  data:
+                    example: null
+        404:
+          description: "Notification not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Notification not found"
+                  data:
+                    example: null
       security:
         - bearerAuth: []
 
@@ -1791,7 +1972,7 @@ paths:
       description: Retrieve details of a specific payment by payment ID.
       parameters:
         - in: path
-          name: id
+          name: paymentId
           required: true
           schema:
             type: integer
@@ -1815,7 +1996,7 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: "Order not found"
+                    example: "Payment not found"
       security:
         - bearerAuth: []
 
@@ -1897,35 +2078,27 @@ components:
           example: Boeing 737-900ER
         id:
           type: integer
-          description: Unique identifier for the flight schedule.
           example: 4
         flight_number:
           type: string
-          description: Flight number.
           example: gua-570825
         time_arrive:
           type: string
-          description: Time of arrival in HH:mm format.
           example: 17:45
         time_departure:
           type: string
-          description: Time of departure in HH:mm format.
           example: 08:30
         date_flight:
           type: string
-          description: Date of the flight in dd-MM-yyyy format.
           example: 25-05-2024
         city_arrive_id:
           type: integer
-          description: Unique identifier for the arrival city.
           example: 1
         city_destination_id:
           type: integer
-          description: Unique identifier for the destination city.
           example: 3
         estimation_minute:
           type: integer
-          description: Estimated flight duration in minutes.
           example: 180
         city_arrive:
           $ref: "#/components/schemas/City"
@@ -2065,24 +2238,22 @@ components:
         id:
           type: integer
           example: 1
-        user:
-          $ref: "#/components/schemas/UserResponse"
-        detailFlight:
-          $ref: "#/components/schemas/FlightSchedule"
-        passengers:
-          type: array
-          items:
-            $ref: "#/components/schemas/Passenger"
         status:
           type: string
           example: unpaid
         code:
           type: string
           example: ORD123456
+        detail_flight_id:
+          type: integer
+          example: 30
         expired_paid:
           type: string
           format: date-time
           example: "2024-05-25T14:20:18.724Z"
+        user_id:
+          type: integer
+          example: 1
 
     PaymentResponse:
       type: object
