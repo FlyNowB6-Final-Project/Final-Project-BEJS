@@ -45,10 +45,6 @@ module.exports = {
                 WHERE sd.continent_id = ${continentId} AND sa.continent_id = ${continentId}
                 GROUP BY o.detail_flight_id;
                 `;
-
-            // -- JOIN continents contd ON sd.continent_id = contd.id
-            // -- JOIN continents conta ON sa.continent_id = conta.id
-            console.log(result)
             return result
         } catch (error) {
             console.log(error)
