@@ -12,7 +12,7 @@ const scheduleSeed = require('./seeder/schedule_seed')
 const detailPlaneSeed = require('./seeder/detail_plane_seed')
 
 async function main() {
-    // await rollbackSeed()
+    await rollbackSeed()
     await airlaneSeed(prisma)
     await planeSeed(prisma)
     await continentSeed(prisma)
