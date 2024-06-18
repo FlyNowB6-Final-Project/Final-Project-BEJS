@@ -38,7 +38,7 @@ module.exports = {
     }
   },
   updateProfile: async (req, res, next) => {
-    multer.single("avatar")(req, res, async (err) => {
+    multer.single("avatar_url")(req, res, async (err) => {
       if (err) {
         return res.status(err.status || 500).json({
           status: false,

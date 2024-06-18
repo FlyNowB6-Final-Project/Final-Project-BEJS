@@ -595,7 +595,7 @@ paths:
                   type: string
                   description: "Phone number of the user"
                   example: "08947583901"
-                avatar:
+                avatar_url:
                   type: string
                   format: binary
                   description: "Avatar image file max 2MB"
