@@ -1,11 +1,13 @@
 const orderService = require("../service/order_service")
 const scheduleService = require("../service/schedule_service")
+const { getCityId } = require("../service/city_service")
 const { formatTimeToUTC, formatAddZeroFront, convertToIso } = require("../utils/formattedDate")
 const pagination = require("../utils/pagination")
 const jsonResponse = require("../utils/response")
 
 const findSchedule = async (req, res, next) => {
-    const { city_arrive_id, city_destination_id, date_departure, seat_class, passenger } = req.body
+    const { city_arrive_id, city_destination_id, date_departure, seat_class, passenger, sorting } = req.body
+
     const { page } = req.query
     if (!city_arrive_id || !city_destination_id || !date_departure || !seat_class || !passenger) {
         return jsonResponse(res, 400, { status: false, message: "faield cant empty", })
@@ -25,8 +27,17 @@ const findSchedule = async (req, res, next) => {
     let isoDate = convertToIso({ day, month, year })
     let paginat = pagination.paginationPage(Number(page))
     let totalPasenger = calculateTotalPassengers(passenger)
+    let cityArriveId = await getCityId(city_arrive_id)
+    let cityDestinationId = await getCityId(city_destination_id)
 
-    let data = await scheduleService.getDataFind(city_arrive_id, city_destination_id, isoDate, paginat.skip, paginat.take)
+    if (!cityArriveId || !cityDestinationId) {
+        return jsonResponse(res, 400, {
+            status: false,
+            message: "city not found",
+        })
+    }
+
+    let data = await scheduleService.getDataFind(cityArriveId, cityDestinationId, isoDate, paginat.skip, paginat.take)
     let totalData = await scheduleService.countDataFind(city_arrive_id, city_destination_id, isoDate,)
     let totalPage = pagination.paginationPageTotal(totalData)
 
