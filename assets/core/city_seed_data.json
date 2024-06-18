@@ -1,8 +1,14 @@
 [
   {
-    "name": "Yogyakarta",
-    "code": "YIA",
-    "airport_name": "Yogyakarta International Airport",
+    "name": "Tangerang",
+    "code": "CGK",
+    "airport_name": "Bandara Internasional Soekarno-Hatta",
+    "country_id": 1
+  },
+  {
+    "name": "Denpasar",
+    "code": "DPS",
+    "airport_name": "Bandara Internasional Ngurah Rai",
     "country_id": 1
   },
   {
@@ -12,15 +18,9 @@
     "country_id": 1
   },
   {
-    "name": "Jakarta",
-    "code": "CGK",
-    "airport_name": "Soekarno Hatta International Airport",
-    "country_id": 1
-  },
-  {
-    "name": "Bali / Denpasar",
-    "code": "DPS",
-    "airport_name": "Ngurah Rai International Airport",
+    "name": "Yogyakarta",
+    "code": "YIA",
+    "airport_name": "Yogyakarta International Airport",
     "country_id": 1
   },
   {
