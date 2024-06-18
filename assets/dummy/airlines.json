@@ -1,5 +1,5 @@
-{
-	"QG": {
+[
+ {
 		"airlineId": "QG",
 		"name": "Citilink",
 		"shortName": "Citilink",
@@ -43,7 +43,7 @@
 			}
 		}
 	},
-	"IP": {
+	 {
 		"airlineId": "IP",
 		"name": "Pelita Air",
 		"shortName": "Pelita",
@@ -51,7 +51,7 @@
 		"iataCode": "IP",
 		"airplanes": {}
 	},
-	"QZ": {
+	 {
 		"airlineId": "QZ",
 		"name": "AirAsia",
 		"shortName": "AirAsia",
@@ -59,7 +59,7 @@
 		"iataCode": "QZ",
 		"airplanes": {}
 	},
-	"8B": {
+	{
 		"airlineId": "8B",
 		"name": "TransNusa",
 		"shortName": "TransNusa",
@@ -82,7 +82,7 @@
 			}
 		}
 	},
-	"GA": {
+	 {
 		"airlineId": "GA",
 		"name": "Garuda Indonesia",
 		"shortName": "Garuda",
@@ -133,7 +133,7 @@
 			}
 		}
 	},
-	"JT": {
+	{
 		"airlineId": "JT",
 		"name": "Lion Air",
 		"shortName": "Lion",
@@ -170,7 +170,7 @@
 			}
 		}
 	},
-	"ID": {
+	{
 		"airlineId": "ID",
 		"name": "Batik Air",
 		"shortName": "Batik",
@@ -200,7 +200,7 @@
 			}
 		}
 	},
-	"IU": {
+	{
 		"airlineId": "IU",
 		"name": "Super Air Jet",
 		"shortName": "Super Air Jet",
@@ -208,7 +208,7 @@
 		"iataCode": "IU",
 		"airplanes": {}
 	},
-	"SJ": {
+	{
 		"airlineId": "SJ",
 		"name": "Sriwijaya Air",
 		"shortName": "Sriwijaya",
@@ -224,7 +224,7 @@
 			}
 		}
 	},
-	"NM": {
+	{
 		"airlineId": "NM",
 		"name": "NAM Air",
 		"shortName": "NAM",
@@ -240,7 +240,7 @@
 			}
 		}
 	},
-	"IW": {
+	 {
 		"airlineId": "IW",
 		"name": "Wings Air",
 		"shortName": "Wings",
@@ -256,7 +256,7 @@
 			}
 		}
 	},
-	"IL": {
+	{
 		"airlineId": "IL",
 		"name": "Trigana Air",
 		"shortName": "Trigana",
@@ -272,7 +272,7 @@
 			}
 		}
 	},
-	"OD": {
+	{
 		"airlineId": "OD",
 		"name": "Batik Air (Malaysia)",
 		"shortName": "Batik Air (Malaysia)",
@@ -280,7 +280,7 @@
 		"iataCode": "OD",
 		"airplanes": {}
 	},
-	"TZ": {
+	 {
 		"airlineId": "TZ",
 		"name": "Scoot",
 		"shortName": "Scoot",
@@ -288,7 +288,7 @@
 		"iataCode": "TZ",
 		"airplanes": {}
 	},
-	"TR": {
+	 {
 		"airlineId": "TR",
 		"name": "Scoot",
 		"shortName": "Scoot",
@@ -296,7 +296,7 @@
 		"iataCode": "TR",
 		"airplanes": {}
 	},
-	"FY": {
+	 {
 		"airlineId": "FY",
 		"name": "Firefly",
 		"shortName": "Firefly",
@@ -304,4 +304,4 @@
 		"iataCode": "FY",
 		"airplanes": {}
 	}
-}
+]
