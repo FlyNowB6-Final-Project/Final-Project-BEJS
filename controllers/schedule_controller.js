@@ -37,7 +37,7 @@ const findSchedule = async (req, res, next) => {
         })
     }
 
-    let data = await scheduleService.getDataFind(cityArriveId, cityDestinationId, isoDate, paginat.skip, paginat.take)
+    let data = await scheduleService.getDataFind(cityArriveId, cityDestinationId, isoDate, true, paginat.skip, paginat.take)
     let totalData = await scheduleService.countDataFind(city_arrive_id, city_destination_id, isoDate,)
     let totalPage = pagination.paginationPageTotal(totalData)
 
