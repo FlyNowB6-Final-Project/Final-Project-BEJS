@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@prisma/client": "^5.14.0",
+    "@sentry/node": "^8.9.2",
+    "@sentry/profiling-node": "^8.9.2",
+    "@sentry/tracing": "^7.114.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",

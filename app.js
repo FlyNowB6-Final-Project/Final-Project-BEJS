@@ -4,6 +4,7 @@ const { nodeProfilingIntegration } = require("@sentry/profiling-node");
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
+  environment: process.env.ENVIRONTMENT,
   integrations: [
     nodeProfilingIntegration(),
   ],
