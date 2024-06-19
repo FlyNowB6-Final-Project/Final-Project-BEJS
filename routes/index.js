@@ -17,6 +17,7 @@ const Plane = require("./plane.routes")
 const Payments = require("./payment.routes")
 const Order = require("./order.routes")
 const Notifications = require("./notif.routes")
+const Admin = require("./admin.routes")
 
 const swagger_path = path.resolve(__dirname, "../docs/api-docs.yaml");
 const file = fs.readFileSync(swagger_path, "utf-8");
@@ -38,5 +39,6 @@ router.use("/api/v1", continentRoute)
 router.use("/api/v1", Payments)
 router.use("/api/v1", Order)
 router.use("/api/v1", Notifications)
+router.use("/api/v1", Admin)
 
 module.exports = router;

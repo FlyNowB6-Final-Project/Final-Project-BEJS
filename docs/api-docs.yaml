@@ -23,6 +23,8 @@ tags:
     description: Operations about Payment
   - name: "Notification"
     description: Operations about Notification
+  - name: "Admin"
+    description: Operations about Admin
 paths:
   /users/register:
     post:
@@ -1735,59 +1737,6 @@ paths:
       security:
         - bearerAuth: []
 
-    post:
-      tags:
-        - "Notification"
-      summary: Create a new notification for All users
-      description: Creates a new notification for all users.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Notification
-                message:
-                  type: string
-                  example: "Promotions Is Coming."
-      responses:
-        201:
-          description: Notifications created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "Notifications created for all users"
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Notification"
-        400:
-          description: Bad request, missing required fields
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "Title and message are required fields"
-                  data:
-                    example: null
-      security:
-        - bearerAuth: []
-
   /notifications/markAsRead/all:
     put:
       tags:
@@ -2077,6 +2026,113 @@ paths:
                     example: "Payment not found"
       security:
         - bearerAuth: []
+
+  /admin/count/user:
+    get:
+      tags:
+        - "Admin"
+      summary: Count All users
+      description: Count All users
+      responses:
+        200:
+          description: Successfully retrieved Count All users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Success to count all users
+                  data:
+                    type: integer
+                    example: 20       
+      # security:
+      #   - bearerAuth: []
+
+  /admin/all/user:
+    get:
+      tags:
+        - "Admin"
+      summary: Get All data users
+      description: Get All data users
+      responses:
+        200:
+          description: Successfully retrieved Get All data users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Successfully retrieved all users
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Admin"               
+      # security:
+      #   - bearerAuth: []
+
+  /admin/notifications:
+    post:
+      tags:
+        - "Admin"
+      summary: Create a new notification for All users
+      description: Creates a new notification for all users.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Notification
+                message:
+                  type: string
+                  example: "Promotions Is Coming."
+      responses:
+        201:
+          description: Notifications created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Notifications created for all users"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Notification"
+        400:
+          description: Bad request, missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Title and message are required fields"
+                  data:
+                    example: null
+      # security:
+      #   - bearerAuth: []
 
 components:
   securitySchemes:
@@ -2416,6 +2472,22 @@ components:
         user_id:
           type: integer
           example: 1
+          
+    Admin: 
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        fullname:
+          type: string
+          example: Flynow Foundation
+        email:
+          type: string
+          example: flynowb6@gmail.com
+        phoneNumber:
+          type: string
+          example: "08123456789"
 
   requestBodies:
     orderRequest:
