@@ -768,9 +768,6 @@ paths:
                 date_departure:
                   type: string
                   example: 25-05-2024
-                # date_return:
-                #   type: string
-                #   example: 20/06/2024
                 seat_class:
                   type: integer
                   example: 2
@@ -783,6 +780,23 @@ paths:
                     children:
                       type: integer
                       example: 1
+                sorting:
+                  type: object
+                  properties:
+                    timeAsc:
+                      type: boolean
+                      example: true
+                    price_from:
+                      type: integer
+                      example: 200000
+                    price_to:
+                      type: integer
+                      example: 1500000
+                    time_departure_from:
+                      type: string
+                    time_departure_to:
+                      type: string
+
       responses:
         "200":
           description: OK
@@ -1383,7 +1397,7 @@ paths:
     get:
       tags:
         - "Order"
-      summary: Get all order 
+      summary: Get all order
       description: Get all order
       parameters:
         - in: query
@@ -1432,10 +1446,10 @@ paths:
                             detailFlight:
                               type: object
                               properties:
-                                id: 
+                                id:
                                   type: integer
                                   example: 1
-                                price: 
+                                price:
                                   type: integer
                                   example: 10000000
                                 detailPlaneId:
@@ -1444,7 +1458,7 @@ paths:
                                     seat_class:
                                       type: object
                                       properties:
-                                        id: 
+                                        id:
                                           type: integer
                                           example: 1
                                         type_class:
@@ -1470,7 +1484,7 @@ paths:
                                       example: 25-05-2024
                                     estimation_minute:
                                       type: integer
-                                      example: 180 
+                                      example: 180
                                     city_arrive:
                                       $ref: "#/components/schemas/City"
                                     city_destination:
@@ -1501,14 +1515,14 @@ paths:
                   - $ref: "#/components/schemas/OrderResponse"
                   - type: array
                     properties:
-                      passenger: 
+                      passenger:
                         $ref: "#/components/schemas/Passenger"
                   - type: object
                     properties:
                       detailFlight:
                         type: object
                         properties:
-                          id: 
+                          id:
                             type: integer
                             example: 1
                           flight_id:
@@ -1517,7 +1531,7 @@ paths:
                           detail_plane_id:
                             type: integer
                             example: 1
-                          price: 
+                          price:
                             type: integer
                             example: 10000000
                           flight:
@@ -1540,7 +1554,7 @@ paths:
                                 example: 25-05-2024
                               estimation_minute:
                                 type: integer
-                                example: 180 
+                                example: 180
                               city_arrive:
                                 $ref: "#/components/schemas/City"
                               city_destination:
@@ -1560,7 +1574,7 @@ paths:
                               plane_id:
                                 type: integer
                                 example: 1
-                              plane: 
+                              plane:
                                 type: object
                                 properties:
                                   id:
