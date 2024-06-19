@@ -1009,6 +1009,8 @@ paths:
     get:
       tags:
         - "Ticket"
+      summary: Get ticket flight recomendation
+      description: Get ticket flight recomendation by count order flight.
       responses:
         "200":
           description: Success
@@ -1115,26 +1117,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        name:
-                          type: string
-                          example: "Boeing 737-800"
-                        brand:
-                          type: string
-                          example: "Boeing"
-                        series:
-                          type: string
-                          example: "10748"
-                        capacity:
-                          type: integer
-                          example: 189
-                        airlinesId:
-                          type: integer
-                          example: 1
+                      $ref: "#/components/schemas/Plane"
 
   /plane/{planeId}:
     get:
@@ -1164,52 +1147,36 @@ paths:
                     type: string
                     example: "Plane details retrieved successfully"
                   data:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      name:
-                        type: string
-                        example: "Boeing 737-800"
-                      brand:
-                        type: string
-                        example: "Boeing"
-                      series:
-                        type: string
-                        example: "10748"
-                      capacity:
-                        type: integer
-                        example: 189
-                      airlinesId:
-                        type: integer
-                        example: 1
-                      DetailPlane:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                              example: 1
-                            total_seat:
-                              type: integer
-                              example: 80
-                            seat_class_id:
-                              type: integer
-                              example: 1
-                            plane_id:
-                              type: integer
-                              example: 1
-                            seat_class:
+                    allOf:
+                      - $ref: "#/components/schemas/Plane"
+                      - type: object
+                        properties:
+                          DetailPlane:
+                            type: array
+                            items:
                               type: object
                               properties:
                                 id:
                                   type: integer
                                   example: 1
-                                type_class:
-                                  type: string
-                                  example: "Ekonomi"
+                                total_seat:
+                                  type: integer
+                                  example: 80
+                                seat_class_id:
+                                  type: integer
+                                  example: 1
+                                plane_id:
+                                  type: integer
+                                  example: 1
+                                seat_class:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    type_class:
+                                      type: string
+                                      example: "Ekonomi"
         "404":
           description: Plane not found
           content:
@@ -1228,8 +1195,8 @@ paths:
     get:
       tags:
         - "Destination"
-      summary: Get All city and Find city
-      description: Get All city and Find city
+      summary: Get All city with airport
+      description: Get All city
       parameters:
         - in: query
           name: find
@@ -1253,23 +1220,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        name:
-                          type: string
-                          example: Tangerang
-                        code:
-                          type: string
-                          example: CGK
-                        airport_name:
-                          type: string
-                          example: Bandara Internasional Soekarno-Hatta
-                        country:
-                          type: string
-                          example: Indoensia
+                      $ref: "#/components/schemas/City"
   /countries:
     get:
       tags:
@@ -1299,20 +1250,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        name:
-                          type: string
-                          example: Indonesia
-                        code:
-                          type: string
-                          example: ID
-                        continent_id:
-                          type: integer
-                          example: 1
+                      $ref: "#/components/schemas/Country"
   /continents:
     get:
       tags:
@@ -1342,17 +1280,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        name:
-                          type: string
-                          example: Asia
-                        code:
-                          type: string
-                          example: AS
+                      $ref: "#/components/schemas/Continent"
 
   /ticket/order/{detailFlightId}:
     post:
@@ -2027,7 +1955,7 @@ paths:
       security:
         - bearerAuth: []
 
-  /admin/count/user:
+  /admin/count:
     get:
       tags:
         - "Admin"
@@ -2048,8 +1976,17 @@ paths:
                     type: string
                     example: Success to count all users
                   data:
-                    type: integer
-                    example: 20       
+                    type: object
+                    properties:
+                      countUser:
+                        type: integer
+                        example: 10
+                      countOrder:
+                        type: integer
+                        example: 25
+                      countFlight:
+                        type: integer
+                        example: 40    
       # security:
       #   - bearerAuth: []
 
@@ -2077,6 +2014,67 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/Admin"               
+      # security:
+      #   - bearerAuth: []
+
+  /admin/all/order:
+    get:
+      tags:
+        - "Admin"
+      summary: Get All data Order user
+      description: Get All data Order user
+      responses:
+        200:
+          description: Successfully retrieved Get All data Order user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Successfully retrieved all data order user
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AdminOrder"         
+      # security:
+      #   - bearerAuth: []
+
+  /admin/order/user/:userId:
+    get:
+      tags:
+        - "Admin"
+      summary: Get Detail data Order by user
+      description: Get Detail data Order by user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the user whose order details are to be retrieved
+      responses:
+        200:
+          description: Successfully retrieved Get Detail data Order by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Successfully retrieved detail data order by user
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AdminOrder"         
       # security:
       #   - bearerAuth: []
 
@@ -2187,6 +2185,7 @@ components:
         role:
           type: string
           example: user
+          
     FlightSchedule:
       type: object
       properties:
@@ -2270,68 +2269,75 @@ components:
           type: integer
           example: 2
 
-    DetailedFlightInfo:
-      allOf:
-        - $ref: "#/components/schemas/BasicFlightInfo"
-        - type: object
-          properties:
-            city_arrive:
-              $ref: "#/components/schemas/City"
-            city_destination:
-              $ref: "#/components/schemas/City"
+    Plane:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        name:
+          type: string
+          example: Airbus A320
+        brand:
+          type: string
+          example: Airbus
+        capacity:
+          type: integer
+          example: 180
+        airlinesId:
+          type: integer
+          example: 2
+        series:
+          type: string
+          example: 72635
 
-    DetailFlight:
+    City:
       type: object
       properties:
         id:
           type: integer
           example: 1
-        price:
-          type: integer
-          example: 500000
-          description: Harga
-        detailPlaneId:
-          $ref: "#/components/schemas/PlaneDetail"
-
-    PlaneDetail:
-      type: object
-      properties:
-        seat_class:
-          $ref: "#/components/schemas/SeatClass"
-        plane:
-          $ref: "#/components/schemas/Plane"
-
-    SeatClass:
-      type: object
-      properties:
-        type_class:
-          type: string
-          example: Ekonomi
-          description: Jenis Kelas
-
-    Plane:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Boeing 737-800
-          description: Nama Pesawat
-
-    City:
-      type: object
-      properties:
-        code:
-          type: string
-          example: CGK
-          description: Kode Kota
         name:
           type: string
           example: Tangerang
-          description: Nama Kota
+        code:
+          type: string
+          example: CGK
         airport_name:
           type: string
           example: Bandara Internasional Soekarno-Hatta
-          description: Nama Bandara
+        country:
+          type: string
+          example: Indoensia
+
+    Continent:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Asia
+        code:
+          type: string
+          example: AS
+
+    Country:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Indonesia
+        code:
+          type: string
+          example: ID
+        continent_id:
+          type: integer
+          example: 1
 
     Passenger:
       type: object
@@ -2472,7 +2478,7 @@ components:
         user_id:
           type: integer
           example: 1
-          
+
     Admin: 
       type: object
       properties:
@@ -2488,6 +2494,61 @@ components:
         phoneNumber:
           type: string
           example: "08123456789"
+          
+    AdminOrder: 
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        status:
+          type: string
+          example: unpaid
+        code:
+          type: string
+          example: ORD123456
+        user_id:
+          type: integer
+          example: 1
+        detailFlight:
+          type: object
+          properties:
+            id: 
+              type: integer
+              example: 1
+            price: 
+              type: integer
+              example: 10000000
+            detailPlaneId:
+              type: object
+              properties:
+                plane:
+                  $ref: "#/components/schemas/Plane"
+            flight:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 4
+                flight_number:
+                  type: string
+                  example: gua-570825
+                time_arrive:
+                  type: string
+                  example: 17:45
+                time_departure:
+                  type: string
+                  example: 08:30
+                date_flight:
+                  type: string
+                  example: 25-05-2024
+                estimation_minute:
+                  type: integer
+                  example: 180 
+                city_arrive:
+                  $ref: "#/components/schemas/City"
+                city_destination:
+                  $ref: "#/components/schemas/City"
 
   requestBodies:
     orderRequest:
