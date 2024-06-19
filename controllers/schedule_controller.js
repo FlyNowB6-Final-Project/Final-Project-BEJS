@@ -1,7 +1,7 @@
 const orderService = require("../service/order_service")
 const scheduleService = require("../service/schedule_service")
 const { getCityId } = require("../service/city_service")
-const { formatTimeToUTC, formatAddZeroFront, convertToIso } = require("../utils/formattedDate")
+const { formatTimeToUTC, formatAddZeroFront, convertToIso, convertTOManual } = require("../utils/formattedDate")
 const pagination = require("../utils/pagination")
 const jsonResponse = require("../utils/response")
 const { ResponseError } = require("../error/response_error")
@@ -23,9 +23,9 @@ const findSchedule = async (req, res, next) => {
 
         day = formatAddZeroFront(day)
         month = formatAddZeroFront(month)
-        let allData = []
 
-        const isoDate = convertToIso({ day, month, year })
+
+        const isoDate = convertTOManual({ day, month, year })
         const paginat = pagination.paginationPage(Number(page))
         const totalPasenger = calculateTotalPassengers(request.passenger)
         const cityArriveId = await getCityId(request.city_arrive_id)
@@ -35,31 +35,12 @@ const findSchedule = async (req, res, next) => {
             throw new ResponseError(400, "City Not found")
         }
 
-        let data = await scheduleService.getDataFind(cityArriveId, cityDestinationId, isoDate, true, paginat.skip, paginat.take)
-        let totalData = await scheduleService.countDataFind(cityArriveId, cityDestinationId, isoDate,)
-        let totalPage = pagination.paginationPageTotal(totalData)
+        let data = await scheduleService.getDataFind(cityArriveId, cityDestinationId, isoDate, request.seat_class, request.sorting.timeAsc, request.sorting.price_from, request.sorting.price_to, paginat.skip, paginat.take)
+        // let totalData = await scheduleService.countDataFind(cityArriveId, cityDestinationId, isoDate)
+        // let totalPage = pagination.paginationPageTotal(totalData)
 
-        if (!data || data.length === 0) {
-            return jsonResponse(res, 400, { status: false, message: "failed retrive schedule data", })
-        }
 
-        for (const value of data) {
-            let detailFlight = await scheduleService.getDetailFlightByFlightId(value.id);
-            let mergedData = detailFlight
-                .filter(flightDetail => flightDetail.detailPlaneId.seat_class.id === request.seat_class)
-                .map(flightDetail => ({
-                    flightDetailId: flightDetail.id,
-                    price: flightDetail.price,
-                    totalPrice: flightDetail.price * totalPasenger,
-                    flightSeat: flightDetail.detailPlaneId.seat_class.type_class,
-                    flightPlane: flightDetail.detailPlaneId.plane.name,
-                    ...value,
-                }));
-
-            allData.push(...mergedData);
-        }
-
-        allData.forEach((v) => {
+        data.forEach((v) => {
             v.time_arrive = formatTimeToUTC(v.time_arrive)
             v.time_departure = formatTimeToUTC(v.time_departure)
 
@@ -72,15 +53,29 @@ const findSchedule = async (req, res, next) => {
 
             let fullDate = `${day}-${month}-${year}`;
             v.date_flight = fullDate
+            v.city_arive = {
+                code: v.cityarrivecode,
+                name: v.cityarrivename,
+                airport_name: v.cityarriveairportname
+            }
+            v.city_destination = {
+                code: v.citydestinationcode,
+                name: v.citydestinationname,
+                airport_name: v.citydestinationairportname
+            }
+
+            v.totalPrice = totalPasenger * v.price
+
+            delete v.cityarrivecode
+            delete v.cityarrivename
+            delete v.cityarriveairportname
+            delete v.citydestinationcode
+            delete v.citydestinationname
+            delete v.citydestinationairportname
+
         })
 
-        allData.sort((a, b) => {
-            let timeA = new Date(`1970-01-01T${a.time_departure}Z`);
-            let timeB = new Date(`1970-01-01T${b.time_departure}Z`);
-            return timeA - timeB;
-        });
-
-        if (!allData) {
+        if (!data) {
             return jsonResponse(res, 400, {
                 status: false,
                 message: "schedule data not found",
@@ -89,11 +84,11 @@ const findSchedule = async (req, res, next) => {
 
         return jsonResponse(res, 200, {
             message: "success retrive schedule data",
-            data: allData,
-            page: Number(page) ?? 1,
-            perPage: allData.length,
-            pageCount: totalPage,
-            totalCount: totalData,
+            data: data,
+            // page: Number(page) ?? 1,
+            // perPage: data.length,
+            // pageCount: totalPage,
+            // totalCount: totalData,
         })
 
     } catch (error) {
@@ -132,7 +127,6 @@ const mostPurchaseSchedule = async (req, res, next) => {
     }))
 
     if (data.length == 0 && !isContinent) {
-        console.log("in data null")
         data = await scheduleService.getDetailFlight()
     }
 

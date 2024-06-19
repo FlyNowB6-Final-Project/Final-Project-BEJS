@@ -22,6 +22,11 @@ module.exports = {
     return `${year}-${month}-${day}T${hour}:${minutes}:${second}.000Z`
   },
 
+  convertTOManual: ({ day = "00", month = "01", year }) => {
+    return `${year}-${month}-${day}`
+  },
+
+
   formatTimeToUTC,
   formatDateToUTC,
 

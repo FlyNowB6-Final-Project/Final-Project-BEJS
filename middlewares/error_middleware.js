@@ -23,7 +23,9 @@ const errorMiddleware = (err, req, res, next) => {
             message: "Resource not found",
         });
     }
+    console.log(err.message)
     if (err.status === 500) {
+
         return jsonResponse(res, 500, {
             status: false,
             message: "Internal Server Error",

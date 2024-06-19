@@ -1,39 +1,61 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient, Prisma } = require("@prisma/client");
 const { validate } = require("../validation/validation");
 const { scheduleValidation } = require("../validation/schedule_validation");
 const prisma = new PrismaClient()
 
-const getDataFind = async (city_arrive_id, city_destination_id, date_flight, timeAsc, skip, take) => {
-    return await prisma.flight.findMany({
-        where: {
-            city_arrive_id,
-            city_destination_id,
-            date_flight,
+const getDataFind = async (city_arrive_id, city_destination_id, date_flight, seat_class, timeAsc = true, price_from, price_to, skip = 0, take = 5) => {
+    let condition = " ";
+    let defaultOrder = timeAsc ? 'ASC' : 'DESC';
 
-        },
-        skip,
-        take,
-        orderBy: {
-            time_departure: timeAsc ? "asc" : "desc"
-        },
-        include: {
-            city_arrive: {
-                select: {
-                    code: true,
-                    name: true,
-                    airport_name: true
-                }
-            },
-            city_destination: {
-                select: {
-                    code: true,
-                    name: true,
-                    airport_name: true
-                }
-            },
-        }
-    })
-}
+    if (price_from !== undefined && price_to !== undefined) {
+        condition += `AND df.price BETWEEN ${price_from} AND ${price_to} `;
+    }
+
+    const query = Prisma.sql`
+        SELECT
+            df.id AS flightDetailId,
+            df.price AS price,
+            sc.type_class AS flightSeat,
+            pl.name AS flightPlane,
+            fl.id AS id,
+            fl.flight_number AS flightNumber,
+            fl.time_arrive,
+            fl.time_departure,
+            fl.date_flight,
+            fl.estimation_minute,
+            ca.code AS cityArriveCode,
+            ca.name AS cityArriveName,
+            ca.airport_name AS cityArriveAirportName,
+            cd.code AS citydestinationCode,
+            cd.name AS citydestinationName,
+            cd.airport_name AS citydestinationAirportName
+        FROM
+            detail_flight AS df
+            JOIN flights AS fl ON df.flight_id = fl.id
+            JOIN detail_plane AS dp ON dp.id = df.detail_plane_id
+            JOIN cities AS ca ON ca.id = fl.city_arrive_id
+            JOIN cities AS cd ON cd.id = fl.city_destination_id
+            JOIN seat_class AS sc ON sc.id = dp.seat_class_id
+            JOIN planes AS pl ON pl.id = dp.plane_id
+        WHERE
+            fl.city_arrive_id = ${city_arrive_id}
+            AND fl.city_destination_id = ${city_destination_id}
+            AND fl.date_flight = CAST(${date_flight} AS DATE)
+            AND dp.seat_class_id = ${seat_class}
+            ${Prisma.raw(condition)}
+        ORDER BY
+            fl.time_departure ${Prisma.raw(defaultOrder)}
+        OFFSET ${skip}
+        LIMIT ${take};`;
+
+
+
+    const result = await prisma.$queryRaw(query);
+    return result;
+};
+
+
+
 const countDataFind = async (city_arrive_id, city_destination_id, date_departure) => {
 
     return await prisma.flight.count({

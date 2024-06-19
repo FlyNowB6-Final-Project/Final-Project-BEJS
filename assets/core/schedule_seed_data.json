@@ -4,7 +4,7 @@
         "city_destination_id": 2,
         "flight_number": "sup-5707",
         "time_arrive": "2024-06-24T15:30:00.000Z",
-        "time_departure": "2024-06-24T06:00:00.000Z",
+        "time_departure": "2024-06-24T07:00:00.000Z",
         "date_flight": "2024-06-",
         "estimation_minute": 240,
         "detail_data": [
@@ -159,7 +159,7 @@
         "city_destination_id": 2,
         "flight_number": "sup-57010",
         "time_arrive": "2024-06-24T15:30:00.000Z",
-        "time_departure": "2024-06-24T06:00:00.000Z",
+        "time_departure": "2024-06-24T05:00:00.000Z",
         "date_flight": "2024-06-24",
         "estimation_minute": 240,
         "detail_data": [
@@ -190,7 +190,7 @@
         "city_destination_id": 2,
         "flight_number": "sup-57011",
         "time_arrive": "2024-06-25T15:30:00.000Z",
-        "time_departure": "2024-06-25T06:00:00.000Z",
+        "time_departure": "2024-06-25T08:00:00.000Z",
         "date_flight": "2024-06-25",
         "estimation_minute": 240,
         "detail_data": [
@@ -221,7 +221,7 @@
         "city_destination_id": 2,
         "flight_number": "sup-57012",
         "time_arrive": "2024-06-26T15:30:00.000Z",
-        "time_departure": "2024-06-26T06:00:00.000Z",
+        "time_departure": "2024-06-26T08:00:00.000Z",
         "date_flight": "2024-06-26",
         "estimation_minute": 240,
         "detail_data": [
@@ -252,7 +252,7 @@
         "city_destination_id": 2,
         "flight_number": "sup-5713",
         "time_arrive": "2024-06-27T15:30:00.000Z",
-        "time_departure": "2024-06-27T06:00:00.000Z",
+        "time_departure": "2024-06-27T09:00:00.000Z",
         "date_flight": "2024-06-27",
         "estimation_minute": 240,
         "detail_data": [
@@ -283,7 +283,7 @@
         "city_destination_id": 2,
         "flight_number": "sup-5714",
         "time_arrive": "2024-06-28T15:30:00.000Z",
-        "time_departure": "2024-06-28T06:00:00.000Z",
+        "time_departure": "2024-06-28T10:00:00.000Z",
         "date_flight": "2024-06-28",
         "estimation_minute": 240,
         "detail_data": [
