@@ -1,16 +1,20 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { convertToIso, formatDateTimeToUTC } = require('../utils/formattedDate');
+const { convertToIso, formatDateTimeToUTC } = require("../utils/formattedDate");
 
 module.exports = {
   countAllUser: async (req, res, next) => {
     try {
       const countUser = await prisma.user.count();
 
+      const countOrder = await prisma.order.count();
+
+      const countFlight = await prisma.flight.count();
+
       res.status(200).json({
         status: true,
         message: "Success to count all users",
-        data: countUser,
+        data: { countUser, countOrder, countFlight },
       });
     } catch (err) {
       next(err);
@@ -41,19 +45,16 @@ module.exports = {
       const orders = await prisma.order.findMany({
         select: {
           id: true,
+          status: true,
           code: true,
+          user_id: true,
           detailFlight: {
             select: {
               id: true,
               price: true,
               detailPlaneId: {
                 select: {
-                  seat_class: {
-                    select: {
-                      id: true,
-                      type_class: true,
-                    },
-                  },
+                  plane: true,
                 },
               },
               flight: {
@@ -98,6 +99,61 @@ module.exports = {
   },
   getDetailOrderUser: async (req, res, next) => {
     try {
+      const userId = req.params.userId;
+
+      const order = await prisma.order.findMany({
+        where: {
+          user_id: parseInt(userId),
+        },
+        select: {
+          id: true,
+          status: true,
+          code: true,
+          detailFlight: {
+            select: {
+              id: true,
+              price: true,
+              detailPlaneId: {
+                select: {
+                  plane: true,
+                },
+              },
+              flight: {
+                select: {
+                  id: true,
+                  flight_number: true,
+                  time_arrive: true,
+                  time_departure: true,
+                  date_flight: true,
+                  estimation_minute: true,
+                  city_arrive: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true,
+                      airport_name: true,
+                    },
+                  },
+                  city_destination: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true,
+                      airport_name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      res.status(200).json({
+        status: true,
+        message: "Successfully retrieved detail order by userId",
+        data: order,
+      });
     } catch (error) {
       next(error);
     }
