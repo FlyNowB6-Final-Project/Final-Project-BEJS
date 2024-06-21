@@ -35,10 +35,31 @@ const findSchedule = async (req, res, next) => {
             throw new ResponseError(400, "City Not found")
         }
 
-        let data = await scheduleService.getDataFind(cityArriveId, cityDestinationId, isoDate, request.seat_class, request.sorting.timeAsc, request.sorting.price_from, request.sorting.price_to, paginat.skip, paginat.take)
-        // let totalData = await scheduleService.countDataFind(cityArriveId, cityDestinationId, isoDate)
-        // let totalPage = pagination.paginationPageTotal(totalData)
+        let data = await scheduleService.getDataFind({
+            city_arrive_id: cityArriveId,
+            city_destination_id: cityDestinationId,
+            date_flight: isoDate,
+            seat_class: request.seat_class,
+            order: request.sorting.sortAsc,
+            price_from: request.sorting.price_from,
+            price_to: request.sorting.price_to,
+            time_from: request.sorting.time_departure_from,
+            time_to: request.sorting.time_departure_to,
+            skip: paginat.skip,
+            take: paginat.take,
+        })
 
+        let totalData = await scheduleService.countDataFind({
+            city_arrive_id: cityArriveId,
+            city_destination_id: cityDestinationId,
+            date_flight: isoDate,
+            seat_class: request.seat_class,
+            price_from: request.sorting.price_from,
+            price_to: request.sorting.price_to,
+            time_from: request.sorting.time_departure_from,
+            time_to: request.sorting.time_departure_to,
+        })
+        let totalPage = pagination.paginationPageTotal(totalData)
 
         data.forEach((v) => {
             v.time_arrive = formatTimeToUTC(v.time_arrive)
@@ -85,10 +106,10 @@ const findSchedule = async (req, res, next) => {
         return jsonResponse(res, 200, {
             message: "success retrive schedule data",
             data: data,
-            // page: Number(page) ?? 1,
-            // perPage: data.length,
-            // pageCount: totalPage,
-            // totalCount: totalData,
+            page: Number(page) ?? 1,
+            perPage: data.length,
+            pageCount: totalPage,
+            totalCount: totalData,
         })
 
     } catch (error) {

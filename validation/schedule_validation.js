@@ -10,11 +10,11 @@ const scheduleValidation = joi.object({
         adult: joi.number(),
     }),
     sorting: joi.object({
-        timeAsc: joi.boolean(),
-        time_departure_from: joi.string(),
-        time_departure_to: joi.string(),
-        price_from: joi.number(),
-        price_to: joi.number(),
+        sortAsc: joi.boolean(),
+        time_departure_from: joi.string().allow(null),
+        time_departure_to: joi.string().allow(null),
+        price_from: joi.number().allow(null),
+        price_to: joi.number().allow(null),
     })
 })
 
