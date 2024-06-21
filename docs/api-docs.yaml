@@ -783,7 +783,7 @@ paths:
                 sorting:
                   type: object
                   properties:
-                    timeAsc:
+                    sortAsc:
                       type: boolean
                       example: true
                     price_from:
