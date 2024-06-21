@@ -794,8 +794,10 @@ paths:
                       example: 1500000
                     time_departure_from:
                       type: string
+                      example: 07:00
                     time_departure_to:
                       type: string
+                      example: 09:00
 
       responses:
         "200":
@@ -2000,7 +2002,7 @@ paths:
                         example: 25
                       countFlight:
                         type: integer
-                        example: 40    
+                        example: 40
       # security:
       #   - bearerAuth: []
 
@@ -2027,7 +2029,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Admin"               
+                      $ref: "#/components/schemas/Admin"
       # security:
       #   - bearerAuth: []
 
@@ -2054,7 +2056,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/AdminOrder"         
+                      $ref: "#/components/schemas/AdminOrder"
       # security:
       #   - bearerAuth: []
 
@@ -2088,7 +2090,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/AdminOrder"         
+                      $ref: "#/components/schemas/AdminOrder"
       # security:
       #   - bearerAuth: []
 
@@ -2199,7 +2201,7 @@ components:
         role:
           type: string
           example: user
-          
+
     FlightSchedule:
       type: object
       properties:
@@ -2493,7 +2495,7 @@ components:
           type: integer
           example: 1
 
-    Admin: 
+    Admin:
       type: object
       properties:
         id:
@@ -2508,8 +2510,8 @@ components:
         phoneNumber:
           type: string
           example: "08123456789"
-          
-    AdminOrder: 
+
+    AdminOrder:
       type: object
       properties:
         id:
@@ -2527,10 +2529,10 @@ components:
         detailFlight:
           type: object
           properties:
-            id: 
+            id:
               type: integer
               example: 1
-            price: 
+            price:
               type: integer
               example: 10000000
             detailPlaneId:
@@ -2558,7 +2560,7 @@ components:
                   example: 25-05-2024
                 estimation_minute:
                   type: integer
-                  example: 180 
+                  example: 180
                 city_arrive:
                   $ref: "#/components/schemas/City"
                 city_destination:
