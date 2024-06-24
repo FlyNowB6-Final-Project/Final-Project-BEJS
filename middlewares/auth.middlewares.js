@@ -61,7 +61,7 @@ module.exports = {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         status: false,
-        message: 'You are not authorized to access this resource',
+        message: 'Only admin can access',
         data: null,
       });
     }
