@@ -2003,8 +2003,8 @@ paths:
                       countFlight:
                         type: integer
                         example: 40
-      # security:
-      #   - bearerAuth: []
+      security:
+        - bearerAuth: []
 
   /admin/all/user:
     get:
@@ -2030,8 +2030,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/Admin"
-      # security:
-      #   - bearerAuth: []
+      security:
+        - bearerAuth: []
 
   /admin/all/order:
     get:
@@ -2057,8 +2057,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/AdminOrder"
-      # security:
-      #   - bearerAuth: []
+      security:
+        - bearerAuth: []
 
   /admin/order/user/:userId:
     get:
@@ -2091,8 +2091,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/AdminOrder"
-      # security:
-      #   - bearerAuth: []
+      security:
+        - bearerAuth: []
 
   /admin/notifications:
     post:
@@ -2145,8 +2145,8 @@ paths:
                     example: "Title and message are required fields"
                   data:
                     example: null
-      # security:
-      #   - bearerAuth: []
+      security:
+        - bearerAuth: []
 
 components:
   securitySchemes:
