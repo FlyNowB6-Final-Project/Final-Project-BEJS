@@ -8,6 +8,11 @@ datasource db {
   // directUrl = env("DIRECT_URL")
 }
 
+enum Role {
+  user
+  admin
+}
+
 model User {
   id           Int            @id @default(autoincrement())
   fullname     String
@@ -16,7 +21,7 @@ model User {
   password     String?
   google_id    String?
   isVerified   Boolean        @default(false)
-  role         String?        @default("user")
+  role         Role           @default(user)
   avatar_url   String?
   family_name  String?
   otp          String?
