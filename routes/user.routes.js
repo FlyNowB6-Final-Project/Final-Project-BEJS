@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { register, login, verifyOtp, resendOtp, forgetPassword, resetPassword,getDetail, updateProfile, auth, googleOauth2 } = require("../controllers/user.controllers");
-const restrict = require("../middlewares/auth.middlewares");
+const { restrict } = require("../middlewares/auth.middlewares");
 const passport = require("../libs/passport")
 
 // API Auth Users
