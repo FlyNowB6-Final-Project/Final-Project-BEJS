@@ -6,12 +6,12 @@ const {
   getDetailOrderUser,
   createNotif,
 } = require("../controllers/admin.controllers");
-// const restrict = require("../middlewares/auth.middlewares");
+const { restrict, isAdmin } = require("../middlewares/auth.middlewares");
 
-router.get("/admin/count", countAllUser);
-router.get("/admin/all/user", getAllUser);
-router.get("/admin/all/order", getAllOrder);
-router.get("/admin/order/user/:userId", getDetailOrderUser);
-router.post("/admin/notifications", createNotif);
+router.get("/admin/count", restrict, isAdmin, countAllUser);
+router.get("/admin/all/user", restrict, isAdmin, getAllUser);
+router.get("/admin/all/order", restrict, isAdmin, getAllOrder);
+router.get("/admin/order/user/:userId", restrict, isAdmin, getDetailOrderUser);
+router.post("/admin/notifications", restrict, isAdmin, createNotif);
 
 module.exports = router;
