@@ -29,7 +29,16 @@ const checkDateLater = (daysLater) => {
   return nextDate
 }
 
+const utcTimePlus7 = () => {
+  const date = new Date();
+  const utcOffset = date.getTimezoneOffset() * 60000;
+  const wibOffset = 7 * 60 * 60000;
+  const wibTime = new Date(date.getTime() + utcOffset + wibOffset);
+  return wibTime;
+}
+
 module.exports = {
+  utcTimePlus7,
   checkDateLater,
   formattedDate: (timestamp) => {
     let date = new Date(timestamp);

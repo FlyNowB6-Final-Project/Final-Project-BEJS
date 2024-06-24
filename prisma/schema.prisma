@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -15,7 +16,7 @@ model User {
   password     String?
   google_id    String?
   isVerified   Boolean        @default(false)
-  role         String?         @default("user")
+  role         String?        @default("user")
   avatar_url   String?
   family_name  String?
   otp          String?
