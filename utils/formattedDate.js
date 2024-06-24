@@ -10,7 +10,27 @@ const formatDateToUTC = (dateString) => {
   return date.toISOString().split('T')[0];
 }
 
+const checkDateLater = (daysLater) => {
+  var now = new Date();
+  const totalDate = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  let day = now.getDate();
+  let dayLater = day + daysLater
+  let month = now.getMonth() + 1;
+  let year = now.getFullYear();
+
+
+  if (dayLater > totalDate) {
+    dayLater = dayLater - totalDate
+
+    let nextDate = new Date(year, (month - 1) + 1, dayLater);
+    return nextDate
+  }
+  nextDate = new Date(year, month - 1, dayLater);
+  return nextDate
+}
+
 module.exports = {
+  checkDateLater,
   formattedDate: (timestamp) => {
     let date = new Date(timestamp);
     let options = { day: "numeric", month: "long", year: "numeric" };
