@@ -58,7 +58,7 @@ module.exports = {
     }
   },
   isAdmin: (req, res, next) => {
-    if (req.user.role !== 'ADMIN') {
+    if (req.user.role !== 'admin') {
       return res.status(403).json({
         status: false,
         message: 'You are not authorized to access this resource',
@@ -68,7 +68,7 @@ module.exports = {
     next();
   },
   isUser: (req, res, next) => {
-    if (req.user.role !== 'USER') {
+    if (req.user.role !== 'user') {
       return res.status(403).json({
         status: false,
         message: 'You are not authorized to access this resource',
