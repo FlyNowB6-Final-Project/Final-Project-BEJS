@@ -1025,13 +1025,6 @@ paths:
     get:
       tags:
         - "Ticket"
-      parameters:
-        - in: path
-          name: category_id
-          required: true
-          schema:
-            type: integer
-          description: The ID of the category to retrieve
       summary: Get category ticket flight recomendation
       description: Get category ticket flight recomendation.
       responses:
@@ -1064,6 +1057,13 @@ paths:
     get:
       tags:
         - "Ticket"
+      parameters:
+        - in: path
+          name: category_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the category to retrieve
       summary: Get ticket flight recomendation
       description: Get ticket flight recomendation by count order flight.
       responses:
