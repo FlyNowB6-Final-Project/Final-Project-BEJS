@@ -118,7 +118,8 @@ const findSchedule = async (req, res, next) => {
 }
 
 const allRecomendation = async (req, res, next) => {
-    const { city } = req.query
+    const { category_id } = req.query
+    const city = category_id
     let isCity = false
     let data
     if (city != null) {
