@@ -117,13 +117,13 @@ const findSchedule = async (req, res, next) => {
     }
 }
 
-const mostPurchaseSchedule = async (req, res, next) => {
-    const { continent } = req.query
-    let isContinent = false
+const allRecomendation = async (req, res, next) => {
+    const { city } = req.query
+    let isCity = false
     let data
-    if (continent != null) {
-        isContinent = true
-        data = await orderService.getDataForRecomendationByContinent(Number(continent))
+    if (city != null) {
+        isCity = true
+        data = await orderService.getDataForRecomendationByCity(Number(city))
     } else {
         data = await orderService.getDataForRecomendation()
     }
@@ -132,22 +132,18 @@ const mostPurchaseSchedule = async (req, res, next) => {
         countryObject.order_count = Number(countryObject.order_count)
     });
 
+    console.log(data)
     data.sort((a, b) => b.order_count - a.order_count)
 
     data = data.slice(0, 5)
 
-    // for (let item of data) {
-    //     item = await scheduleService.getDetailFlightById(item.detail_flight_id);
-    //     delete item.detail_flight_id
-    //     delete item.order_count
-    // }
 
     data = await Promise.all(data.map(async (item) => {
         return await scheduleService.getDetailFlightById(item.detail_flight_id)
 
     }))
 
-    if (data.length == 0 && !isContinent) {
+    if (data.length == 0 && !isCity) {
         data = await scheduleService.getDetailFlight()
     }
 
@@ -174,7 +170,29 @@ function calculateTotalPassengers(passenger) {
 
 
 
+async function getCategoryRecomendation(req, res, next) {
+    try {
+        let result = await orderService.orderRecomendationByCity()
+        result.forEach((value) => {
+
+            delete value.order_count
+            value.id = Number(value.id)
+            console.log(value)
+        });
+
+        return jsonResponse(res, 200, {
+            status: true,
+            message: "success retrive category recomendation",
+            data: result
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+
 module.exports = {
     findSchedule,
-    mostPurchaseSchedule
+    allRecomendation,
+    getCategoryRecomendation
 }
