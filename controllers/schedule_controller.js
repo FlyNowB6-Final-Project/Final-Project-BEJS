@@ -132,7 +132,6 @@ const allRecomendation = async (req, res, next) => {
         countryObject.order_count = Number(countryObject.order_count)
     });
 
-    console.log(data)
     data.sort((a, b) => b.order_count - a.order_count)
 
     data = data.slice(0, 5)
@@ -174,10 +173,8 @@ async function getCategoryRecomendation(req, res, next) {
     try {
         let result = await orderService.orderRecomendationByCity()
         result.forEach((value) => {
-
             delete value.order_count
             value.id = Number(value.id)
-            console.log(value)
         });
 
         return jsonResponse(res, 200, {
