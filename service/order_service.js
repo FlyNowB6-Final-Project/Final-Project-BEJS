@@ -50,7 +50,7 @@ module.exports = {
         }
     },
 
-    getDataForRecomendationByCity: async (city) => {
+    getDataForRecomendationByCity: async (city, limit) => {
         try {
             const result = await prisma.$queryRaw`
                 SELECT  o.detail_flight_id, COUNT(o.id) AS order_count
@@ -62,7 +62,30 @@ module.exports = {
                 JOIN countries sd ON cd.country_id = sd.id
                 JOIN countries sa ON ca.country_id = sa.id
                 WHERE cd.id = ${city}
-                GROUP BY o.detail_flight_id;
+                GROUP BY o.detail_flight_id
+                LIMIT ${limit}
+                ;
+                `;
+            return result
+        } catch (error) {
+            throw error
+        }
+    },
+    getDiscountDataForRecomendationByCity: async (city) => {
+        try {
+            const result = await prisma.$queryRaw`
+                SELECT  o.detail_flight_id, COUNT(o.id) AS order_count
+                FROM orders o
+                JOIN detail_flight df ON o.detail_flight_id = df.id
+                JOIN flights f ON df.flight_id = f.id
+                JOIN cities cd ON f.city_destination_id = cd.id
+                JOIN cities ca ON f.city_arrive_id = ca.id
+                JOIN countries sd ON cd.country_id = sd.id
+                JOIN countries sa ON ca.country_id = sa.id
+                WHERE cd.id = ${city} AND f.discount > 0
+                GROUP BY o.detail_flight_id
+                LIMIT 3
+                ;
                 `;
             return result
         } catch (error) {

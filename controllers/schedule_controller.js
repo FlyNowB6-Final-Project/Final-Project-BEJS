@@ -123,6 +123,8 @@ const allRecomendation = async (req, res, next) => {
     let data
     if (city != null) {
         isCity = true
+        // data = await orderService.getDiscountDataForRecomendationByCity(Number(city))
+        // console.log(data)
         data = await orderService.getDataForRecomendationByCity(Number(city))
     } else {
         data = await orderService.getDataForRecomendation()

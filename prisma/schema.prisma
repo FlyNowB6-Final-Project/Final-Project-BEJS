@@ -41,6 +41,7 @@ model Flight {
   city_arrive_id      Int
   city_destination_id Int
   estimation_minute   Int
+  discount            Int            @default(0)
   DetailFlight        DetailFlight[]
   city_arrive         City           @relation("arrive", fields: [city_arrive_id], references: [id])
   city_destination    City           @relation("destination", fields: [city_destination_id], references: [id])
