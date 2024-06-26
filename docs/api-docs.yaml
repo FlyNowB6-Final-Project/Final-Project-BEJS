@@ -1021,10 +1021,49 @@ paths:
                   message:
                     type: string
                     example: "Flight not found"
+  /ticket/schedule/category:
+    get:
+      tags:
+        - "Ticket"
+      summary: Get category ticket flight recomendation
+      description: Get category ticket flight recomendation.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    description: Indicates the success status of the request
+                  message:
+                    type: string
+                    description: Human-readable message regarding the request status
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID of the recommendation
+                        city_destination:
+                          type: string
+                          description: City destination for the recommendation
+
   /ticket/schedule/recomendation:
     get:
       tags:
         - "Ticket"
+      parameters:
+        - in: path
+          name: category_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the category to retrieve
       summary: Get ticket flight recomendation
       description: Get ticket flight recomendation by count order flight.
       responses:
