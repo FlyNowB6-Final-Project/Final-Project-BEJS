@@ -1649,8 +1649,15 @@ paths:
       tags:
         - "Notification"
       summary: Get All notification
-      description: Get All notification
+      description: Get All notification        
       parameters:
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: integer
+            example: 1
         - in: query
           name: find
           schema:
@@ -1698,6 +1705,18 @@ paths:
                         user_id:
                           type: integer
                           example: 1
+                  page:
+                    type: integer
+                    example: 1
+                  perPage:
+                    type: integer
+                    example: 10
+                  pageCount:
+                    type: integer
+                    example: 11
+                  totalCount:
+                    type: integer
+                    example: 105
       security:
         - bearerAuth: []
 
