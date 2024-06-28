@@ -18,7 +18,7 @@ const createCronSchedule = async ({
     isSunday
 }) => {
     try {
-        let data = await prisma.cronJobSchedule.create({
+        const data = await prisma.cronJobSchedule.create({
             data: {
                 flight_key,
                 time_arrive,
@@ -42,7 +42,24 @@ const createCronSchedule = async ({
     }
 }
 
+const createDetailCronSchedule = async (price, detailPlaneId, cronJobScheduleId) => {
+    try {
+        const result = await prisma.detailCronJobSchedul.create({
+            data: {
+                price: price,
+                detail_plane_id: detailPlaneId,
+                cron_job_Schedule_id: cronJobScheduleId,
+            }
+        });
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 
 module.exports = {
-    createCronSchedule
+    createCronSchedule,
+    createDetailCronSchedule
 }

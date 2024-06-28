@@ -1,5 +1,10 @@
 const joi = require("joi");
 
+const categorySchema = joi.object({
+    price: joi.number().required(),
+    detail_plane_id: joi.number().required()
+});
+
 const cronScheduleValidation = joi.object({
     time_arrive: joi.string()
         .required()
@@ -19,6 +24,8 @@ const cronScheduleValidation = joi.object({
     is_friday: joi.bool(),
     is_saturday: joi.bool(),
     is_sunday: joi.bool(),
+    category: joi.array().items(categorySchema)
 });
+
 
 module.exports = cronScheduleValidation;

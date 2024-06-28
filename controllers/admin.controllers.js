@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { convertToIso, formatDateTimeToUTC } = require("../utils/formattedDate");
-const { createCronSchedule } = require("../service/cron_upload_service");
+const { createCronSchedule, createDetailCronSchedule } = require("../service/cron_upload_service");
 const cronScheduleValidation = require("../validation/cron_schedule_validation");
 const { validate } = require("../validation/validation");
 const { generateRandomString } = require("../utils/helper");
@@ -221,6 +221,7 @@ module.exports = {
       let arrivalInMinutes = arrivalHour * 60 + arrivalMinute;
       let differenceInMinutes = arrivalInMinutes - departureInMinutes;
 
+
       let data = await createCronSchedule({
         flight_key: generateRandomString(6),
         city_arrive_id: requestBody.city_arrive_id,
@@ -237,6 +238,16 @@ module.exports = {
         isSaturday: requestBody.is_saturday,
         isSunday: requestBody.is_sunday
       })
+
+      let detail = [];
+      for (let i = 0; i < requestBody.category.length; i++) {
+        const categoryData = requestBody.category[i];
+        const result = await createDetailCronSchedule(categoryData.price, categoryData.detail_plane_id, data.id);
+        detail.push(result);
+      }
+
+      data.detail = detail
+
 
       return jsonResponse(res, 200, {
         status: true,
