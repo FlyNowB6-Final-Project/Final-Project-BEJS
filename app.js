@@ -17,7 +17,7 @@ const path = require('path');
 const logger = require('morgan');
 const cors = require("cors");
 const routes = require("./routes");
-const task = require("./service/cron_schedule_service");
+// const task = require("./service/cron_schedule_service");
 const errorMiddleware = require("./middlewares/error_middleware");
 
 
@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
   res.send(`<h1 align="center">Welcome To API Flynow Foundation</h1>`);
 });
 
-task.start()
+// task.start()
 
 app.use(errorMiddleware);
 
