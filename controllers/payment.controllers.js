@@ -47,11 +47,17 @@ module.exports = {
         });
       }
 
-      // Check if the order is already paid
       if (order.status === "paid") {
         return res.status(400).json({
           status: false,
           message: "Order has already been paid",
+        });
+      }
+
+      if (order.status === "cancelled") {
+        return res.status(400).json({
+          status: false,
+          message: "Order has been cancelled and cannot be paid",
         });
       }
 
@@ -234,6 +240,14 @@ module.exports = {
         return res.status(400).json({
           status: false,
           message: "Order has already been paid",
+          data: null,
+        });
+      }
+
+      if (order.status === "cancelled") {
+        return res.status(400).json({
+          status: false,
+          message: "Order has been cancelled and cannot be paid",
           data: null,
         });
       }

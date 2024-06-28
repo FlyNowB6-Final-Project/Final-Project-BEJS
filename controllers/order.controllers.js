@@ -198,9 +198,18 @@ module.exports = {
         },
       });
 
-      orders.forEach((value) => {
-        value.expired_paid = formatDateTimeToUTC(value.expired_paid);
-      });
+      // Update status to "canceled" if expired_paid has passed
+      const currentTime = new Date();
+      for (const order of orders) {
+        if (order.status === "unpaid" && currentTime > order.expired_paid) {
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { status: "cancelled" },
+          });
+          order.status = "cancelled"; // Update the status in the response as well
+        }
+        order.expired_paid = formatDateTimeToUTC(order.expired_paid);
+      }
 
       return jsonResponse(res, 200, {
         message: "Get all orders successfully",
