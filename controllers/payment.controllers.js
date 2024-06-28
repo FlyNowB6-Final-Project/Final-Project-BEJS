@@ -8,6 +8,8 @@ const {
   PAYMENT_PROD_SERVER_KEY,
 } = process.env;
 const { convertToIso, formatDateTimeToUTC } = require('../utils/formattedDate');
+const paginationReq = require("../utils/pagination");
+const jsonResponse = require("../utils/response");
 
 // Setup Midtrans client
 const isProduction = false;
@@ -132,16 +134,27 @@ module.exports = {
   },
   index: async (req, res, next) => {
     try {
-      const payments = await prisma.payment.findMany();
+      const { page } = req.query;
+      let pagination = paginationReq.paginationPage(Number(page), 10);
+
+      const payments = await prisma.payment.findMany({
+        take: pagination.take, skip: pagination.skip
+      });
+
+      const totalData = await prisma.payment.count();
+      const totalPage = Math.ceil(totalData / pagination.take);
 
       payments.forEach(value => {
         value.createdAt = formatDateTimeToUTC(value.createdAt)
-      })
+      });
 
-      res.status(200).json({
-        status: true,
+      return jsonResponse(res, 200, {
         message: "All payments retrieved successfully",
         data: payments,
+        page: Number(page) ?? 1,
+        perPage: payments.length,
+        pageCount: totalPage,
+        totalCount: totalData,
       });
     } catch (error) {
       next(error);
@@ -240,6 +253,11 @@ module.exports = {
           first_name: order.user.name,
           email: order.user.email,
           phone: order.user.phone,
+        },
+        callback_url: {
+          finish: ``,
+          // cancel: ``,
+          // pending: ``,
         },
       };
 
