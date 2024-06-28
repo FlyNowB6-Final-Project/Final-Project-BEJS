@@ -1,11 +1,14 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { convertToIso, formatDateTimeToUTC } = require('../utils/formattedDate');
+// const paginationReq = require("../utils/pagination");
 
 module.exports = {
   index: async (req, res, next) => {
     try {
-      const { find, filter } = req.query;
+      // const { find, filter, page } = req.query;
+
+      // let pagination = paginationReq.paginationPage(Number(page), 10)
 
       const conditions = {
         user_id: Number(req.user.id),
@@ -20,7 +23,7 @@ module.exports = {
       }
 
       const notifications = await prisma.notification.findMany({
-        where: conditions,
+        // where: conditions, take: pagination.take, skip: pagination.skip
       });
 
       notifications.forEach(value => {

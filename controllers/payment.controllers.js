@@ -241,6 +241,11 @@ module.exports = {
           email: order.user.email,
           phone: order.user.phone,
         },
+        callback_url: {
+          finish: ``,
+          // cancel: ``,
+          // pending: ``,
+        },
       };
 
       // Charge the transaction using Midtrans API

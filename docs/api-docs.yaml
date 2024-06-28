@@ -853,6 +853,14 @@ paths:
         - "Ticket"
       summary: Get all flights
       description: Gets a list of all flights available in the database.
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: integer
+            example: 1
       responses:
         "200":
           description: Successfully Get all flights
@@ -871,6 +879,18 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/BasicFlightInfo"
+                  page:
+                    type: integer
+                    example: 1
+                  perPage:
+                    type: integer
+                    example: 10
+                  pageCount:
+                    type: integer
+                    example: 11
+                  totalCount:
+                    type: integer
+                    example: 105
 
   /ticket/flight/{detailFlightId}:
     get:
