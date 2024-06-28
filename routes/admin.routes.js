@@ -17,7 +17,7 @@ router.get("/admin/order/user/:userId", restrict, isAdmin, getDetailOrderUser);
 router.post("/admin/notifications", restrict, isAdmin, createNotif);
 
 
-router.post("/admin/fligth", uploadCronAdmin)
-router.get("/admin/fligth", getCronJobData)
+router.post("/admin/flight", uploadCronAdmin)
+router.get("/admin/flight", getCronJobData)
 
 module.exports = router;
