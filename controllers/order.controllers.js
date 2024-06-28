@@ -4,6 +4,8 @@ const { generatedOrderCode } = require("../utils/orderCodeGenerator");
 const { formatDateTimeToUTC, formatDateToUTC, formatTimeToUTC } = require("../utils/formattedDate");
 const imageKit = require("../libs/imagekit")
 const qr = require("qr-image");
+const paginationReq = require("../utils/pagination");
+const jsonResponse = require("../utils/response");
 
 module.exports = {
   order: async (req, res, next) => {
@@ -105,7 +107,8 @@ module.exports = {
   getAll: async (req, res, next) => {
     try {
       const { id } = req.user;
-      const { find, startDate, endDate, filter } = req.query;
+      const { find, startDate, endDate, filter, page } = req.query;
+      let pagination = paginationReq.paginationPage(Number(page), 10);
 
       const conditions = {
         user_id: id,
@@ -137,8 +140,13 @@ module.exports = {
         conditions.status = { equals: filter, mode: 'insensitive' };
       }
 
+      const totalData = await prisma.order.count({ where: conditions });
+      const totalPage = Math.ceil(totalData / pagination.take);
+
       const orders = await prisma.order.findMany({
         where: conditions,
+        take: pagination.take,
+        skip: pagination.skip,
         select: {
           id: true,
           status: true,
@@ -194,10 +202,13 @@ module.exports = {
         value.expired_paid = formatDateTimeToUTC(value.expired_paid);
       });
 
-      return res.status(200).json({
-        status: true,
+      return jsonResponse(res, 200, {
         message: "Get all orders successfully",
         data: orders,
+        page: Number(page) ?? 1,
+        perPage: orders.length,
+        pageCount: totalPage,
+        totalCount: totalData,
       });
     } catch (error) {
       next(error);

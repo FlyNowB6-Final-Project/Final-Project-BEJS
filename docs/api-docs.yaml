@@ -1422,6 +1422,13 @@ paths:
       summary: Get all order
       description: Get all order
       parameters:
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: integer
+            example: 1
         - in: query
           name: find
           schema:
@@ -1511,6 +1518,18 @@ paths:
                                       $ref: "#/components/schemas/City"
                                     city_destination:
                                       $ref: "#/components/schemas/City"
+                  page:
+                    type: integer
+                    example: 1
+                  perPage:
+                    type: integer
+                    example: 10
+                  pageCount:
+                    type: integer
+                    example: 5
+                  totalCount:
+                    type: integer
+                    example: 50 
       security:
         - bearerAuth: []
 
