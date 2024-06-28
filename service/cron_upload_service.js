@@ -58,8 +58,24 @@ const createDetailCronSchedule = async (price, detailPlaneId, cronJobScheduleId)
 }
 
 
+const getCronSchedule = async () => {
+    try {
+        const result = await prisma.cronJobSchedule.findMany({
+            include: {
+                detail_cron_Job_Schedul: true,
+                city_arrive: true,
+                city_destination: true,
+            },
+        });
+        return result
+    } catch (error) {
+        throw error
+    }
+}
+
 
 module.exports = {
     createCronSchedule,
-    createDetailCronSchedule
+    createDetailCronSchedule,
+    getCronSchedule
 }

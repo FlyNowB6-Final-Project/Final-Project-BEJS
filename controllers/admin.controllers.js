@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { convertToIso, formatDateTimeToUTC } = require("../utils/formattedDate");
-const { createCronSchedule, createDetailCronSchedule } = require("../service/cron_upload_service");
+const { createCronSchedule, createDetailCronSchedule, getCronSchedule } = require("../service/cron_upload_service");
 const cronScheduleValidation = require("../validation/cron_schedule_validation");
 const { validate } = require("../validation/validation");
 const { generateRandomString } = require("../utils/helper");
@@ -249,6 +249,19 @@ module.exports = {
       data.detail = detail
 
 
+      return jsonResponse(res, 200, {
+        status: true,
+        message: "succes add new flight schedule",
+        data,
+      })
+    } catch (error) {
+      next(error)
+    }
+  },
+
+  getCronJobData: async (req, res, next) => {
+    try {
+      const data = await getCronSchedule()
       return jsonResponse(res, 200, {
         status: true,
         message: "succes add new flight schedule",

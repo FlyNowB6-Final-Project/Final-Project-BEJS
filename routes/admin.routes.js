@@ -6,6 +6,7 @@ const {
   getDetailOrderUser,
   createNotif,
   uploadCronAdmin,
+  getCronJobData,
 } = require("../controllers/admin.controllers");
 const { restrict, isAdmin } = require("../middlewares/auth.middlewares");
 
@@ -17,5 +18,6 @@ router.post("/admin/notifications", restrict, isAdmin, createNotif);
 
 
 router.post("/admin/fligth", uploadCronAdmin)
+router.get("/admin/fligth", getCronJobData)
 
 module.exports = router;
