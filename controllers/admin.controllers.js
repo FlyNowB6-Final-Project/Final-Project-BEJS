@@ -1,6 +1,11 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { convertToIso, formatDateTimeToUTC } = require("../utils/formattedDate");
+const { createCronSchedule } = require("../service/cron_upload_service");
+const cronScheduleValidation = require("../validation/cron_schedule_validation");
+const { validate } = require("../validation/validation");
+const { generateRandomString } = require("../utils/helper");
+const jsonResponse = require("../utils/response");
 
 module.exports = {
   countAllUser: async (req, res, next) => {
@@ -205,4 +210,41 @@ module.exports = {
       next(error);
     }
   },
+  uploadCronAdmin: async (req, res, next) => {
+    try {
+      const requestBody = validate(cronScheduleValidation, req.body)
+
+      let [departureHour, departureMinute] = requestBody.time_departure.split(':').map(Number);
+      let [arrivalHour, arrivalMinute] = requestBody.time_arrive.split(':').map(Number);
+
+      let departureInMinutes = departureHour * 60 + departureMinute;
+      let arrivalInMinutes = arrivalHour * 60 + arrivalMinute;
+      let differenceInMinutes = arrivalInMinutes - departureInMinutes;
+
+      let data = await createCronSchedule({
+        flight_key: generateRandomString(6),
+        city_arrive_id: requestBody.city_arrive_id,
+        city_destination_id: requestBody.city_destination_id,
+        time_arrive: convertToIso({ time: requestBody.time_arrive }),
+        time_departure: convertToIso({ time: requestBody.time_departure }),
+        estimation_minute: differenceInMinutes,
+        discount: requestBody.discount,
+        isMonday: requestBody.is_monday,
+        isThuesday: requestBody.is_thuesday,
+        isWednesday: requestBody.is_wednesday,
+        isThursday: requestBody.is_thursday,
+        isFriday: requestBody.is_friday,
+        isSaturday: requestBody.is_saturday,
+        isSunday: requestBody.is_sunday
+      })
+
+      return jsonResponse(res, 200, {
+        status: true,
+        message: "succes add new flight schedule",
+        data,
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 };

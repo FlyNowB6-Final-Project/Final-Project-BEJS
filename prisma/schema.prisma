@@ -33,19 +33,18 @@ model User {
 }
 
 model Flight {
-  id                   Int                    @id @default(autoincrement())
-  flight_number        String                 @unique
-  time_arrive          DateTime               @db.Time(6)
-  time_departure       DateTime               @db.Time(6)
-  date_flight          DateTime               @db.Date
-  city_arrive_id       Int
-  city_destination_id  Int
-  estimation_minute    Int
-  discount             Int                    @default(0)
-  DetailFlight         DetailFlight[]
-  city_arrive          City                   @relation("arrive", fields: [city_arrive_id], references: [id])
-  city_destination     City                   @relation("destination", fields: [city_destination_id], references: [id])
-  DetailCronJobSchedul DetailCronJobSchedul[]
+  id                  Int            @id @default(autoincrement())
+  flight_number       String         @unique
+  time_arrive         DateTime       @db.Time(6)
+  time_departure      DateTime       @db.Time(6)
+  date_flight         DateTime       @db.Date
+  city_arrive_id      Int
+  city_destination_id Int
+  estimation_minute   Int
+  discount            Int            @default(0)
+  DetailFlight        DetailFlight[]
+  city_arrive         City           @relation("arrive", fields: [city_arrive_id], references: [id])
+  city_destination    City           @relation("destination", fields: [city_destination_id], references: [id])
 
   @@map("flights")
 }
@@ -201,7 +200,7 @@ model Notification {
 
 model CronJobSchedule {
   id                      Int                    @id @default(autoincrement())
-  flight_number           String                 @unique
+  flight_key              String                 @unique
   time_arrive             DateTime               @db.Time(6)
   time_departure          DateTime               @db.Time(6)
   city_arrive_id          Int
@@ -210,25 +209,23 @@ model CronJobSchedule {
   discount                Int                    @default(0)
   city_arrive             City                   @relation("CRN_Arrive", fields: [city_arrive_id], references: [id])
   city_destination        City                   @relation("CRN_Destination", fields: [city_destination_id], references: [id])
+  isMonday                Boolean                @default(false)
+  isThuesday              Boolean                @default(false)
+  isWednesday             Boolean                @default(false)
+  isThursday              Boolean                @default(false)
+  isFriday                Boolean                @default(false)
+  isSaturday              Boolean                @default(false)
+  isSunday                Boolean                @default(false)
   detail_cron_Job_Schedul DetailCronJobSchedul[]
-  isMonday                Boolean                @default(true)
-  isThuesday              Boolean                @default(true)
-  isWednesday             Boolean                @default(true)
-  isThursday              Boolean                @default(true)
-  isFriday                Boolean                @default(true)
-  isSaturday              Boolean                @default(true)
-  isSunday                Boolean                @default(true)
 
   @@map("cron_job_schedule")
 }
 
 model DetailCronJobSchedul {
   id                   Int              @id @default(autoincrement())
-  flight_id            Int?
   price                Int
   detail_plane_id      Int
   detailPlaneId        DetailPlane      @relation(fields: [detail_plane_id], references: [id])
-  flight               Flight?          @relation(fields: [flight_id], references: [id])
   CronJobSchedule      CronJobSchedule? @relation(fields: [cron_job_Schedule_id], references: [id])
   cron_job_Schedule_id Int?
 

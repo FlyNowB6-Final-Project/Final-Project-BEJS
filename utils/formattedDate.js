@@ -47,7 +47,10 @@ module.exports = {
     return formattedDate;
   },
 
-  convertToIso: ({ day = "00", month = "01", year, hour = "00", minutes = "00", second = "00" }) => {
+  convertToIso: ({ time, day = "01", month = "01", year = "2024", hour = "00", minutes = "00", second = "00" }) => {
+    if (time) {
+      return `${year}-${month}-${day}T${time}:${second}.000Z`
+    }
     return `${year}-${month}-${day}T${hour}:${minutes}:${second}.000Z`
   },
 
