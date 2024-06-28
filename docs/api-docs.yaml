@@ -1962,15 +1962,44 @@ paths:
         - "Payment"
       summary: Retrieve all payments
       description: Retrieves a list of all payments made by authenticated users.
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: integer
+            example: 1
       responses:
         200:
           description: Successfully retrieved all payments
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/PaymentResponse"
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "All payments retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PaymentResponse"
+                  page:
+                    type: integer
+                    example: 1
+                  perPage:
+                    type: integer
+                    example: 10
+                  pageCount:
+                    type: integer
+                    example: 5
+                  totalCount:
+                    type: integer
+                    example: 50
       security:
         - bearerAuth: []
 
