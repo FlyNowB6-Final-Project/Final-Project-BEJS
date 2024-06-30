@@ -8,6 +8,7 @@ const {
   uploadCronAdmin,
   getCronJobData,
 } = require("../controllers/admin.controllers");
+const { createPlane, getAirlines } = require("../controllers/plane_controller");
 const { restrict, isAdmin } = require("../middlewares/auth.middlewares");
 
 router.get("/admin/count", restrict, isAdmin, countAllUser);
@@ -19,5 +20,8 @@ router.post("/admin/notifications", restrict, isAdmin, createNotif);
 
 router.post("/admin/flight", uploadCronAdmin)
 router.get("/admin/flight", getCronJobData)
+
+router.post("/admin/plane", createPlane)
+router.get("/admin/airlines", getAirlines)
 
 module.exports = router;

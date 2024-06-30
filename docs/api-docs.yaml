@@ -2371,6 +2371,106 @@ paths:
                     type: string
                   data:
                     $ref: "#/components/schemas/FlightCroncheduleOutput"
+  /admin/planes:
+    post:
+      tags:
+        - "Admin"
+      summary: Create a new plane with details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Airbus-297438
+                series:
+                  type: string
+                  example: arb-da
+                airline_id:
+                  type: integer
+                  example: 1
+                capacity:
+                  type: integer
+                  example: 100
+                detail_plane:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      seat_class_id:
+                        type: integer
+                        example: 1
+                      total_seat:
+                        type: integer
+                        example: 40
+      responses:
+        "200":
+          description: Successfully retrieved data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success retrieve data
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 33
+                      name:
+                        type: string
+                        example: Airbus-297438
+                      brand:
+                        type: string
+                        example: arb-da
+                      capacity:
+                        type: integer
+                        example: 100
+                      airlinesId:
+                        type: integer
+                        example: 1
+                      series:
+                        type: string
+                        example: arb-da
+                      detail_plane:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 141
+                            total_seat:
+                              type: integer
+                              example: 40
+                            seat_class_id:
+                              type: integer
+                              example: 1
+                            plane_id:
+                              type: integer
+                              example: 33
+        "400":
+          description: Failed create
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Failed add data
 
 components:
   securitySchemes:
