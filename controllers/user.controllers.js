@@ -298,7 +298,7 @@ module.exports = {
 
       const html = await nodemailer.getHTML("link-reset.ejs", {
         name: user.fullname,
-        url: `http://localhost:5173/reset-password?token=${token}`
+        url: `https://flynowfoundation.my.id/reset-password?token=${token}`
       });
 
       await nodemailer.sendMail(email, "Password Reset Request", html);

@@ -255,7 +255,7 @@ module.exports = {
           phone: order.user.phone,
         },
         callback_url: {
-          finish: ``,
+          finish: `https://flynowfoundation.my.id/paymentOrder`,
           // cancel: ``,
           // pending: ``,
         },
