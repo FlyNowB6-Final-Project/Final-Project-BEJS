@@ -6,7 +6,50 @@ const cronScheduleValidation = require("../validation/cron_schedule_validation")
 const { validate } = require("../validation/validation");
 const { generateRandomString } = require("../utils/helper");
 const jsonResponse = require("../utils/response");
+const { createFligth } = require("../service/schedule_service");
 
+
+const checkIsExecute = async (now, value) => {
+  switch (now) {
+    case 0:
+      if (value.isMonday) {
+        await createFligth(data.flight_key)
+      }
+
+      break
+    case 1:
+      if (value.isThuesday) {
+        await createFligth(data.flight_key)
+      }
+      break
+    case 2:
+      if (value.isWednesday) {
+        await createFligth(data.flight_key)
+      }
+      break
+    case 3:
+      if (value.isThursday) {
+        await createFligth(data.flight_key)
+      }
+      break
+    case 4:
+      if (value.isFriday) {
+        await createFligth(data.flight_key)
+      }
+      break
+    case 5:
+      if (value.isSaturday) {
+        await createFligth(data.flight_key)
+      }
+      break
+    case 6:
+      if (value.isSunday) {
+        await createFligth(data.flight_key)
+      }
+      break
+  }
+
+}
 module.exports = {
   countAllUser: async (req, res, next) => {
     try {
@@ -239,6 +282,7 @@ module.exports = {
         isSunday: requestBody.is_sunday
       })
 
+
       let detail = [];
       for (let i = 0; i < requestBody.category.length; i++) {
         const categoryData = requestBody.category[i];
@@ -248,7 +292,12 @@ module.exports = {
 
       data.detail = detail
 
+      for (i = 1; i < 8; i++) {
+        let now = new Date()
 
+        
+
+      }
       return jsonResponse(res, 200, {
         status: true,
         message: "succes add new flight schedule",
