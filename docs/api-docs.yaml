@@ -1725,7 +1725,7 @@ paths:
           name: filter
           schema:
             type: string
-          description: Filter notification by title ('welcome', 'password', 'order', 'payment', 'notification').
+          description: Filter notification by title ('Welcome', 'Password', 'Order', 'Payment', 'Notifikasi', Promosi).
       responses:
         "200":
           description: Success
@@ -2234,7 +2234,7 @@ paths:
               properties:
                 title:
                   type: string
-                  example: Notification
+                  example: Notifikasi
                 message:
                   type: string
                   example: "Promotions Is Coming."
