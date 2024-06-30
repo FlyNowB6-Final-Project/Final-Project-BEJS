@@ -199,11 +199,53 @@ const createSchedule = async (flightData) => {
 }
 
 
+const createFligth = async ({ date_flight,
+    estimation_minute,
+    flight_number,
+    time_arrive,
+    time_departure,
+    city_arrive_id,
+    city_destination_id,
+    discount }) => {
+    try {
+        return await prisma.flight.create({
+            data: {
+                date_flight,
+                estimation_minute,
+                flight_number,
+                time_arrive,
+                time_departure,
+                city_arrive_id,
+                city_destination_id,
+                discount,
+            }
+        })
+    } catch (error) {
+        throw error
+    }
+}
+
+
+const createDetailFligth = async ({ price, detail_plane_id, flight_id }) => {
+    try {
+        return await prisma.detailFlight.create({
+            data: {
+                price, detail_plane_id, flight_id
+            }
+        })
+    } catch (error) {
+        throw error
+    }
+}
+
+
 module.exports = {
     getDataFind,
     countDataFind,
     createSchedule,
     getDetailFlightById,
     getDetailFlight,
-    getDetailFlightByFlightId
+    getDetailFlightByFlightId,
+    createFligth,
+    createDetailFligth
 }
