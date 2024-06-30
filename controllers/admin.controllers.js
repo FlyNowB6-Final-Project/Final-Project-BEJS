@@ -6,50 +6,72 @@ const cronScheduleValidation = require("../validation/cron_schedule_validation")
 const { validate } = require("../validation/validation");
 const { generateRandomString } = require("../utils/helper");
 const jsonResponse = require("../utils/response");
-const { createFligth } = require("../service/schedule_service");
+const { createFligth, createDetailFligth } = require("../service/schedule_service");
+
+const checkIsExecute = async (now, value, detailValue) => {
+  const createFlightWithDetails = async () => {
+    console.log("start insert into db ")
+    const data = await createFligth({
+      flight_number: generateRandomString(6),
+      city_arrive_id: value.city_arrive_id,
+      city_destination_id: value.city_destination_id,
+      date_flight: now,
+      discount: value.discount,
+      estimation_minute: value.estimation_minute,
+      time_arrive: value.time_arrive,
+      time_departure: value.time_departure
+    });
 
 
-const checkIsExecute = async (now, value) => {
-  switch (now) {
+    for (let i = 0; i < detailValue.length; i++) {
+      await createDetailFligth({
+        detail_plane_id: detailValue[i].detail_plane_id,
+        flight_id: data.id,
+        price: detailValue[i].price
+      });
+    }
+
+
+  };
+  switch (now.getDay()) {
     case 0:
       if (value.isMonday) {
-        await createFligth(data.flight_key)
+        await createFlightWithDetails();
       }
-
-      break
+      break;
     case 1:
-      if (value.isThuesday) {
-        await createFligth(data.flight_key)
+      if (value.isTuesday) {
+        await createFlightWithDetails();
       }
-      break
+      break;
     case 2:
       if (value.isWednesday) {
-        await createFligth(data.flight_key)
+        await createFlightWithDetails();
       }
-      break
+      break;
     case 3:
       if (value.isThursday) {
-        await createFligth(data.flight_key)
+        await createFlightWithDetails();
       }
-      break
+      break;
     case 4:
       if (value.isFriday) {
-        await createFligth(data.flight_key)
+        await createFlightWithDetails();
       }
-      break
+      break;
     case 5:
       if (value.isSaturday) {
-        await createFligth(data.flight_key)
+        await createFlightWithDetails();
       }
-      break
+      break;
     case 6:
       if (value.isSunday) {
-        await createFligth(data.flight_key)
+        await createFlightWithDetails();
       }
-      break
+      break;
   }
-
 }
+
 module.exports = {
   countAllUser: async (req, res, next) => {
     try {
@@ -290,14 +312,15 @@ module.exports = {
         detail.push(result);
       }
 
-      data.detail = detail
 
-      for (i = 1; i < 8; i++) {
-        let now = new Date()
+      for (i = 0; i < 7; i++) {
+        let now = new Date();
+        now.setDate(now.getDate() + i);
 
-        
-
+        await checkIsExecute(now, data, detail)
       }
+
+      data.detail = detail
       return jsonResponse(res, 200, {
         status: true,
         message: "succes add new flight schedule",
