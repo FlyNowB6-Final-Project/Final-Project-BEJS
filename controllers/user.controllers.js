@@ -2,11 +2,13 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET_KEY } = process.env;
+const { JWT_SECRET_KEY, FRONT_END_URL, URL_RESET_PASS } = process.env;
 const { generatedOTP } = require("../utils/otpGenerator");
 const nodemailer = require("../utils/nodemailer");
 const { formatDateToUTC, formatDateTimeToUTC, utcTimePlus7 } = require("../utils/formattedDate");
 const { date } = require("joi");
+const axios = require('axios');
+const { formatDateToUTC, formatDateTimeToUTC } = require("../utils/formattedDate");
 // const { formattedDate } = require("../utils/formattedDate");
 
 module.exports = {
@@ -184,6 +186,15 @@ module.exports = {
     try {
       const { email, otp } = req.body;
 
+      // Pastikan email tidak undefined
+      if (!email) {
+        return res.status(400).json({
+          status: false,
+          message: "Email is required",
+          data: null,
+        });
+      }
+
       // Set OTP expired at 2 minutes
       const otpExpired = 2 * 60 * 1000;
 
@@ -300,7 +311,7 @@ module.exports = {
 
       const html = await nodemailer.getHTML("link-reset.ejs", {
         name: user.fullname,
-        url: `https://flynowfoundation.my.id/reset-password?token=${token}`
+        url: `${URL_RESET_PASS}?token=${token}`
       });
 
       await nodemailer.sendMail(email, "Password Reset Request", html);
@@ -386,15 +397,80 @@ module.exports = {
       next(error);
     }
   },
-  googleOauth2: (req, res) => {
-    // let token = jwt.sign({ ...req.user }, JWT_SECRET_KEY);
+  googleOauth2: async (req, res) => {
+    const user = req.user;
     let token = jwt.sign({ id: req.user.id, password: null }, JWT_SECRET_KEY);
 
-    res.json({
-      status: true,
-      message: "OK",
-      err: null,
-      data: { user: req.user, token },
+    const userExist = await prisma.user.findUnique({
+      where: { id: req.user.id },
     });
+
+    const redirectUrl = `${FRONT_END_URL}/?token=${token}`;
+
+    return res.redirect(redirectUrl);
+  },
+  LoginGoogle: async (req, res, next) => {
+    try {
+      // Destructures 'access_token' from the request body
+      const { access_token } = req.body;
+
+      if (!access_token) {
+        return res.status(400).json({
+          status: false,
+          message: 'Missing required field',
+          data: null,
+        });
+      }
+
+      // Gets Google user data using the access token
+      const googleData = await axios.get(
+        `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
+      );
+
+      // Extracts the full name and family name from the Google data
+      const fullName = googleData?.data?.name;
+      const nameParts = fullName.split(' ');
+      const familyName = nameParts.length > 1 ? nameParts.pop() : '';
+      const firstName = nameParts.join(' ');
+
+      // Upserts user data in case the user already exists in the database
+      const user = await prisma.user.upsert({
+        where: {
+          email: googleData?.data?.email, // Uses the email from the Google data as a unique identifier
+        },
+        update: {
+          fullname: firstName, // Updates the user's full name if they already exist
+          family_name: familyName, // Updates the user's family name if they already exist
+          google_id: googleData?.data?.sub, // Updates the user's Google ID
+          isVerified: true, // Ensures the email is marked as verified
+        },
+        create: {
+          email: googleData?.data?.email,
+          fullname: firstName,
+          family_name: familyName,
+          password: '',
+          isVerified: true,
+          google_id: googleData?.data?.sub,
+        },
+      });
+
+      // Deletes the user's password from the user object for security reasons
+      delete user.password;
+
+      // Creates a JWT token for the user
+      const token = jwt.sign(user, JWT_SECRET_KEY);
+
+      // Returns a successful response with the user data and token
+      return res.status(200).json({
+        status: true,
+        message: 'Successfully login with Google',
+        data: {
+          user,
+          token,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   },
 };
