@@ -8,8 +8,6 @@ const nodemailer = require("../utils/nodemailer");
 const { formatDateToUTC, formatDateTimeToUTC, utcTimePlus7 } = require("../utils/formattedDate");
 const { date } = require("joi");
 const axios = require('axios');
-const { formatDateToUTC, formatDateTimeToUTC } = require("../utils/formattedDate");
-// const { formattedDate } = require("../utils/formattedDate");
 
 module.exports = {
   register: async (req, res, next) => {
