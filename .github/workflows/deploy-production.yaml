@@ -3,7 +3,7 @@ name: Deploy to Railway Production ENV
 on:
   push:
     branches:
-      - "production"
+      - "main"
 
 jobs:
   deploy:
