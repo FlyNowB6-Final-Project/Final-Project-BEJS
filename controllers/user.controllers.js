@@ -2,7 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET_KEY } = process.env;
+const { JWT_SECRET_KEY, FRONT_END_URL, URL_RESET_PASS } = process.env;
 const { generatedOTP } = require("../utils/otpGenerator");
 const nodemailer = require("../utils/nodemailer");
 const { formatDateToUTC, formatDateTimeToUTC } = require("../utils/formattedDate");
@@ -298,7 +298,7 @@ module.exports = {
 
       const html = await nodemailer.getHTML("link-reset.ejs", {
         name: user.fullname,
-        url: `https://flynowfoundation.my.id/reset-password?token=${token}`
+        url: `${URL_RESET_PASS}?token=${token}`
       });
 
       await nodemailer.sendMail(email, "Password Reset Request", html);
@@ -384,15 +384,16 @@ module.exports = {
       next(error);
     }
   },
-  googleOauth2: (req, res) => {
-    // let token = jwt.sign({ ...req.user }, JWT_SECRET_KEY);
+  googleOauth2: async (req, res) => {
+    const user = req.user;
     let token = jwt.sign({ id: req.user.id, password: null }, JWT_SECRET_KEY);
 
-    res.json({
-      status: true,
-      message: "OK",
-      err: null,
-      data: { user: req.user, token },
+    const userExist = await prisma.user.findUnique({
+      where: { id: req.user.id },
     });
+
+    const redirectUrl = `${FRONT_END_URL}/?token=${token}`;
+
+    return res.redirect(redirectUrl);
   },
 };
