@@ -30,14 +30,15 @@ const checkDateLater = (daysLater) => {
 }
 
 const utcTimePlus7 = () => {
-  const date = new Date();
-  const utcOffset = date.getTimezoneOffset() * 60000;
-  const wibOffset = 7 * 60 * 60000;
-  const wibTime = new Date(date.getTime() + utcOffset + wibOffset);
+  let now = new Date();
+  let wibOffset = 7 * 60 * 60 * 1000;
+  let wibTime = new Date(now.getTime() + wibOffset);
   return wibTime;
 }
 
 module.exports = {
+  formatTimeToUTC,
+  formatDateToUTC,
   utcTimePlus7,
   checkDateLater,
   formattedDate: (timestamp) => {
@@ -58,9 +59,6 @@ module.exports = {
     return `${year}-${month}-${day}`
   },
 
-
-  formatTimeToUTC,
-  formatDateToUTC,
 
   formatDateTimeToUTC: (dateString) => {
     return `${formatDateToUTC(dateString)} ${formatTimeToUTC(dateString)}`
