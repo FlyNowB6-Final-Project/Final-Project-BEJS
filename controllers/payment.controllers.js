@@ -254,11 +254,11 @@ module.exports = {
           email: order.user.email,
           phone: order.user.phone,
         },
-        callback_url: {
-          finish: ``,
-          // cancel: ``,
-          // pending: ``,
-        },
+        // callback_url: {
+        //   finish: `https://flynowfoundation.my.id/paymentOrder`,
+        //   cancel: ``,
+        //   pending: ``,
+        // },
       };
 
       // Charge the transaction using Midtrans API

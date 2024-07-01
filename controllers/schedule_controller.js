@@ -149,6 +149,12 @@ const allRecomendation = async (req, res, next) => {
         data = await scheduleService.getDetailFlight()
     }
 
+    const baseUrl = `${req.protocol}://${req.headers.host}/api/v1/image?city=`;
+
+    data.forEach(item => {
+        const cityName = item.flight.city_destination.name.toLowerCase();
+        item.image_url = `${baseUrl}${cityName}`;
+    });
 
     if (!data) {
         return jsonResponse(res, 400, {

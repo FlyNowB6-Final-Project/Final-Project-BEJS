@@ -1,6 +1,76 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { convertToIso, formatDateTimeToUTC } = require("../utils/formattedDate");
+const { createCronSchedule, createDetailCronSchedule, getCronSchedule } = require("../service/cron_upload_service");
+const cronScheduleValidation = require("../validation/cron_schedule_validation");
+const { validate } = require("../validation/validation");
+const { generateRandomString } = require("../utils/helper");
+const jsonResponse = require("../utils/response");
+const { createFligth, createDetailFligth } = require("../service/schedule_service");
+
+const checkIsExecute = async (now, value, detailValue) => {
+  const createFlightWithDetails = async () => {
+    console.log("start insert into db ")
+    const data = await createFligth({
+      flight_number: generateRandomString(6),
+      city_arrive_id: value.city_arrive_id,
+      city_destination_id: value.city_destination_id,
+      date_flight: now,
+      discount: value.discount,
+      estimation_minute: value.estimation_minute,
+      time_arrive: value.time_arrive,
+      time_departure: value.time_departure
+    });
+
+
+    for (let i = 0; i < detailValue.length; i++) {
+      await createDetailFligth({
+        detail_plane_id: detailValue[i].detail_plane_id,
+        flight_id: data.id,
+        price: detailValue[i].price
+      });
+    }
+
+
+  };
+  switch (now.getDay()) {
+    case 0:
+      if (value.isMonday) {
+        await createFlightWithDetails();
+      }
+      break;
+    case 1:
+      if (value.isTuesday) {
+        await createFlightWithDetails();
+      }
+      break;
+    case 2:
+      if (value.isWednesday) {
+        await createFlightWithDetails();
+      }
+      break;
+    case 3:
+      if (value.isThursday) {
+        await createFlightWithDetails();
+      }
+      break;
+    case 4:
+      if (value.isFriday) {
+        await createFlightWithDetails();
+      }
+      break;
+    case 5:
+      if (value.isSaturday) {
+        await createFlightWithDetails();
+      }
+      break;
+    case 6:
+      if (value.isSunday) {
+        await createFlightWithDetails();
+      }
+      break;
+  }
+}
 
 module.exports = {
   countAllUser: async (req, res, next) => {
@@ -205,4 +275,72 @@ module.exports = {
       next(error);
     }
   },
+  uploadCronAdmin: async (req, res, next) => {
+    try {
+      const requestBody = validate(cronScheduleValidation, req.body)
+
+      let [departureHour, departureMinute] = requestBody.time_departure.split(':').map(Number);
+      let [arrivalHour, arrivalMinute] = requestBody.time_arrive.split(':').map(Number);
+
+      let departureInMinutes = departureHour * 60 + departureMinute;
+      let arrivalInMinutes = arrivalHour * 60 + arrivalMinute;
+      let differenceInMinutes = arrivalInMinutes - departureInMinutes;
+
+
+      let data = await createCronSchedule({
+        flight_key: generateRandomString(6),
+        city_arrive_id: requestBody.city_arrive_id,
+        city_destination_id: requestBody.city_destination_id,
+        time_arrive: convertToIso({ time: requestBody.time_arrive }),
+        time_departure: convertToIso({ time: requestBody.time_departure }),
+        estimation_minute: differenceInMinutes,
+        discount: requestBody.discount,
+        isMonday: requestBody.is_monday,
+        isThuesday: requestBody.is_thuesday,
+        isWednesday: requestBody.is_wednesday,
+        isThursday: requestBody.is_thursday,
+        isFriday: requestBody.is_friday,
+        isSaturday: requestBody.is_saturday,
+        isSunday: requestBody.is_sunday
+      })
+
+
+      let detail = [];
+      for (let i = 0; i < requestBody.category.length; i++) {
+        const categoryData = requestBody.category[i];
+        const result = await createDetailCronSchedule(categoryData.price, categoryData.detail_plane_id, data.id);
+        detail.push(result);
+      }
+
+
+      for (i = 0; i < 7; i++) {
+        let now = new Date();
+        now.setDate(now.getDate() + i);
+
+        await checkIsExecute(now, data, detail)
+      }
+
+      data.detail = detail
+      return jsonResponse(res, 200, {
+        status: true,
+        message: "succes add new flight schedule",
+        data,
+      })
+    } catch (error) {
+      next(error)
+    }
+  },
+
+  getCronJobData: async (req, res, next) => {
+    try {
+      const data = await getCronSchedule()
+      return jsonResponse(res, 200, {
+        status: true,
+        message: "succes add new flight schedule",
+        data,
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 };

@@ -535,6 +535,86 @@ paths:
                                   token:
                                     type: integer
                                     example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZnVsbG5hbWUiOiJCYWd1cyBEd2kgUHV0cmEgQWRpeW9ubyIsImZhbWlseV9uYW1lIjpudWxsLCJlbWFpbCI6InN1Z2FiLmR3aTg4QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDgyMjI5NzQ5NDYyIiwiYXZhdGFyX3VybCI6bnVsbCwiZ29vZ2xlX2lkIjpudWxsLCJvdHAiOiI2NjI1NDMiLCJvdHBDcmVhdGVkQXQiOiIyMDI0LTA1LTI0VDE2OjEzOjU2LjA4OFoiLCJpc1ZlcmlmaWVkIjp0cnVlLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNjU2NzI1OH0._tBfHd_s_J9UWnblX_tHjnTmmt5b2PdXpvekhjHRXF0
+  /users/loginGoogle:
+    post:
+      tags:
+        - "Users"
+      summary: Login by Google
+      description: Login by Google by Access Token (Google Playground -> OAuth2 -> userinfo.email and userinfo.profile checked)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  example: ya29.a0AXooCgsJUw2LZB7y5pTKZK7NPEUM7ehfBs-6AaF6Jj3MsOPT1ih4NoemDxDBR2KETaS2YulZ62IuPcmtsE_04vOfsL85qhdKFysCDunvrGAdwh68huXM7_42leXW0tlKlk4hWO64nYNYqsJjVoYvaKCEVfqP-TOBmCDOaCgYKAVMSARISFQHGX2Mixra-LLm6wRoWlIQNS_wAyw0171
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Successfully login with Google
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: 7e775854-aad8-4ad5-89f1-09b7b3481ba3
+                          name:
+                            type: string
+                            example: John Doe
+                          email:
+                            type: string
+                            example: example@gmail.com
+                          is_verified:
+                            type: boolean
+                            example: true
+                          role:
+                            type: string
+                            example: USER
+                          createdAt:
+                            type: string
+                            format: datetime
+                            example: "2024-05-29T15:20:20.554Z"
+                          updatedAt:
+                            type: string
+                            format: datetime
+                            example: "2024-05-29T15:20:20.554Z"
+
+                      token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdlNzc1ODU0LWFhZDgtNGFkNS04OWYxLTA5YjdiMzQ4MWJhMyIsIm5hbWUiOiJEZXdhbmdnYSBOYW5kYSBBcmp1bmEiLCJlbWFpbCI6ImFkZXdhbmdnYW5AZ21haWwuY29tIiwiaXNfdmVyaWZpZWQiOnRydWUsInJvbGUiOiJVU0VSIiwiY3JlYXRlZEF0IjoiMjAyNC0wNS0yOVQxNToyMDoyMC41NTRaIiwidXBkYXRlZEF0IjoiMjAyNC0wNS0yOVQxNToyMDoyMC41NTRaIiwiaWF0IjoxNzE2OTk2MDIwfQ.pz1Ilx4MRkMDrpt-ol5FIoTjP4U1f_Z-WOn_yTg-CDw
+
+        400:
+          description: Input must be required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Missing required field
+                  data:
+                    example: ~
 
   /profile:
     get:
@@ -1725,7 +1805,7 @@ paths:
           name: filter
           schema:
             type: string
-          description: Filter notification by title ('welcome', 'password', 'order', 'payment', 'notification').
+          description: Filter notification by title ('Welcome', 'Password', 'Order', 'Payment', 'Notifikasi', Promosi).
       responses:
         "200":
           description: Success
@@ -2234,7 +2314,7 @@ paths:
               properties:
                 title:
                   type: string
-                  example: Notification
+                  example: Notifikasi
                 message:
                   type: string
                   example: "Promotions Is Coming."
@@ -2273,6 +2353,204 @@ paths:
                     example: null
       security:
         - bearerAuth: []
+
+  /admin/flight:
+    get:
+      parameters:
+        - in: path
+          name: page
+          required: true
+          schema:
+            type: integer
+          description: page
+      tags:
+        - "Admin"
+      responses:
+        "200":
+          description: create new schedule data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FlightCroncheduleOutput"
+    post:
+      tags:
+        - "Admin"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                time_departure:
+                  type: string
+                  example: "12:00"
+                time_arrive:
+                  type: string
+                  example: "13:30"
+                city_arrive_id:
+                  type: integer
+                  example: 1
+                city_destination_id:
+                  type: integer
+                  example: 2
+                discount:
+                  type: integer
+                  example: 20
+                is_monday:
+                  type: boolean
+                  example: true
+                is_thuesday:
+                  type: boolean
+                  example: true
+                is_wednesday:
+                  type: boolean
+                  example: true
+                is_thursday:
+                  type: boolean
+                  example: false
+                is_friday:
+                  type: boolean
+                  example: true
+                is_saturday:
+                  type: boolean
+                  example: false
+                is_sunday:
+                  type: boolean
+                  example: true
+                category:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      price:
+                        type: integer
+                        example: 200000
+                      detail_plane_id:
+                        type: integer
+                        example: 2
+      responses:
+        "200":
+          description: create new schedule data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/FlightCroncheduleOutput"
+  /admin/plane:
+    post:
+      tags:
+        - "Admin"
+      summary: Create a new plane data with details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Airbus-297438
+                series:
+                  type: string
+                  example: arb-da
+                airline_id:
+                  type: integer
+                  example: 1
+                capacity:
+                  type: integer
+                  example: 100
+                detail_plane:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      seat_class_id:
+                        type: integer
+                        example: 1
+                      total_seat:
+                        type: integer
+                        example: 40
+      responses:
+        "200":
+          description: Successfully retrieved data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success retrieve data
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 33
+                      name:
+                        type: string
+                        example: Airbus-297438
+                      brand:
+                        type: string
+                        example: arb-da
+                      capacity:
+                        type: integer
+                        example: 100
+                      airlinesId:
+                        type: integer
+                        example: 1
+                      series:
+                        type: string
+                        example: arb-da
+                      detail_plane:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 141
+                            total_seat:
+                              type: integer
+                              example: 40
+                            seat_class_id:
+                              type: integer
+                              example: 1
+                            plane_id:
+                              type: integer
+                              example: 33
+        "400":
+          description: Failed create
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Failed add data
 
 components:
   securitySchemes:
@@ -2691,6 +2969,70 @@ components:
                   $ref: "#/components/schemas/City"
                 city_destination:
                   $ref: "#/components/schemas/City"
+    FlightCroncheduleOutput:
+      type: object
+      properties:
+        flight_key:
+          type: string
+          example: "sQGglf"
+        time_arrive:
+          type: string
+          format: date-time
+          example: "1970-01-01T13:30:00.000Z"
+        time_departure:
+          type: string
+          format: date-time
+          example: "1970-01-01T12:00:00.000Z"
+        city_arrive_id:
+          type: integer
+          example: 1
+        city_destination_id:
+          type: integer
+          example: 2
+        estimation_minute:
+          type: integer
+          example: 90
+        discount:
+          type: integer
+          example: 20
+        isMonday:
+          type: boolean
+          example: true
+        isThuesday:
+          type: boolean
+          example: true
+        isWednesday:
+          type: boolean
+          example: true
+        isThursday:
+          type: boolean
+          example: false
+        isFriday:
+          type: boolean
+          example: true
+        isSaturday:
+          type: boolean
+          example: false
+        isSunday:
+          type: boolean
+          example: true
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              price:
+                type: integer
+                example: 200000
+              detail_plane_id:
+                type: integer
+                example: 2
+              cron_job_Schedule_id:
+                type: integer
+                example: 7
 
   requestBodies:
     orderRequest:
