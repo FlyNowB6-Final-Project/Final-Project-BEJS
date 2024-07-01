@@ -4,6 +4,7 @@ info:
   description: API Pemesanan Ticketing Pesawat
   version: 1.0.0
 servers:
+  - url: https://expressjs-production-53af.up.railway.app/api/v1
   - url: https://express-development-3576.up.railway.app/api/v1
   - url: http://localhost:3000/api/v1
 tags:
@@ -1648,7 +1649,7 @@ paths:
                     example: 5
                   totalCount:
                     type: integer
-                    example: 50 
+                    example: 50
       security:
         - bearerAuth: []
 
@@ -1787,7 +1788,7 @@ paths:
       tags:
         - "Notification"
       summary: Get All notification
-      description: Get All notification        
+      description: Get All notification
       parameters:
         - name: page
           in: query
