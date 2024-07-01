@@ -2284,11 +2284,11 @@ paths:
                     type: string
                   data:
                     $ref: "#/components/schemas/FlightCroncheduleOutput"
-  /admin/planes:
+  /admin/plane:
     post:
       tags:
         - "Admin"
-      summary: Create a new plane with details
+      summary: Create a new plane data with details
       requestBody:
         required: true
         content:
