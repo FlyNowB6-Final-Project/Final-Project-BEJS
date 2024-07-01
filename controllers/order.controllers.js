@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { generatedOrderCode } = require("../utils/orderCodeGenerator");
-const { formatDateTimeToUTC, formatDateToUTC, formatTimeToUTC } = require("../utils/formattedDate");
+const { formatDateTimeToUTC, formatDateToUTC, formatTimeToUTC, utcTimePlus7 } = require("../utils/formattedDate");
 const imageKit = require("../libs/imagekit")
 const qr = require("qr-image");
 const paginationReq = require("../utils/pagination");
@@ -59,7 +59,7 @@ module.exports = {
           detailFlight: { connect: { id: parseInt(detailFlightId) } },
           code: generatedOrderCode(),
           status: "unpaid",
-          expired_paid: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+          expired_paid: new Date(utcTimePlus7().getTime() + 30 * 60 * 1000),
           passenger: {
             createMany: {
               data: passengers.map((passenger) => ({
@@ -84,12 +84,11 @@ module.exports = {
       const notification = await prisma.notification.create({
         data: {
           title: "Order",
-          message: `Your order with booking code ${
-            newOrder.code
-          } is currently unpaid. Please completed your payment before ${formatDateTimeToUTC(
-            newOrder.expired_paid.toISOString()
-          )}.`,
-          createdAt: new Date().toISOString(),
+          message: `Your order with booking code ${newOrder.code
+            } is currently unpaid. Please completed your payment before ${formatDateTimeToUTC(
+              newOrder.expired_paid.toISOString()
+            )}.`,
+          createdAt: utcTimePlus7().toISOString(),
           user: { connect: { id: req.user.id } },
         },
       });
@@ -198,9 +197,18 @@ module.exports = {
         },
       });
 
-      orders.forEach((value) => {
-        value.expired_paid = formatDateTimeToUTC(value.expired_paid);
-      });
+      // Update status to "canceled" if expired_paid has passed
+      const currentTime = new Date();
+      for (const order of orders) {
+        if (order.status === "unpaid" && currentTime > order.expired_paid) {
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { status: "cancelled" },
+          });
+          order.status = "cancelled"; // Update the status in the response as well
+        }
+        order.expired_paid = formatDateTimeToUTC(order.expired_paid);
+      }
 
       return jsonResponse(res, 200, {
         message: "Get all orders successfully",
@@ -321,7 +329,7 @@ module.exports = {
       let qrCode = qr.imageSync(qr_data, { type: "png" });
 
       let { url } = await imageKit.upload({
-        fileName: Date.now() + ".png",
+        fileName: utcTimePlus7() + ".png",
         file: qrCode.toString("base64"),
       });
 

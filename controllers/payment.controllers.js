@@ -7,7 +7,7 @@ const {
   PAYMENT_PROD_CLIENT_KEY,
   PAYMENT_PROD_SERVER_KEY,
 } = process.env;
-const { convertToIso, formatDateTimeToUTC } = require('../utils/formattedDate');
+const { convertToIso, formatDateTimeToUTC, utcTimePlus7 } = require('../utils/formattedDate');
 const paginationReq = require("../utils/pagination");
 const jsonResponse = require("../utils/response");
 
@@ -47,11 +47,17 @@ module.exports = {
         });
       }
 
-      // Check if the order is already paid
       if (order.status === "paid") {
         return res.status(400).json({
           status: false,
           message: "Order has already been paid",
+        });
+      }
+
+      if (order.status === "cancelled") {
+        return res.status(400).json({
+          status: false,
+          message: "Order has been cancelled and cannot be paid",
         });
       }
 
@@ -98,7 +104,7 @@ module.exports = {
         data: {
           amount: totalAmount.toString(),
           method_payment,
-          createdAt: new Date().toISOString(),
+          createdAt: utcTimePlus7().toISOString(),
           order_id: orderId,
         },
       });
@@ -124,7 +130,7 @@ module.exports = {
         data: {
           title: "Payment",
           message: `Your order with booking code ${order.code} is currently Paid. Enjoy you're Flight`,
-          createdAt: new Date().toISOString(),
+          createdAt: utcTimePlus7().toISOString(),
           user: { connect: { id: req.user.id } },
         },
       });
@@ -238,6 +244,14 @@ module.exports = {
         });
       }
 
+      if (order.status === "cancelled") {
+        return res.status(400).json({
+          status: false,
+          message: "Order has been cancelled and cannot be paid",
+          data: null,
+        });
+      }
+
       const totalAmount = order.detailFlight.price * (1 + 0.11); // Including 11% VAT (PPN 11%)
 
       // Define payment parameters for Midtrans API
@@ -325,7 +339,7 @@ module.exports = {
             order_id: Number(orderId),
             amount: gross_amount,
             method_payment: payment_type,
-            createdAt: new Date().toISOString(),
+            createdAt: utcTimePlus7().toISOString(),
           },
         });
 
@@ -344,7 +358,7 @@ module.exports = {
           data: {
             title: "Payment",
             message: `Your order with booking code ${order.code} is currently Paid. Enjoy you're Flight.`,
-            createdAt: new Date().toISOString(),
+            createdAt: utcTimePlus7().toISOString(),
             user: { connect: { id: updatedOrder.user_id } },
           },
         });

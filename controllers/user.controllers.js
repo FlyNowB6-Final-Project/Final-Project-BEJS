@@ -5,9 +5,9 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY, FRONT_END_URL, URL_RESET_PASS } = process.env;
 const { generatedOTP } = require("../utils/otpGenerator");
 const nodemailer = require("../utils/nodemailer");
+const { formatDateToUTC, formatDateTimeToUTC, utcTimePlus7 } = require("../utils/formattedDate");
+const { date } = require("joi");
 const axios = require('axios');
-const { formatDateToUTC, formatDateTimeToUTC } = require("../utils/formattedDate");
-// const { formattedDate } = require("../utils/formattedDate");
 
 module.exports = {
   register: async (req, res, next) => {
@@ -21,7 +21,6 @@ module.exports = {
       const exist = await prisma.user.findUnique({
         where: { email },
       });
-
       // Validate required fields
       if (!fullname || !email || !phoneNumber || !password) {
         return res.status(400).json({
@@ -104,7 +103,7 @@ module.exports = {
         data: {
           title: "Welcome",
           message: "Your account has been created successfully.",
-          createdAt: new Date().toISOString(),
+          createdAt: utcTimePlus7().toISOString(),
           user: { connect: { id: user.id } },
         },
       });
@@ -219,7 +218,9 @@ module.exports = {
       }
 
       // Set Expired otp
-      const currentTime = new Date();
+      // const currentTime = new Date();
+      const currentTime = utcTimePlus7()
+
       const isExpired = currentTime - user.otpCreatedAt > otpExpired;
 
       if (isExpired) {
@@ -368,7 +369,7 @@ module.exports = {
           data: {
             title: "Password",
             message: "Your password has been updated successfully!",
-            createdAt: new Date().toISOString(),
+            createdAt: utcTimePlus7().toISOString(),
             user: { connect: { id: updateUser.id } },
           },
         });
