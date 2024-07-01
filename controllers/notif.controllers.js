@@ -26,11 +26,14 @@ module.exports = {
       const totalPage = Math.ceil(totalData / pagination.take);
 
       const notifications = await prisma.notification.findMany({
-        where: conditions, take: pagination.take, skip: pagination.skip,
+        where: conditions,
+        take: pagination.take,
+        skip: pagination.skip,
         orderBy: {
-          createdAt
+          createdAt: 'desc'
         }
       });
+
 
       notifications.forEach(value => {
         value.createdAt = formatDateTimeToUTC(value.createdAt)
