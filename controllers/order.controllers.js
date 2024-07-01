@@ -59,7 +59,7 @@ module.exports = {
           detailFlight: { connect: { id: parseInt(detailFlightId) } },
           code: generatedOrderCode(),
           status: "unpaid",
-          expired_paid: new Date(new Date().getTime() + 30 * 60 * 1000),
+          expired_paid: new Date(utcTimePlus7().getTime() + 24 * 60 * 60 * 1000),
           passenger: {
             createMany: {
               data: passengers.map((passenger) => ({
