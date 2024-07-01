@@ -7,7 +7,7 @@ const {
   PAYMENT_PROD_CLIENT_KEY,
   PAYMENT_PROD_SERVER_KEY,
 } = process.env;
-const { convertToIso, formatDateTimeToUTC } = require('../utils/formattedDate');
+const { convertToIso, formatDateTimeToUTC, utcTimePlus7 } = require('../utils/formattedDate');
 const paginationReq = require("../utils/pagination");
 const jsonResponse = require("../utils/response");
 
@@ -98,7 +98,7 @@ module.exports = {
         data: {
           amount: totalAmount.toString(),
           method_payment,
-          createdAt: new Date().toISOString(),
+          createdAt: utcTimePlus7().toISOString(),
           order_id: orderId,
         },
       });
@@ -124,7 +124,7 @@ module.exports = {
         data: {
           title: "Payment",
           message: `Your order with booking code ${order.code} is currently Paid. Enjoy you're Flight`,
-          createdAt: new Date().toISOString(),
+          createdAt: utcTimePlus7().toISOString(),
           user: { connect: { id: req.user.id } },
         },
       });
@@ -325,7 +325,7 @@ module.exports = {
             order_id: Number(orderId),
             amount: gross_amount,
             method_payment: payment_type,
-            createdAt: new Date().toISOString(),
+            createdAt: utcTimePlus7().toISOString(),
           },
         });
 
@@ -344,7 +344,7 @@ module.exports = {
           data: {
             title: "Payment",
             message: `Your order with booking code ${order.code} is currently Paid. Enjoy you're Flight.`,
-            createdAt: new Date().toISOString(),
+            createdAt: utcTimePlus7().toISOString(),
             user: { connect: { id: updatedOrder.user_id } },
           },
         });

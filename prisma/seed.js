@@ -21,8 +21,8 @@ async function main() {
     await citySeed(prisma)
     await seatClassSeed(prisma)
     await detailPlaneSeed(prisma)
-    // await scheduleSeed(prisma)
-    await userAdmin(prisma)
+    await scheduleSeed(prisma)
+    // await userAdmin(prisma)
 
 }
 
