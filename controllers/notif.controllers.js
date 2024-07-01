@@ -26,7 +26,10 @@ module.exports = {
       const totalPage = Math.ceil(totalData / pagination.take);
 
       const notifications = await prisma.notification.findMany({
-        where: conditions, take: pagination.take, skip: pagination.skip
+        where: conditions, take: pagination.take, skip: pagination.skip,
+        orderBy: {
+          createdAt
+        }
       });
 
       notifications.forEach(value => {
@@ -52,7 +55,7 @@ module.exports = {
         data: {
           isRead: true,
         },
-      }); 
+      });
 
       res.status(200).json({
         status: true,
