@@ -185,6 +185,15 @@ module.exports = {
     try {
       const { email, otp } = req.body;
 
+      // Pastikan email tidak undefined
+      if (!email) {
+        return res.status(400).json({
+          status: false,
+          message: "Email is required",
+          data: null,
+        });
+      }
+
       // Set OTP expired at 2 minutes
       const otpExpired = 2 * 60 * 1000;
 
