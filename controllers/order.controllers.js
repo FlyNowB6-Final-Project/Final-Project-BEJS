@@ -1,8 +1,13 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { generatedOrderCode } = require("../utils/orderCodeGenerator");
-const { formatDateTimeToUTC, formatDateToUTC, formatTimeToUTC, utcTimePlus7 } = require("../utils/formattedDate");
-const imageKit = require("../libs/imagekit")
+const {
+  formatDateTimeToUTC,
+  formatDateToUTC,
+  formatTimeToUTC,
+  utcTimePlus7,
+} = require("../utils/formattedDate");
+const imageKit = require("../libs/imagekit");
 const qr = require("qr-image");
 const paginationReq = require("../utils/pagination");
 const jsonResponse = require("../utils/response");
@@ -59,7 +64,7 @@ module.exports = {
           detailFlight: { connect: { id: parseInt(detailFlightId) } },
           code: generatedOrderCode(),
           status: "unpaid",
-          expired_paid: new Date(utcTimePlus7().getTime() + 30 * 60 * 1000),
+          expired_paid: new Date(utcTimePlus7().getTime() + 20 * 60 * 1000),
           passenger: {
             createMany: {
               data: passengers.map((passenger) => ({
@@ -84,10 +89,11 @@ module.exports = {
       const notification = await prisma.notification.create({
         data: {
           title: "Order",
-          message: `Your order with booking code ${newOrder.code
-            } is currently unpaid. Please completed your payment before ${formatDateTimeToUTC(
-              newOrder.expired_paid.toISOString()
-            )}.`,
+          message: `Your order with booking code ${
+            newOrder.code
+          } is currently unpaid. Please completed your payment before ${formatDateTimeToUTC(
+            newOrder.expired_paid.toISOString()
+          )}.`,
           createdAt: utcTimePlus7().toISOString(),
           user: { connect: { id: req.user.id } },
         },
@@ -126,17 +132,17 @@ module.exports = {
           end.setUTCHours(23, 59, 59, 999);
           conditions.expired_paid = {
             gte: start,
-            lte: end
+            lte: end,
           };
         } else {
           conditions.expired_paid = {
-            gte: start
+            gte: start,
           };
         }
       }
 
       if (filter) {
-        conditions.status = { equals: filter, mode: 'insensitive' };
+        conditions.status = { equals: filter, mode: "insensitive" };
       }
 
       const totalData = await prisma.order.count({ where: conditions });
@@ -146,6 +152,9 @@ module.exports = {
         where: conditions,
         take: pagination.take,
         skip: pagination.skip,
+        orderBy: {
+          expired_paid: "desc",
+        },
         select: {
           id: true,
           status: true,
@@ -197,22 +206,25 @@ module.exports = {
         },
       });
 
-      // Update status to "canceled" if expired_paid has passed
-      const currentTime = new Date();
-      for (const order of orders) {
-        if (order.status === "unpaid" && currentTime > order.expired_paid) {
-          await prisma.order.update({
-            where: { id: order.id },
-            data: { status: "cancelled" },
-          });
-          order.status = "cancelled"; // Update the status in the response as well
-        }
-        order.expired_paid = formatDateTimeToUTC(order.expired_paid);
-      }
+      // Update status to "cancelled" if expired_paid has passed
+      const currentTime = utcTimePlus7();
+      const updatedOrders = await Promise.all(
+        orders.map(async (order) => {
+          if (order.status === "unpaid" && currentTime > order.expired_paid) {
+            await prisma.order.update({
+              where: { id: order.id },
+              data: { status: "cancelled" },
+            });
+            order.status = "cancelled"; // Update the status in the response as well
+          }
+          order.expired_paid = formatDateTimeToUTC(order.expired_paid);
+          return order;
+        })
+      );
 
       return jsonResponse(res, 200, {
         message: "Get all orders successfully",
-        data: orders,
+        data: updatedOrders,
         page: Number(page) ?? 1,
         perPage: orders.length,
         pageCount: totalPage,
@@ -292,9 +304,15 @@ module.exports = {
 
         order.detailFlight.detailPlane = detailPlane;
       }
-      order.detailFlight.flight.date_flight = formatDateToUTC(order.detailFlight.flight.date_flight)
-      order.detailFlight.flight.time_arrive = formatTimeToUTC(order.detailFlight.flight.time_arrive)
-      order.detailFlight.flight.time_departure = formatTimeToUTC(order.detailFlight.flight.time_departure)
+      order.detailFlight.flight.date_flight = formatDateToUTC(
+        order.detailFlight.flight.date_flight
+      );
+      order.detailFlight.flight.time_arrive = formatTimeToUTC(
+        order.detailFlight.flight.time_arrive
+      );
+      order.detailFlight.flight.time_departure = formatTimeToUTC(
+        order.detailFlight.flight.time_departure
+      );
       order.expired_paid = formatDateTimeToUTC(order.expired_paid);
 
       return res.status(200).json({
