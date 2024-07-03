@@ -2357,6 +2357,10 @@ paths:
 
   /admin/flight:
     get:
+      tags:
+        - "Admin"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: page
@@ -2364,8 +2368,6 @@ paths:
           schema:
             type: integer
           description: page
-      tags:
-        - "Admin"
       responses:
         "200":
           description: create new schedule data
@@ -2385,6 +2387,8 @@ paths:
     post:
       tags:
         - "Admin"
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           application/json:
@@ -2456,6 +2460,8 @@ paths:
     post:
       tags:
         - "Admin"
+      security:
+        - bearerAuth: []
       summary: Create a new plane data with details
       requestBody:
         required: true
