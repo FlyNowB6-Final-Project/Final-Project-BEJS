@@ -1,75 +1,13 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { convertToIso, formatDateTimeToUTC, utcTimePlus7 } = require("../utils/formattedDate");
-const { createCronSchedule, createDetailCronSchedule, getCronSchedule } = require("../service/cron_upload_service");
+const { createCronSchedule, createDetailCronSchedule, getCronSchedule, checkIsExecute } = require("../service/cron_upload_service");
 const cronScheduleValidation = require("../validation/cron_schedule_validation");
 const { validate } = require("../validation/validation");
 const { generateRandomString } = require("../utils/helper");
 const jsonResponse = require("../utils/response");
 const { createFligth, createDetailFligth } = require("../service/schedule_service");
 
-const checkIsExecute = async (now, value, detailValue) => {
-  const createFlightWithDetails = async () => {
-    const data = await createFligth({
-      flight_number: generateRandomString(6),
-      city_arrive_id: value.city_arrive_id,
-      city_destination_id: value.city_destination_id,
-      date_flight: now,
-      discount: value.discount,
-      estimation_minute: value.estimation_minute,
-      time_arrive: value.time_arrive,
-      time_departure: value.time_departure
-    });
-
-
-    for (let i = 0; i < detailValue.length; i++) {
-      await createDetailFligth({
-        detail_plane_id: detailValue[i].detail_plane_id,
-        flight_id: data.id,
-        price: detailValue[i].price
-      });
-    }
-
-
-  };
-  switch (now.getDay()) {
-    case 0:
-      if (value.isSunday) {
-        await createFlightWithDetails();
-      }
-      break;
-    case 1:
-      if (value.isMonday) {
-        await createFlightWithDetails();
-      }
-      break;
-    case 2:
-      if (value.isThuesday) {
-        await createFlightWithDetails();
-      }
-      break;
-    case 3:
-      if (value.isWednesday) {
-        await createFlightWithDetails();
-      }
-      break;
-    case 4:
-      if (value.isThursday) {
-        await createFlightWithDetails();
-      }
-      break;
-    case 5:
-      if (value.isFriday) {
-        await createFlightWithDetails();
-      }
-      break;
-    case 6:
-      if (value.isSaturday) {
-        await createFlightWithDetails();
-      }
-      break;
-  }
-}
 
 module.exports = {
   countAllUser: async (req, res, next) => {
