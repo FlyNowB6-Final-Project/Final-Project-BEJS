@@ -10,7 +10,6 @@ const { createFligth, createDetailFligth } = require("../service/schedule_servic
 
 const checkIsExecute = async (now, value, detailValue) => {
   const createFlightWithDetails = async () => {
-    console.log("start insert into db ")
     const data = await createFligth({
       flight_number: generateRandomString(6),
       city_arrive_id: value.city_arrive_id,
@@ -35,37 +34,37 @@ const checkIsExecute = async (now, value, detailValue) => {
   };
   switch (now.getDay()) {
     case 0:
-      if (value.isMonday) {
+      if (value.isSunday) {
         await createFlightWithDetails();
       }
       break;
     case 1:
-      if (value.isTuesday) {
+      if (value.isMonday) {
         await createFlightWithDetails();
       }
       break;
     case 2:
-      if (value.isWednesday) {
+      if (value.isThuesday) {
         await createFlightWithDetails();
       }
       break;
     case 3:
-      if (value.isThursday) {
+      if (value.isWednesday) {
         await createFlightWithDetails();
       }
       break;
     case 4:
-      if (value.isFriday) {
+      if (value.isThursday) {
         await createFlightWithDetails();
       }
       break;
     case 5:
-      if (value.isSaturday) {
+      if (value.isFriday) {
         await createFlightWithDetails();
       }
       break;
     case 6:
-      if (value.isSunday) {
+      if (value.isSaturday) {
         await createFlightWithDetails();
       }
       break;
@@ -221,7 +220,7 @@ module.exports = {
 
       res.status(200).json({
         status: true,
-        message: "Successfully retrieved detail order by userId",
+        message: "Successfully retrieved nowdetail order by userId",
         data: order,
       });
     } catch (error) {
@@ -313,9 +312,10 @@ module.exports = {
       }
 
 
-      for (i = 0; i < 7; i++) {
-        let now = new Date();
+      for (i = 1; i < 8; i++) {
+        let now = utcTimePlus7()
         now.setDate(now.getDate() + i);
+        console.log(i, now)
 
         await checkIsExecute(now, data, detail)
       }
