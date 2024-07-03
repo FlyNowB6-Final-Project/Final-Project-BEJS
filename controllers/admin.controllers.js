@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { convertToIso, formatDateTimeToUTC } = require("../utils/formattedDate");
+const { convertToIso, formatDateTimeToUTC, utcTimePlus7 } = require("../utils/formattedDate");
 const { createCronSchedule, createDetailCronSchedule, getCronSchedule } = require("../service/cron_upload_service");
 const cronScheduleValidation = require("../validation/cron_schedule_validation");
 const { validate } = require("../validation/validation");
@@ -244,7 +244,7 @@ module.exports = {
       // Create notifications for all users using Promise.all
       const newNotification = await Promise.all(
         allUsers.map(async (user) => {
-          const now = new Date();
+          const now = utcTimePlus7();
           const isoDate = convertToIso({
             day: now.getDate().toString().padStart(2, "0"),
             month: (now.getMonth() + 1).toString().padStart(2, "0"),
