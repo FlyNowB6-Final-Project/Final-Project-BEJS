@@ -45,6 +45,10 @@ module.exports = {
       "expired_date",
       "issuing_country",
     ];
+
+    const currentYear = new Date().getFullYear();
+    const minBirthYear = currentYear - 1;
+
     for (const passenger of passengers) {
       for (const field of requiredFields) {
         if (!passenger[field]) {
@@ -54,6 +58,14 @@ module.exports = {
             data: null,
           });
         }
+      }
+      const birthYear = new Date(passenger.birth_date).getFullYear();
+      if (birthYear >= minBirthYear) {
+        return res.status(400).json({
+          status: "error",
+          message: `minimum age one year`,
+          data: null,
+        });
       }
     }
 
@@ -89,11 +101,10 @@ module.exports = {
       const notification = await prisma.notification.create({
         data: {
           title: "Order",
-          message: `Your order with booking code ${
-            newOrder.code
-          } is currently unpaid. Please completed your payment before ${formatDateTimeToUTC(
-            newOrder.expired_paid.toISOString()
-          )}.`,
+          message: `Your order with booking code ${newOrder.code
+            } is currently unpaid. Please completed your payment before ${formatDateTimeToUTC(
+              newOrder.expired_paid.toISOString()
+            )}.`,
           createdAt: utcTimePlus7().toISOString(),
           user: { connect: { id: req.user.id } },
         },
