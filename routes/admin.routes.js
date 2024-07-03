@@ -18,10 +18,10 @@ router.get("/admin/order/user/:userId", restrict, isAdmin, getDetailOrderUser);
 router.post("/admin/notifications", restrict, isAdmin, createNotif);
 
 
-router.post("/admin/flight", uploadCronAdmin)
-router.get("/admin/flight", getCronJobData)
+router.post("/admin/flight", restrict, isAdmin, uploadCronAdmin)
+router.get("/admin/flight", restrict, isAdmin, getCronJobData)
 
-router.post("/admin/plane", createPlane)
-router.get("/admin/airlines", getAirlines)
+router.post("/admin/plane", restrict, isAdmin, createPlane)
+router.get("/admin/airlines", restrict, isAdmin, getAirlines)
 
 module.exports = router;
